@@ -161,19 +161,22 @@ input:focus {
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec"; // Asegurate que sea la última versión
 
         async function cargarDatos() {
-        console.log("Sincronizando con Google Sheets...");
+        console.log("Intentando sincronizar...");
         try {
-            // USAMOS UNA VARIABLE PARA EVITAR CACHÉ
-            const res = await fetch(URL_SCRIPT + "?t=" + new Date().getTime());
-            const data = await res.json();
+            // Agregamos un número aleatorio al final para engañar al caché
+            const respuesta = await fetch(URL_SCRIPT + "?nocache=" + Math.random());
+            const data = await respuesta.json();
             
-            datosCargados.precios = data.precios;
-            datosCargados.inventario = data.inventario;
-            datosCargados.turnos = data.turnos || [];
+            // Asignación directa y forzada
+            datosCargados = {
+                precios: data.precios || {},
+                inventario: data.inventario || [],
+                turnos: data.turnos || []
+            };
             
-            console.log("Sincronización exitosa. Turnos encontrados:", datosCargados.turnos.length);
+            console.log("Sincronización completa. Turnos en memoria:", datosCargados.turnos.length);
         } catch (e) {
-            console.error("Error en la carga:", e);
+            console.error("Error fatal en la carga:", e);
         }
     }
 
@@ -319,3 +322,4 @@ input:focus {
     </script>
 </body>
 </html>
+
