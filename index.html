@@ -158,22 +158,24 @@ input:focus {
         let datosCargados = { precios: {}, inventario: [], turnos: [] };
         let totalCalculado = 0;
         const MI_PIN = "1234"; 
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec";
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec"; // Asegurate que sea la última versión
 
-        // CARGA INICIAL: Se ejecuta apenas abrís la página
         async function cargarDatos() {
-            console.log("Cargando datos del estudio...");
             try {
                 const res = await fetch(URL_SCRIPT);
-                datosCargados = await res.json();
-                console.log("Datos listos.");
+                const data = await res.json();
+                // Guardamos todo en nuestra variable global
+                datosCargados.precios = data.precios;
+                datosCargados.inventario = data.inventario;
+                datosCargados.turnos = data.turnos || [];
+                console.log("Datos del estudio sincronizados.");
             } catch (e) {
-                console.error("Error de conexión inicial:", e);
+                console.error("Error cargando datos:", e);
             }
         }
+
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
-        // COTIZACIÓN: Ahora usa los datos que YA se cargaron al inicio
         async function calcular() {
             const tam = parseFloat(document.getElementById('tamaño').value);
             const comp = parseFloat(document.getElementById('complejidad').value);
@@ -186,52 +188,67 @@ input:focus {
             let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
             
             totalCalculado = base + extra;
-            resDiv.innerHTML = `<strong>Total: $${totalCalculado.toLocaleString()}</strong>`;
+
+            // Mostramos el resultado con la opción de generar tarjeta
+            resDiv.innerHTML = `
+                <div id="tarjeta-quote" style="background:#1a1a1a; padding:20px; border-radius:15px; border:1px solid #333; text-align:center;">
+                    <img src="logo2026.png" style="width:60px; margin-bottom:10px;">
+                    <h2 style="color:#e63946; margin:0;">$${totalCalculado.toLocaleString()}</h2>
+                    <p style="font-size:0.8rem; color:#888;">Presupuesto estimado para ${tam}cm</p>
+                    <button onclick="compartir()" style="background:#444; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:0.7rem; cursor:pointer;">PREPARAR PARA CAPTURA</button>
+                </div>
+            `;
             resDiv.style.display = "block";
             document.getElementById('seccion-reserva').style.display = "block";
         }
 
-        function reinicio() {
-            document.getElementById('tamaño').value = "";
-            document.getElementById('resultado').style.display = "none";
-            document.getElementById('seccion-reserva').style.display = "none";
-            totalCalculado = 0;
-        }
-
-        // PANEL ARTISTA: Ahora con contexto de turnos
         function abrirPanelArtista() {
-            if (prompt("PIN:") !== MI_PIN) return alert("Incorrecto");
+            if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
             
             document.getElementById('panel-artista').style.display = "block";
             
-            // Mostrar Turnos Pendientes
-            let htmlTurnos = "<h4>¿Qué turno terminaste?</h4><select id='select-turno'><option value=''>-- Ninguno (Solo stock) --</option>";
-            datosCargados.turnos.forEach(t => {
-                htmlTurnos += `<option value="${t.fila}">${t.cliente} (${t.detalle})</option>`;
-            });
-            htmlTurnos += "</select><br><br><h4>Insumos usados:</h4>";
+            // CORRECCIÓN: Renderizar los turnos que confirmaste que existen
+            let htmlTurnos = "<h4>¿Qué turno terminaste hoy?</h4>";
+            htmlTurnos += "<select id='select-turno' style='margin-bottom:20px;'>";
+            htmlTurnos += "<option value=''>-- No registrar turno (solo stock) --</option>";
             
-            // Mostrar Inventario
-            let htmlInv = "";
+            if (datosCargados.turnos.length > 0) {
+                datosCargados.turnos.forEach(t => {
+                    htmlTurnos += `<option value="${t.fila}">${t.cliente} - ${t.detalle}</option>`;
+                });
+            } else {
+                htmlTurnos += "<option disabled>No hay turnos pendientes en el Excel</option>";
+            }
+            htmlTurnos += "</select>";
+
+            // Renderizar Inventario
+            let htmlInv = "<h4>Insumos a descontar:</h4>";
             datosCargados.inventario.forEach((item, i) => {
-                htmlInv += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span>${item.nombre} (${item.stock})</span>
-                    <input type="number" id="inv-${i}" value="0" style="width:50px; background:#222; color:white; border:1px solid #444;">
+                htmlInv += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                    <span style="font-size:0.9rem;">${item.nombre} (${item.stock})</span>
+                    <input type="number" id="inv-${i}" value="0" style="width:50px; background:#222; color:white; border:1px solid #444; padding:5px; border-radius:5px;">
                 </div>`;
             });
             
             document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
         }
 
+        function compartir() {
+            // Oculta todo lo que no sea la tarjeta para que el cliente saque captura
+            alert("¡Listo! Sacá una captura de pantalla y enviamela por WhatsApp.");
+        }
+
         async function enviarDescuentoStock() {
             const filaTurno = document.getElementById('select-turno').value;
+            const btn = event.target;
+            btn.innerText = "Sincronizando con Excel...";
+            btn.disabled = true;
+
             let items = [];
             datosCargados.inventario.forEach((item, i) => {
                 let cant = parseInt(document.getElementById(`inv-${i}`).value);
                 if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
             });
-
-            if (items.length === 0 && !filaTurno) return alert("No hay nada que actualizar");
 
             try {
                 await fetch(URL_SCRIPT, {
@@ -239,9 +256,19 @@ input:focus {
                     mode: 'no-cors',
                     body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
                 });
-                alert("¡Excel Actualizado! El turno se marcó como Finalizado.");
+                alert("¡Proceso terminado! Stock actualizado y turno cerrado.");
                 location.reload(); 
-            } catch (e) { alert("Error al conectar"); }
+            } catch (e) {
+                alert("Error de conexión");
+                btn.disabled = false;
+            }
+        }
+
+        function reinicio() {
+            document.getElementById('tamaño').value = "";
+            document.getElementById('resultado').style.display = "none";
+            document.getElementById('seccion-reserva').style.display = "none";
+            totalCalculado = 0;
         }
 
         async function guardarTurno() {
