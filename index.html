@@ -168,24 +168,29 @@
         // CONFIGURACIÓN GLOBAL
         let datosCargados = { precios: {}, inventario: [], turnos: [] };
         let totalCalculado = 0;
-        let estiloElegido = ""; 
+        let estiloNombre = ""; // Para el WhatsApp
+        let cargando = false; 
         const MI_PIN = "1234"; 
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
 
-        // 1. CARGA INICIAL
+        // 1. CARGA INICIAL (Con indicador de carga)
         async function cargarDatos() {
-            console.log("Sincronizando con el estudio...");
+            if (cargando) return;
+            cargando = true;
+            console.log("Sincronizando...");
             try {
-                const res = await fetch(URL_SCRIPT + "?v=" + Math.random());
+                const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
                 const data = await res.json();
                 datosCargados = {
                     precios: data.precios || {},
                     inventario: data.inventario || [],
                     turnos: data.turnos || []
                 };
-                console.log("Datos listos. Turnos detectados:", datosCargados.turnos.length);
+                console.log("Sincronización exitosa.");
             } catch (e) {
                 console.error("Error sincronizando:", e);
+            } finally {
+                cargando = false;
             }
         }
         window.addEventListener('DOMContentLoaded', cargarDatos);
@@ -253,35 +258,43 @@
             } catch (e) { alert("Error al conectar con el servidor"); }
         }
 
-        // 4. PANEL DE ARTISTA (INVENTARIO + TURNOS)
+        // 2. ABRIR PANEL (Bloquea si no hay datos)
         function abrirPanelArtista() {
+            if (datosCargados.inventario.length === 0) {
+                alert("Todavía se están cargando los datos del Excel. Esperá 2 segundos e intentá de nuevo.");
+                cargarDatos(); // Reintentamos la carga por las dudas
+                return;
+            }
+
             if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
             document.getElementById('panel-artista').style.display = "block";
             
-            // Render Turnos
-            let html = "<h4>¿Qué turno terminaste?</h4>";
-            html += "<select id='select-turno' style='background:#222; color:white; border-radius:10px; padding:10px; margin-bottom:20px;'>";
+            renderizarPanel(); // Separamos el dibujo en una función aparte para que sea más limpio
+        }
+
+        function renderizarPanel() {
+            let htmlTurnos = "<h4>¿Qué turno terminaste?</h4>";
+            htmlTurnos += "<select id='select-turno' style='width:100%; padding:10px; margin-bottom:20px; background:#222; color:white; border-radius:10px;'>";
+            
             if (datosCargados.turnos.length > 0) {
-                html += "<option value=''>-- Seleccioná el cliente --</option>";
+                htmlTurnos += "<option value=''>-- Seleccioná el cliente --</option>";
                 datosCargados.turnos.forEach(t => {
-                    let infoTurno = t.detalle.split("GMT")[0];
-                    html += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${infoTurno})</option>`;
+                    htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${t.detalle})</option>`;
                 });
             } else {
-                html += "<option>No hay turnos pendientes</option>";
+                htmlTurnos += "<option value=''>No hay turnos pendientes en el Excel</option>";
             }
-            html += "</select>";
+            htmlTurnos += "</select>";
 
-            // Render Inventario
-            html += "<h4>Insumos usados:</h4>";
+            let htmlInv = "<h4>Insumos usados:</h4>";
             datosCargados.inventario.forEach((item, i) => {
-                html += `
-                <div class="inv-item">
-                    <span style="font-size:0.85rem;">${item.nombre} <small style="color:#666;">(Stock: ${item.stock || 0})</small></span>
-                    <input type="number" id="inv-${i}" value="0" min="0" style="width:50px; background:#000; color:#0ff; border:1px solid #333; text-align:center; border-radius:5px; padding:5px;">
+                htmlInv += `
+                <div class="inv-item" style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center; background:#111; padding:10px; border-radius:10px;">
+                    <span style="font-size:0.85rem;">${item.nombre} <br><small style="color:#666;">Stock: ${item.stock || 0}</small></span>
+                    <input type="number" id="inv-${i}" value="0" min="0" style="width:50px; background:#000; color:#0ff; border:1px solid #333; text-align:center; padding:5px; border-radius:5px;">
                 </div>`;
             });
-            document.getElementById('lista-inventario').innerHTML = html;
+            document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
         }
 
         // 5. ENVIAR DESCUENTO DE STOCK
@@ -321,4 +334,3 @@
     </script>
 </body>
 </html>
-
