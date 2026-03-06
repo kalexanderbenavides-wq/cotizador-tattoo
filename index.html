@@ -155,158 +155,40 @@ input:focus {
     </div>
 
     <script>
-        // =====================================================
-        // ⚙️  CONFIGURACIÓN - Modifica aquí si necesitas cambios
-        // =====================================================
-        let inventarioCargado = [];
+        let datosCargados = { precios: {}, inventario: [], turnos: [] };
         let totalCalculado = 0;
         const MI_PIN = "1234"; 
-        
-        // ⚠️ ASEGÚRATE DE QUE ESTA URL SEA LA DE TU ÚLTIMA "IMPLEMENTACIÓN"
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
-        // =====================================================
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec";
 
+        // CARGA INICIAL: Se ejecuta apenas abrís la página
         async function cargarDatos() {
+            console.log("Cargando datos del estudio...");
             try {
                 const res = await fetch(URL_SCRIPT);
-                const data = await res.json();
-                inventarioCargado = data.inventario || [];
-                console.log("Datos cargados correctamente");
+                datosCargados = await res.json();
+                console.log("Datos listos.");
             } catch (e) {
-                console.error("Error cargando inventario:", e);
+                console.error("Error de conexión inicial:", e);
             }
         }
-
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
-        function abrirPanelArtista() {
-            let pass = prompt("Introducí tu PIN:");
-            if(pass === MI_PIN) {
-                document.getElementById('panel-artista').style.display = "block";
-                mostrarInventario();
-            } else if(pass !== null) {
-                alert("PIN incorrecto");
-            }
-        }
-
-        function mostrarInventario() {
-            let html = "";
-            inventarioCargado.forEach((item, index) => {
-                html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                    <span>${item.nombre} (Stock: ${item.stock})</span>
-                    <input type="number" id="inv-${index}" value="0" style="width:50px; margin:0; padding:5px;">
-                </div>`;
-            });
-            document.getElementById('lista-inventario').innerHTML = html;
-        }
-
-        async function enviarDescuentoStock() {
-            // Referencia al botón para cambiarle el texto mientras carga
-            const btn = event.target;
-            const textoOriginal = btn.innerText;
-            btn.innerText = "Actualizando Excel...";
-            btn.disabled = true;
-
-            let itemsADescontar = [];
-            inventarioCargado.forEach((item, index) => {
-                // Obtenemos la cantidad que pusiste en el input numérico
-                let cant = parseInt(document.getElementById(`inv-${index}`).value);
-                if(cant > 0) {
-                    // Guardamos la fila real y la cantidad a restar
-                    itemsADescontar.push({ fila: item.fila, cantidad: cant });
-                }
-            });
-
-            if (itemsADescontar.length === 0) {
-                alert("Primero ingresá cantidades a descontar.");
-                btn.innerText = textoOriginal;
-                btn.disabled = false;
-                return;
-            }
-
-            try {
-                // Importante: No usamos mode: 'no-cors' aquí para poder leer la respuesta
-                const res = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({ 
-                        accion: "descontar", 
-                        itemsADescontar: itemsADescontar 
-                    })
-                });
-
-                // Esperamos a que Google nos responda con texto
-                const textoRespuesta = await res.text();
-                
-                // Verificamos si Google confirmó el cambio
-                if (textoRespuesta === "Stock Actualizado Correctamente") {
-                    alert("¡Stock descontado con éxito en el Excel!");
-                    
-                    // EN LUGAR DE RELOAD, VOLVEMOS A CARGAR LOS DATOS EN SILENCIO
-                    await cargarDatos(); // Recarga inventarioCargado desde Google
-                    mostrarInventario(); // Vuelve a dibujar la lista con los stocks nuevos
-                } else {
-                    alert("Hubo un problema al actualizar el Excel. Verificá los permisos del Script.");
-                }
-
-            } catch (e) {
-                console.error(e);
-                alert("Error de red. Verificá tu conexión o los permisos del Script.");
-            } finally {
-                // Restauramos el botón a su estado original
-                btn.innerText = textoOriginal;
-                btn.disabled = false;
-            }
-        }
-
+        // COTIZACIÓN: Ahora usa los datos que YA se cargaron al inicio
         async function calcular() {
             const tam = parseFloat(document.getElementById('tamaño').value);
             const comp = parseFloat(document.getElementById('complejidad').value);
-            const resultadoDiv = document.getElementById('resultado');
+            const resDiv = document.getElementById('resultado');
 
-            if (isNaN(tam) || tam < 5 || tam > 50) {
-                alert("El tamaño debe estar entre 5 cm y 50 cm.");
-                return;
-            }
+            if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
 
-            resultadoDiv.style.display = "block";
-            resultadoDiv.innerText = "Consultando base de datos...";
-
-            try {
-                // No usamos no-cors aquí porque necesitamos leer la respuesta
-                const respuesta = await fetch(URL_SCRIPT);
-                const data = await respuesta.json();
-                const precios = data.precios;
-
-                let precioBase, cmExtraCosto, desglose;
-
-                if (tam < 15) {
-                    precioBase = (comp === 1) ? precios.baja : precios.mediaAlta;
-                    cmExtraCosto = 0;
-                    desglose = `Precio base (menor a 15cm)`;
-                } else {
-                    precioBase = 80000;
-                    const cmAdicionales = tam - 15;
-                    const bloques = Math.ceil(cmAdicionales / 5);
-                    cmExtraCosto = bloques * 40000;
-                    desglose = `Extra: ${bloques} bloque(s) de 5cm (+$${cmExtraCosto.toLocaleString()})`;
-                }
-
-                const total = precioBase + cmExtraCosto; 
-                totalCalculado = total; 
-                
-                resultadoDiv.innerHTML = `
-                    <div style="font-size: 0.8rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px;">DETALLE</div>
-                    Base: $${precioBase.toLocaleString()}<br>
-                    ${desglose}<br>
-                    <div style="font-size: 1.2rem; color: #00ff00; margin-top: 10px;">
-                        <strong>Total: $${total.toLocaleString()}</strong>
-                    </div>
-                `;
-                document.getElementById('seccion-reserva').style.display = "block";
-            } catch (error) {
-                console.error(error);
-                resultadoDiv.innerText = "Error de conexión. Verifica los permisos del Script.";
-            }
+            const precios = datosCargados.precios;
+            let base = (comp == 1) ? precios.baja : precios.mediaAlta;
+            let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
+            
+            totalCalculado = base + extra;
+            resDiv.innerHTML = `<strong>Total: $${totalCalculado.toLocaleString()}</strong>`;
+            resDiv.style.display = "block";
+            document.getElementById('seccion-reserva').style.display = "block";
         }
 
         function reinicio() {
@@ -314,6 +196,52 @@ input:focus {
             document.getElementById('resultado').style.display = "none";
             document.getElementById('seccion-reserva').style.display = "none";
             totalCalculado = 0;
+        }
+
+        // PANEL ARTISTA: Ahora con contexto de turnos
+        function abrirPanelArtista() {
+            if (prompt("PIN:") !== MI_PIN) return alert("Incorrecto");
+            
+            document.getElementById('panel-artista').style.display = "block";
+            
+            // Mostrar Turnos Pendientes
+            let htmlTurnos = "<h4>¿Qué turno terminaste?</h4><select id='select-turno'><option value=''>-- Ninguno (Solo stock) --</option>";
+            datosCargados.turnos.forEach(t => {
+                htmlTurnos += `<option value="${t.fila}">${t.cliente} (${t.detalle})</option>`;
+            });
+            htmlTurnos += "</select><br><br><h4>Insumos usados:</h4>";
+            
+            // Mostrar Inventario
+            let htmlInv = "";
+            datosCargados.inventario.forEach((item, i) => {
+                htmlInv += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>${item.nombre} (${item.stock})</span>
+                    <input type="number" id="inv-${i}" value="0" style="width:50px; background:#222; color:white; border:1px solid #444;">
+                </div>`;
+            });
+            
+            document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
+        }
+
+        async function enviarDescuentoStock() {
+            const filaTurno = document.getElementById('select-turno').value;
+            let items = [];
+            datosCargados.inventario.forEach((item, i) => {
+                let cant = parseInt(document.getElementById(`inv-${i}`).value);
+                if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
+            });
+
+            if (items.length === 0 && !filaTurno) return alert("No hay nada que actualizar");
+
+            try {
+                await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
+                });
+                alert("¡Excel Actualizado! El turno se marcó como Finalizado.");
+                location.reload(); 
+            } catch (e) { alert("Error al conectar"); }
         }
 
         async function guardarTurno() {
