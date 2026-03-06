@@ -185,15 +185,18 @@ input:focus {
         const selector = document.getElementById('complejidad');
         const comp = parseFloat(selector.value);
         
-        // Guardamos el NOMBRE del estilo (ej: "Solo líneas") para el WhatsApp
-        estiloNombre = selector.options[selector.selectedIndex].text.match(/\(([^)]+)\)/)[1];
+        // Extraemos el nombre del estilo de forma segura
+        let fullText = selector.options[selector.selectedIndex].text;
+        let match = fullText.match(/\(([^)]+)\)/);
+        estiloNombre = match ? match[1] : fullText;
 
         if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
 
         const precios = datosCargados.precios;
         let base = (comp == 1) ? precios.baja : precios.mediaAlta;
-        let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
         
+        // Fórmula de bloques adicionales: $Total = Base + Extra$
+        let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
         totalCalculado = base + extra;
 
         const resDiv = document.getElementById('resultado');
@@ -208,7 +211,6 @@ input:focus {
         resDiv.style.display = "block";
         document.getElementById('seccion-reserva').style.display = "block";
     }
-
     function abrirPanelArtista() {
         if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
         document.getElementById('panel-artista').style.display = "block";
@@ -240,24 +242,40 @@ input:focus {
 
     async function guardarTurno() {
         const nombre = document.getElementById('nombre-cliente').value;
+        const whatsapp = document.getElementById('tel-cliente').value;
         const tam = document.getElementById('tamaño').value;
         const hora = document.getElementById('hora-turno').value;
 
-        if(!nombre) return alert("Completá tu nombre");
+        if(!nombre || !whatsapp) return alert("Completá tus datos para agendar");
+
+        // Obtenemos la fecha actual del sistema del cliente (Buenos Aires)
+        const fechaActual = new Date().toLocaleDateString('es-AR');
+
+        const payload = { 
+            accion: "reservar", 
+            nombre, 
+            whatsapp,
+            tam, 
+            hora, 
+            fecha: fechaActual,
+            comp: estiloNombre, 
+            total: totalCalculado 
+        };
 
         try {
             await fetch(URL_SCRIPT, {
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify({ 
-                    accion: "reservar", 
-                    nombre, 
-                    tam, 
-                    hora, 
-                    comp: estiloNombre, // Mandamos el nombre del estilo al Excel
-                    total: totalCalculado 
-                })
+                body: JSON.stringify(payload)
             });
+
+            alert("¡Turno enviado! En un minuto aparecerá en tu agenda.");
+            
+            const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de "${estiloNombre}" de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+            window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
+            
+        } catch (e) { alert("Error al enviar"); }
+    }
 
             alert("¡Turno enviado al Excel!");
             
@@ -304,3 +322,4 @@ input:focus {
     </script>
 </body>
 </html>
+
