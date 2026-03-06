@@ -155,175 +155,152 @@ input:focus {
     </div>
 
     <script>
-        let datosCargados = { precios: {}, inventario: [], turnos: [] };
-        let totalCalculado = 0;
-        let estiloElegido = ""; // Variable para guardar el nombre del estilo
-        const MI_PIN = "1234"; 
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec"; // Asegurate que sea la última versión
+    let datosCargados = { precios: {}, inventario: [], turnos: [] };
+    let totalCalculado = 0;
+    let estiloNombre = ""; // Para el WhatsApp
+    const MI_PIN = "1234"; 
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
 
-        async function cargarDatos() {
-        console.log("Intentando sincronizar...");
+    async function cargarDatos() {
+        console.log("Sincronizando con el estudio...");
         try {
-            // Agregamos un número aleatorio al final para engañar al caché
-            const respuesta = await fetch(URL_SCRIPT + "?nocache=" + Math.random());
-            const data = await respuesta.json();
+            // Agregamos un número al azar para que no use la memoria vieja
+            const res = await fetch(URL_SCRIPT + "?v=" + Math.random());
+            const data = await res.json();
             
-            // Asignación directa y forzada
-            datosCargados = {
-                precios: data.precios || {},
-                inventario: data.inventario || [],
-                turnos: data.turnos || []
-            };
+            datosCargados.precios = data.precios || {};
+            datosCargados.inventario = data.inventario || [];
+            datosCargados.turnos = data.turnos || [];
             
-            console.log("Sincronización completa. Turnos en memoria:", datosCargados.turnos.length);
+            console.log("Turnos cargados en memoria:", datosCargados.turnos.length);
         } catch (e) {
-            console.error("Error fatal en la carga:", e);
+            console.error("Error cargando datos:", e);
         }
     }
 
-        window.addEventListener('DOMContentLoaded', cargarDatos);
+    window.addEventListener('DOMContentLoaded', cargarDatos);
 
-        async function calcular() {
-            const tam = parseFloat(document.getElementById('tamaño').value);
-            const comp = parseFloat(document.getElementById('complejidad').value);
-            estiloElegido = document.getElementById('complejidad').options[document.getElementById('complejidad').selectedIndex].text;
-            estiloElegido = estiloElegido.match(/\(([^)]+)\)/)[1];
-            const resDiv = document.getElementById('resultado');
-
-            if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
-
-            const precios = datosCargados.precios;
-            let base = (comp == 1) ? precios.baja : precios.mediaAlta;
-            let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
-            
-            totalCalculado = base + extra;
-
-            // Mostramos el resultado con la opción de generar tarjeta
-            resDiv.innerHTML = `
-                <div id="tarjeta-quote" style="background:#1a1a1a; padding:20px; border-radius:15px; border:1px solid #333; text-align:center;">
-                    <img src="logo2026.png" style="width:60px; margin-bottom:10px;">
-                    <h2 style="color:#e63946; margin:0;">$${totalCalculado.toLocaleString()}</h2>
-                    <p style="font-size:0.8rem; color:#888;">${estiloElegido} - ${tam}cm</p>
-                    <button onclick="compartir()" style="background:#444; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:0.7rem; cursor:pointer;">PREPARAR PARA CAPTURA</button>
-                </div>
-            `;
-            resDiv.style.display = "block";
-            document.getElementById('seccion-reserva').style.display = "block";
-        }
-
-        function abrirPanelArtista() {
-        if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
+    async function calcular() {
+        const tam = parseFloat(document.getElementById('tamaño').value);
+        const selector = document.getElementById('complejidad');
+        const comp = parseFloat(selector.value);
         
+        // Guardamos el NOMBRE del estilo (ej: "Solo líneas") para el WhatsApp
+        estiloNombre = selector.options[selector.selectedIndex].text;
+
+        if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
+
+        const precios = datosCargados.precios;
+        let base = (comp == 1) ? precios.baja : precios.mediaAlta;
+        let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
+        
+        totalCalculado = base + extra;
+
+        const resDiv = document.getElementById('resultado');
+        resDiv.innerHTML = `
+            <div id="tarjeta-quote" style="background:#1a1a1a; padding:20px; border-radius:15px; border:1px solid #333; text-align:center;">
+                <img src="logo2026.png" style="width:60px; margin-bottom:10px;">
+                <h2 style="color:#e63946; margin:0;">$${totalCalculado.toLocaleString()}</h2>
+                <p style="font-size:0.8rem; color:#888;">${estiloNombre} - ${tam}cm</p>
+                <button onclick="alert('¡Sacá captura!')" style="background:#444; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:0.7rem; cursor:pointer;">LISTO PARA CAPTURA</button>
+            </div>
+        `;
+        resDiv.style.display = "block";
+        document.getElementById('seccion-reserva').style.display = "block";
+    }
+
+    function abrirPanelArtista() {
+        if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
         document.getElementById('panel-artista').style.display = "block";
         
-        // DIBUJAR SELECTOR DE TURNOS
         let htmlTurnos = "<h4>¿Qué turno terminaste?</h4>";
         htmlTurnos += "<select id='select-turno' style='width:100%; padding:10px; margin-bottom:20px; background:#222; color:white; border-radius:10px;'>";
         
-        if (datosCargados.turnos && datosCargados.turnos.length > 0) {
+        if (datosCargados.turnos.length > 0) {
             htmlTurnos += "<option value=''>-- Seleccioná el cliente --</option>";
             datosCargados.turnos.forEach(t => {
-                // Limpiamos el detalle para que no muestre el año 1899
-                let detalleLimpio = t.detalle.split("1899")[0] || t.detalle;
-                htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${detalleLimpio})</option>`;
+                // Limpiamos el texto para que no salga el año 1899
+                let infoTurno = t.detalle.split("GMT")[0]; 
+                htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${infoTurno})</option>`;
             });
         } else {
-            htmlTurnos += "<option value=''>No se encontraron turnos pendientes</option>";
+            htmlTurnos += "<option>No hay turnos pendientes en el Excel</option>";
         }
         htmlTurnos += "</select>";
 
-        // DIBUJAR INVENTARIO
         let htmlInv = "<h4>Insumos usados:</h4>";
         datosCargados.inventario.forEach((item, i) => {
-            if(item.nombre) {
-                htmlInv += `
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center; background:#1a1a1a; padding:10px; border-radius:10px;">
-                    <span style="font-size:0.85rem;">${item.nombre} <br><small style="color:#666;">Stock: ${item.stock || 0}</small></span>
-                    <input type="number" id="inv-${i}" value="0" min="0" style="width:50px; background:#000; color:#00ff00; border:1px solid #333; text-align:center; padding:5px; border-radius:5px;">
-                </div>`;
-            }
+            htmlInv += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                <span style="font-size:0.85rem;">${item.nombre} <small style="color:#666;">(${item.stock || 0})</small></span>
+                <input type="number" id="inv-${i}" value="0" style="width:50px; background:#000; color:#00ff00; border:1px solid #333; text-align:center; border-radius:5px;">
+            </div>`;
         });
-        
         document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
     }
 
-        function compartir() {
-            // Oculta todo lo que no sea la tarjeta para que el cliente saque captura
-            alert("¡Listo! Sacá una captura de pantalla y enviamela por WhatsApp.");
-        }
+    async function guardarTurno() {
+        const nombre = document.getElementById('nombre-cliente').value;
+        const tam = document.getElementById('tamaño').value;
+        const hora = document.getElementById('hora-turno').value;
 
-        async function enviarDescuentoStock() {
-            const filaTurno = document.getElementById('select-turno').value;
-            const btn = event.target;
-            btn.innerText = "Sincronizando con Excel...";
-            btn.disabled = true;
+        if(!nombre) return alert("Completá tu nombre");
 
-            let items = [];
-            datosCargados.inventario.forEach((item, i) => {
-                let cant = parseInt(document.getElementById(`inv-${i}`).value);
-                if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
+        try {
+            await fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ 
+                    accion: "reservar", 
+                    nombre, 
+                    tam, 
+                    hora, 
+                    comp: estiloNombre, // Mandamos el nombre del estilo al Excel
+                    total: totalCalculado 
+                })
             });
 
-            try {
-                await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
-                });
-                alert("¡Proceso terminado! Stock actualizado y turno cerrado.");
-                location.reload(); 
-            } catch (e) {
-                alert("Error de conexión");
-                btn.disabled = false;
-            }
+            alert("¡Turno enviado al Excel!");
+            
+            // WHATSAPP CON EL ESTILO ELEGIDO
+            const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de "${estiloNombre}" de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+            window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
+            
+        } catch (e) { alert("Error al enviar"); }
+    }
+
+    // Copiá tu función enviarDescuentoStock aquí debajo...
+    async function enviarDescuentoStock() {
+        const filaTurno = document.getElementById('select-turno').value;
+        const btn = event.target;
+        btn.innerText = "Sincronizando con Excel...";
+        btn.disabled = true;
+
+        let items = [];
+        datosCargados.inventario.forEach((item, i) => {
+            let cant = parseInt(document.getElementById(`inv-${i}`).value);
+            if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
+        });
+
+        try {
+            await fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
+            });
+            alert("¡Proceso terminado! Stock actualizado y turno cerrado.");
+            location.reload(); 
+        } catch (e) {
+            alert("Error de conexión");
+            btn.disabled = false;
         }
+    }
 
-        function reinicio() {
-            document.getElementById('tamaño').value = "";
-            document.getElementById('resultado').style.display = "none";
-            document.getElementById('seccion-reserva').style.display = "none";
-            totalCalculado = 0;
-        }
-
-        async function guardarTurno() {
-            const nombre = document.getElementById('nombre-cliente').value;
-            const whatsapp = document.getElementById('tel-cliente').value;
-            const tam = document.getElementById('tamaño').value;
-            const comp = document.getElementById('complejidad').value;
-            const hora = document.getElementById('hora-turno').value;
-
-            if(!nombre || !whatsapp) {
-                alert("Completá tus datos para agendar");
-                return;
-            }
-
-            const payload = { 
-                accion: "reservar",
-                nombre, whatsapp, tam, comp, hora,
-                total: totalCalculado,
-                estilo: estiloElegido
-            };
-
-            try {
-                // El modo no-cors es solo para enviar, no para recibir
-                await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-
-                alert("¡Turno enviado! En un minuto aparecerá en tu calendario y Excel.");
-                
-                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ${estiloElegido} ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
-                window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
-                
-            } catch (e) {
-                console.error("Error guardando turno:", e);
-                alert("Error al enviar el turno.");
-            }
-        }
+    function reinicio() {
+        document.getElementById('tamaño').value = "";
+        document.getElementById('resultado').style.display = "none";
+        document.getElementById('seccion-reserva').style.display = "none";
+        totalCalculado = 0;
+    }
     </script>
 </body>
 </html>
-
