@@ -156,19 +156,24 @@ input:focus {
         // ⚙️  CONFIGURACIÓN - Modifica aquí si necesitas cambios
         // =====================================================
         let inventarioCargado = [];
-        let totalCalculado = 0; // Variable global para guardar el número limpio
-        const MI_PIN = "1234"; // Cambialo por el que quieras
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec"; // Si hay nueva implementación, modifica SOLO aquí
+        let totalCalculado = 0;
+        const MI_PIN = "1234"; 
+        
+        // ⚠️ ASEGÚRATE DE QUE ESTA URL SEA LA DE TU ÚLTIMA "IMPLEMENTACIÓN"
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec";
         // =====================================================
 
-        // Al cargar la página, traemos precios e inventario
         async function cargarDatos() {
-            const res = await fetch(URL_SCRIPT);
-            const data = await res.json();
-            inventarioCargado = data.inventario || [];
+            try {
+                const res = await fetch(URL_SCRIPT);
+                const data = await res.json();
+                inventarioCargado = data.inventario || [];
+                console.log("Datos cargados correctamente");
+            } catch (e) {
+                console.error("Error cargando inventario:", e);
+            }
         }
 
-        // Llamar a cargarDatos al cargar la página
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
         function abrirPanelArtista() {
@@ -201,12 +206,19 @@ input:focus {
                 }
             });
 
-            const res = await fetch(URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify({ accion: "descontar", itemsADescontar: itemsADescontar })
-            });
-            alert("Stock actualizado en el Excel");
-            location.reload();
+            try {
+                const res = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ accion: "descontar", itemsADescontar: itemsADescontar })
+                });
+                alert("Stock actualizado en el Excel");
+                location.reload();
+            } catch (e) {
+                console.error("Error descuentando stock:", e);
+                alert("Error al descontar del Excel");
+            }
         }
 
         async function calcular() {
@@ -223,8 +235,10 @@ input:focus {
             resultadoDiv.innerText = "Consultando base de datos...";
 
             try {
+                // No usamos no-cors aquí porque necesitamos leer la respuesta
                 const respuesta = await fetch(URL_SCRIPT);
-                const precios = await respuesta.json();
+                const data = await respuesta.json();
+                const precios = data.precios;
 
                 let precioBase, cmExtraCosto, desglose;
 
@@ -241,7 +255,7 @@ input:focus {
                 }
 
                 const total = precioBase + cmExtraCosto; 
-                totalCalculado = total; // Guardamos el número sin signos ni palabras 
+                totalCalculado = total; 
                 
                 resultadoDiv.innerHTML = `
                     <div style="font-size: 0.8rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px;">DETALLE</div>
@@ -253,7 +267,8 @@ input:focus {
                 `;
                 document.getElementById('seccion-reserva').style.display = "block";
             } catch (error) {
-                resultadoDiv.innerText = "Error de conexión con Sheets.";
+                console.error(error);
+                resultadoDiv.innerText = "Error de conexión. Verifica los permisos del Script.";
             }
         }
 
@@ -261,7 +276,7 @@ input:focus {
             document.getElementById('tamaño').value = "";
             document.getElementById('resultado').style.display = "none";
             document.getElementById('seccion-reserva').style.display = "none";
-            totalCalculado = 0; // Reiniciar el total calculado
+            totalCalculado = 0;
         }
 
         async function guardarTurno() {
@@ -278,32 +293,27 @@ input:focus {
 
             const payload = { 
                 accion: "reservar",
-                nombre, 
-                whatsapp, 
-                tam, 
-                comp,
-                hora,
+                nombre, whatsapp, tam, comp, hora,
                 total: totalCalculado
             };
 
             try {
-                // USAMOS 'no-cors' para saltar el bloqueo de seguridad
+                // El modo no-cors es solo para enviar, no para recibir
                 await fetch(URL_SCRIPT, {
                     method: 'POST',
-                    mode: 'no-cors', // <--- Esto es clave
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(payload)
                 });
 
-                // Con 'no-cors' no podemos leer la respuesta, así que asumimos éxito
-                alert("¡Turno enviado! Si no aparece en 1 min, revisá el Excel.");
+                alert("¡Turno enviado! En un minuto aparecerá en tu calendario y Excel.");
                 
                 const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
                 window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
                 
             } catch (e) {
-                console.error(e);
-                alert("Error de red. Verificá tu conexión.");
+                console.error("Error guardando turno:", e);
+                alert("Error al enviar el turno.");
             }
         }
     </script>
