@@ -161,18 +161,21 @@ input:focus {
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec"; // Asegurate que sea la última versión
 
         async function cargarDatos() {
-            try {
-                const res = await fetch(URL_SCRIPT);
-                const data = await res.json();
-                // Guardamos todo en nuestra variable global
-                datosCargados.precios = data.precios;
-                datosCargados.inventario = data.inventario;
-                datosCargados.turnos = data.turnos || [];
-                console.log("Datos del estudio sincronizados.");
-            } catch (e) {
-                console.error("Error cargando datos:", e);
-            }
+        console.log("Sincronizando con Google Sheets...");
+        try {
+            // USAMOS UNA VARIABLE PARA EVITAR CACHÉ
+            const res = await fetch(URL_SCRIPT + "?t=" + new Date().getTime());
+            const data = await res.json();
+            
+            datosCargados.precios = data.precios;
+            datosCargados.inventario = data.inventario;
+            datosCargados.turnos = data.turnos || [];
+            
+            console.log("Sincronización exitosa. Turnos encontrados:", datosCargados.turnos.length);
+        } catch (e) {
+            console.error("Error en la carga:", e);
         }
+    }
 
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
@@ -203,35 +206,40 @@ input:focus {
         }
 
         function abrirPanelArtista() {
-            if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
-            
-            document.getElementById('panel-artista').style.display = "block";
-            
-            // CORRECCIÓN: Renderizar los turnos que confirmaste que existen
-            let htmlTurnos = "<h4>¿Qué turno terminaste hoy?</h4>";
-            htmlTurnos += "<select id='select-turno' style='margin-bottom:20px;'>";
-            htmlTurnos += "<option value=''>-- No registrar turno (solo stock) --</option>";
-            
-            if (datosCargados.turnos.length > 0) {
-                datosCargados.turnos.forEach(t => {
-                    htmlTurnos += `<option value="${t.fila}">${t.cliente} - ${t.detalle}</option>`;
-                });
-            } else {
-                htmlTurnos += "<option disabled>No hay turnos pendientes en el Excel</option>";
-            }
-            htmlTurnos += "</select>";
-
-            // Renderizar Inventario
-            let htmlInv = "<h4>Insumos a descontar:</h4>";
-            datosCargados.inventario.forEach((item, i) => {
-                htmlInv += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
-                    <span style="font-size:0.9rem;">${item.nombre} (${item.stock})</span>
-                    <input type="number" id="inv-${i}" value="0" style="width:50px; background:#222; color:white; border:1px solid #444; padding:5px; border-radius:5px;">
-                </div>`;
+        if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
+        
+        document.getElementById('panel-artista').style.display = "block";
+        
+        // DIBUJAR SELECTOR DE TURNOS
+        let htmlTurnos = "<h4>¿Qué turno terminaste?</h4>";
+        htmlTurnos += "<select id='select-turno' style='width:100%; padding:10px; margin-bottom:20px; background:#222; color:white; border-radius:10px;'>";
+        
+        if (datosCargados.turnos && datosCargados.turnos.length > 0) {
+            htmlTurnos += "<option value=''>-- Seleccioná el cliente --</option>";
+            datosCargados.turnos.forEach(t => {
+                // Limpiamos el detalle para que no muestre el año 1899
+                let detalleLimpio = t.detalle.split("1899")[0] || t.detalle;
+                htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${detalleLimpio})</option>`;
             });
-            
-            document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
+        } else {
+            htmlTurnos += "<option value=''>No se encontraron turnos pendientes</option>";
         }
+        htmlTurnos += "</select>";
+
+        // DIBUJAR INVENTARIO
+        let htmlInv = "<h4>Insumos usados:</h4>";
+        datosCargados.inventario.forEach((item, i) => {
+            if(item.nombre) {
+                htmlInv += `
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center; background:#1a1a1a; padding:10px; border-radius:10px;">
+                    <span style="font-size:0.85rem;">${item.nombre} <br><small style="color:#666;">Stock: ${item.stock || 0}</small></span>
+                    <input type="number" id="inv-${i}" value="0" min="0" style="width:50px; background:#000; color:#00ff00; border:1px solid #333; text-align:center; padding:5px; border-radius:5px;">
+                </div>`;
+            }
+        });
+        
+        document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
+    }
 
         function compartir() {
             // Oculta todo lo que no sea la tarjeta para que el cliente saque captura
