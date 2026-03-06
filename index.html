@@ -201,26 +201,60 @@ input:focus {
         }
 
         async function enviarDescuentoStock() {
+            // Referencia al botón para cambiarle el texto mientras carga
+            const btn = event.target;
+            const textoOriginal = btn.innerText;
+            btn.innerText = "Actualizando Excel...";
+            btn.disabled = true;
+
             let itemsADescontar = [];
             inventarioCargado.forEach((item, index) => {
+                // Obtenemos la cantidad que pusiste en el input numérico
                 let cant = parseInt(document.getElementById(`inv-${index}`).value);
                 if(cant > 0) {
+                    // Guardamos la fila real y la cantidad a restar
                     itemsADescontar.push({ fila: item.fila, cantidad: cant });
                 }
             });
 
+            if (itemsADescontar.length === 0) {
+                alert("Primero ingresá cantidades a descontar.");
+                btn.innerText = textoOriginal;
+                btn.disabled = false;
+                return;
+            }
+
             try {
+                // Importante: No usamos mode: 'no-cors' aquí para poder leer la respuesta
                 const res = await fetch(URL_SCRIPT, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ accion: "descontar", itemsADescontar: itemsADescontar })
+                    body: JSON.stringify({ 
+                        accion: "descontar", 
+                        itemsADescontar: itemsADescontar 
+                    })
                 });
-                alert("Stock actualizado en el Excel");
-                location.reload();
+
+                // Esperamos a que Google nos responda con texto
+                const textoRespuesta = await res.text();
+                
+                // Verificamos si Google confirmó el cambio
+                if (textoRespuesta === "Stock Actualizado Correctamente") {
+                    alert("¡Stock descontado con éxito en el Excel!");
+                    
+                    // EN LUGAR DE RELOAD, VOLVEMOS A CARGAR LOS DATOS EN SILENCIO
+                    await cargarDatos(); // Recarga inventarioCargado desde Google
+                    mostrarInventario(); // Vuelve a dibujar la lista con los stocks nuevos
+                } else {
+                    alert("Hubo un problema al actualizar el Excel. Verificá los permisos del Script.");
+                }
+
             } catch (e) {
-                console.error("Error descuentando stock:", e);
-                alert("Error al descontar del Excel");
+                console.error(e);
+                alert("Error de red. Verificá tu conexión o los permisos del Script.");
+            } finally {
+                // Restauramos el botón a su estado original
+                btn.innerText = textoOriginal;
+                btn.disabled = false;
             }
         }
 
@@ -322,4 +356,3 @@ input:focus {
     </script>
 </body>
 </html>
-
