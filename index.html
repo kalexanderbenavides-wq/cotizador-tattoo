@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tattoo Quote Pro</title>
+    <style>
+        :root {
+    --negro-profundo: #0d0d0d;
+    --gris-oscuro: #1a1a1a;
+    --rojo-tinta: #e63946;
+    --texto: #f1f1f1;
+    --borde: #333;
+}
+
+body {
+    background-color: var(--negro-profundo);
+    color: var(--texto);
+    font-family: 'Inter', -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.card {
+    background: var(--gris-oscuro);
+    padding: 30px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border: 1px solid var(--borde);
+}
+
+h1 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--rojo-tinta);
+}
+
+label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input, select {
+    width: 100%;
+    background: #111;
+    border: 1px solid var(--borde);
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: var(--rojo-tinta);
+}
+
+.btn-calc {
+    background: var(--rojo-tinta);
+    color: white;
+    width: 100%;
+    padding: 18px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+}
+
+.btn-reset {
+    background: transparent;
+    color: #666;
+    margin-top: 15px;
+    width: 100%;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+#resultado {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--borde);
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Cotizador Estudio</h1>
+        
+        <label>Tamaño (5cm - 50cm):</label>
+        <input type="number" id="tamaño" placeholder="Ej: 15" min="5" max="50">
+
+        <label>Complejidad / Estilo:</label>
+        <select id="complejidad">
+            <option value="1">Baja (Solo líneas)</option>
+            <option value="1.5">Media (Sombras / Detalle)</option>
+            <option value="2">Alta (Realismo / Full Color)</option>
+        </select>
+
+        <div class="btn-group">
+            <button class="btn-calc" onclick="calcular()">COTIZAR</button>
+            <button class="btn-reset" onclick="reinicio()">LIMPIAR</button>
+        </div>
+
+        <div id="resultado" style="display:none;"></div>
+
+        <div id="seccion-reserva" style="display:none; margin-top:20px;">
+            <label>Elegí tu horario:</label>
+            <select id="hora-turno">
+                <option value="11:00">Mañana (11:00 AM)</option>
+                <option value="14:00">Tarde 1 (02:00 PM)</option>
+                <option value="17:00">Tarde 2 (05:00 PM)</option>
+            </select>
+            
+            <label>Tu Nombre:</label>
+            <input type="text" id="nombre-cliente" placeholder="Nombre completo">
+            <label>WhatsApp:</label>
+            <input type="tel" id="tel-cliente" placeholder="Ej: 1123456789">
+            
+            <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">RESERVAR TURNO</button>
+        </div>
+
+        <hr style="margin-top:50px; border: 0.5px solid #333;">
+        <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#444; width:100%; cursor:pointer;">⚙ Acceso Artista</button>
+
+        <div id="panel-artista" style="display:none; background:#111; padding:20px; border-radius:15px; margin-top:20px;">
+            <h3>Gestión de Insumos</h3>
+            <div id="lista-inventario"></div>
+            <button class="btn-calc" onclick="enviarDescuentoStock()" style="margin-top:20px; background:#444;">DESCONTAR DEL EXCEL</button>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================
+        // ⚙️  CONFIGURACIÓN - Modifica aquí si necesitas cambios
+        // =====================================================
+        let inventarioCargado = [];
+        let totalCalculado = 0; // Variable global para guardar el número limpio
+        const MI_PIN = "1234"; // Cambialo por el que quieras
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz-RR3Nwgy5QZeTUgekOwCWuhDlSTvY24MMwG5KisxnjLGo838x2NaawlFZUS9oMfYi6A/exec"; // Si hay nueva implementación, modifica SOLO aquí
+        // =====================================================
+
+        // Al cargar la página, traemos precios e inventario
+        async function cargarDatos() {
+            const res = await fetch(URL_SCRIPT);
+            const data = await res.json();
+            inventarioCargado = data.inventario || [];
+        }
+
+        // Llamar a cargarDatos al cargar la página
+        window.addEventListener('DOMContentLoaded', cargarDatos);
+
+        function abrirPanelArtista() {
+            let pass = prompt("Introducí tu PIN:");
+            if(pass === MI_PIN) {
+                document.getElementById('panel-artista').style.display = "block";
+                mostrarInventario();
+            } else if(pass !== null) {
+                alert("PIN incorrecto");
+            }
+        }
+
+        function mostrarInventario() {
+            let html = "";
+            inventarioCargado.forEach((item, index) => {
+                html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                    <span>${item.nombre} (Stock: ${item.stock})</span>
+                    <input type="number" id="inv-${index}" value="0" style="width:50px; margin:0; padding:5px;">
+                </div>`;
+            });
+            document.getElementById('lista-inventario').innerHTML = html;
+        }
+
+        async function enviarDescuentoStock() {
+            let itemsADescontar = [];
+            inventarioCargado.forEach((item, index) => {
+                let cant = parseInt(document.getElementById(`inv-${index}`).value);
+                if(cant > 0) {
+                    itemsADescontar.push({ fila: item.fila, cantidad: cant });
+                }
+            });
+
+            const res = await fetch(URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ accion: "descontar", itemsADescontar: itemsADescontar })
+            });
+            alert("Stock actualizado en el Excel");
+            location.reload();
+        }
+
+        async function calcular() {
+            const tam = parseFloat(document.getElementById('tamaño').value);
+            const comp = parseFloat(document.getElementById('complejidad').value);
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (isNaN(tam) || tam < 5 || tam > 50) {
+                alert("El tamaño debe estar entre 5 cm y 50 cm.");
+                return;
+            }
+
+            resultadoDiv.style.display = "block";
+            resultadoDiv.innerText = "Consultando base de datos...";
+
+            try {
+                const respuesta = await fetch(URL_SCRIPT);
+                const precios = await respuesta.json();
+
+                let precioBase, cmExtraCosto, desglose;
+
+                if (tam < 15) {
+                    precioBase = (comp === 1) ? precios.baja : precios.mediaAlta;
+                    cmExtraCosto = 0;
+                    desglose = `Precio base (menor a 15cm)`;
+                } else {
+                    precioBase = 80000;
+                    const cmAdicionales = tam - 15;
+                    const bloques = Math.ceil(cmAdicionales / 5);
+                    cmExtraCosto = bloques * 40000;
+                    desglose = `Extra: ${bloques} bloque(s) de 5cm (+$${cmExtraCosto.toLocaleString()})`;
+                }
+
+                const total = precioBase + cmExtraCosto; 
+                totalCalculado = total; // Guardamos el número sin signos ni palabras 
+                
+                resultadoDiv.innerHTML = `
+                    <div style="font-size: 0.8rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px;">DETALLE</div>
+                    Base: $${precioBase.toLocaleString()}<br>
+                    ${desglose}<br>
+                    <div style="font-size: 1.2rem; color: #00ff00; margin-top: 10px;">
+                        <strong>Total: $${total.toLocaleString()}</strong>
+                    </div>
+                `;
+                document.getElementById('seccion-reserva').style.display = "block";
+            } catch (error) {
+                resultadoDiv.innerText = "Error de conexión con Sheets.";
+            }
+        }
+
+        function reinicio() {
+            document.getElementById('tamaño').value = "";
+            document.getElementById('resultado').style.display = "none";
+            document.getElementById('seccion-reserva').style.display = "none";
+            totalCalculado = 0; // Reiniciar el total calculado
+        }
+
+        async function guardarTurno() {
+            const nombre = document.getElementById('nombre-cliente').value;
+            const whatsapp = document.getElementById('tel-cliente').value;
+            const tam = document.getElementById('tamaño').value;
+            const comp = document.getElementById('complejidad').value;
+            const hora = document.getElementById('hora-turno').value;
+
+            if(!nombre || !whatsapp) {
+                alert("Completá tus datos para agendar");
+                return;
+            }
+
+            const payload = { 
+                accion: "reservar",
+                nombre, 
+                whatsapp, 
+                tam, 
+                comp,
+                hora,
+                total: totalCalculado // Enviamos el número puro
+            };
+
+            try {
+                await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                alert("¡Turno registrado! Te contactaré pronto.");
+                
+                // Abrir WhatsApp automáticamente con el mensaje
+                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar!`;
+                window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
+                
+            } catch (e) {
+                alert("Error al guardar");
+            }
+        }
+    </script>
+</body>
+</html>
