@@ -157,6 +157,7 @@ input:focus {
     <script>
         let datosCargados = { precios: {}, inventario: [], turnos: [] };
         let totalCalculado = 0;
+        let estiloElegido = ""; // Variable para guardar el nombre del estilo
         const MI_PIN = "1234"; 
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzytt5oMaZmIJsLpfmiEW9JcQczDxZjKyp75RKExQuSDfz5kYOSb_17xHHNiwkVkQDZgQ/exec"; // Asegurate que sea la última versión
 
@@ -185,6 +186,8 @@ input:focus {
         async function calcular() {
             const tam = parseFloat(document.getElementById('tamaño').value);
             const comp = parseFloat(document.getElementById('complejidad').value);
+            estiloElegido = document.getElementById('complejidad').options[document.getElementById('complejidad').selectedIndex].text;
+            estiloElegido = estiloElegido.match(/\(([^)]+)\)/)[1];
             const resDiv = document.getElementById('resultado');
 
             if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
@@ -200,7 +203,7 @@ input:focus {
                 <div id="tarjeta-quote" style="background:#1a1a1a; padding:20px; border-radius:15px; border:1px solid #333; text-align:center;">
                     <img src="logo2026.png" style="width:60px; margin-bottom:10px;">
                     <h2 style="color:#e63946; margin:0;">$${totalCalculado.toLocaleString()}</h2>
-                    <p style="font-size:0.8rem; color:#888;">Presupuesto estimado para ${tam}cm</p>
+                    <p style="font-size:0.8rem; color:#888;">${estiloElegido} - ${tam}cm</p>
                     <button onclick="compartir()" style="background:#444; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:0.7rem; cursor:pointer;">PREPARAR PARA CAPTURA</button>
                 </div>
             `;
@@ -297,7 +300,8 @@ input:focus {
             const payload = { 
                 accion: "reservar",
                 nombre, whatsapp, tam, comp, hora,
-                total: totalCalculado
+                total: totalCalculado,
+                estilo: estiloElegido
             };
 
             try {
@@ -311,7 +315,7 @@ input:focus {
 
                 alert("¡Turno enviado! En un minuto aparecerá en tu calendario y Excel.");
                 
-                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ${estiloElegido} ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
                 window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
                 
             } catch (e) {
@@ -322,4 +326,3 @@ input:focus {
     </script>
 </body>
 </html>
-
