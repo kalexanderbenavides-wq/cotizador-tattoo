@@ -283,27 +283,31 @@ input:focus {
                 tam, 
                 comp,
                 hora,
-                total: totalCalculado // Enviamos el número puro
+                total: totalCalculado
             };
 
             try {
+                // USAMOS 'no-cors' para saltar el bloqueo de seguridad
                 await fetch(URL_SCRIPT, {
                     method: 'POST',
+                    mode: 'no-cors', // <--- Esto es clave
+                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(payload)
                 });
-                alert("¡Turno registrado! Te contactaré pronto.");
+
+                // Con 'no-cors' no podemos leer la respuesta, así que asumimos éxito
+                alert("¡Turno enviado! Si no aparece en 1 min, revisá el Excel.");
                 
-                // Abrir WhatsApp automáticamente con el mensaje
-                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar!`;
+                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
                 window.open(`https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`);
                 
             } catch (e) {
-                alert("Error al guardar");
+                console.error(e);
+                alert("Error de red. Verificá tu conexión.");
             }
         }
     </script>
 </body>
 </html>
-
 
 
