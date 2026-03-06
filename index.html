@@ -186,7 +186,7 @@ input:focus {
         const comp = parseFloat(selector.value);
         
         // Guardamos el NOMBRE del estilo (ej: "Solo líneas") para el WhatsApp
-        estiloNombre = selector.options[selector.selectedIndex].text;
+        estiloNombre = selector.options[selector.selectedIndex].text.match(/\(([^)]+)\)/)[1];
 
         if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
 
