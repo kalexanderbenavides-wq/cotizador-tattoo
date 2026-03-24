@@ -466,52 +466,44 @@ ficha.onclick = () => {
         }
 
         async function guardarTurno() {
-    // 1. Recolectamos los datos
+    // 1. Primero atrapamos los datos que escribió el cliente
     const nombre = document.getElementById('nombre-cliente').value.trim();
     const whatsapp = document.getElementById('tel-cliente').value.trim();
     const tam = document.getElementById('tamaño').value;
     const hora = document.getElementById('hora-turno').value;
 
-    // --- CAPA DE SEGURIDAD 1: Campos Vacíos ---
-    if (!nombre || !whatsapp) {
-        return alert("⚠️ ¡Falta tu nombre o WhatsApp! No puedo agendar sin eso.");
+    // --- AQUÍ VA EL PASO 1: LOS GUARDIAS DE SEGURIDAD ---
+
+    // Guardia A: ¿Puso su nombre?
+    if (!nombre) return alert("⚠️ Por favor, ingresá tu nombre.");
+
+    // Guardia B: ¿El WhatsApp tiene 10 números? 
+    // (Ejemplo: 1123456789 - Sin el 0 ni el 15)
+    const moldeCelular = /^\d{10}$/; 
+    if (!moldeCelular.test(whatsapp)) {
+        return alert("⚠️ El WhatsApp debe tener 10 números (ej: 1123456789). No uses espacios, guiones, ni el 0 o 15 inicial.");
     }
 
-    // --- CAPA DE SEGURIDAD 2: Tamaño mínimo ---
-    if (!tam || tam < 5) {
-        return alert("⚠️ Primero calculá el tamaño del tattoo (mínimo 5cm).");
-    }
-
-    // --- CAPA DE SEGURIDAD 3: Formato de WhatsApp (Básico) ---
-    // Verificamos que tenga al menos 8 números
-    if (whatsapp.length < 8 || isNaN(whatsapp)) {
-        return alert("⚠️ Por favor, ingresá un número de WhatsApp válido.");
-    }
-
+    // --- SI PASÓ LOS GUARDIAS, RECIÉN AHÍ HACEMOS EL ENVÍO ---
     try {
-        // Si pasó todos los guardias, enviamos los datos
         await fetch(URL_SCRIPT, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify({
                 accion: "reservar", 
-                nombre, 
-                whatsapp, 
-                tam, 
-                hora, 
-                comp: estiloNombre, 
-                total: totalCalculado 
+                nombre, whatsapp, tam, hora, 
+                comp: estiloNombre, total: totalCalculado 
             })
         });
 
-        alert("✅ ¡Éxito! Turno enviado al calendario.");
+        alert("✅ ¡Turno agendado!");
         
-        // Armamos el mensaje de WhatsApp para el cierre de venta
-        const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+        // Redirigir a WhatsApp para cerrar la venta
+        const mensaje = `Hola! Soy ${nombre}, coticé un ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
         window.location.href = `https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`;
         
     } catch (e) { 
-        alert("❌ Error de conexión. Intentá de nuevo."); 
+        alert("❌ Error al conectar. Intentá de nuevo."); 
     }
 }
 
