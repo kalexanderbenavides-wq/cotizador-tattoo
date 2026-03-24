@@ -265,31 +265,52 @@
         }
 
         // 2. DIBUJAR LA GALERÍA DINÁMICAMENTE
-        function dibujarGaleria(lista) {
-            const contenedor = document.getElementById('galeria-dinamica');
-            contenedor.innerHTML = ""; 
+        // 1. MEJORA: Galería Interactiva
+function dibujarGaleria(lista) {
+    const contenedor = document.getElementById('galeria-dinamica');
+    contenedor.innerHTML = ""; 
 
-            if (!lista || lista.length === 0) {
-                contenedor.innerHTML = "<p style='color:#666;'>No hay trabajos cargados aún.</p>";
-                return;
+    if (!lista || lista.length === 0) {
+        contenedor.innerHTML = "<p style='color:#666;'>No hay trabajos cargados.</p>";
+        return;
+    }
+
+    lista.forEach(trabajo => {
+        const ficha = document.createElement('div');
+        ficha.className = 'foto-placeholder';
+        
+        // --- NUEVA LÓGICA DE CLIC ---
+        ficha.onclick = () => {
+            const selector = document.getElementById('complejidad');
+            const inputTam = document.getElementById('tamaño');
+            
+            // Si el estilo dice "Realismo", seleccionamos "Alta" (valor 2)
+            if (trabajo.estilo.toLowerCase().includes("realismo")) {
+                selector.value = "2";
+            } else if (trabajo.estilo.toLowerCase().includes("sombra") || trabajo.estilo.toLowerCase().includes("detalle")) {
+                selector.value = "1.5";
+            } else {
+                selector.value = "1";
             }
+            
+            // Ponemos el foco en el tamaño para que el cliente solo tenga que escribir el número
+            inputTam.focus();
+            
+            // Scroll suave hacia arriba para que vea el cotizador
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
-            lista.forEach(trabajo => {
-                const ficha = document.createElement('div');
-                ficha.className = 'foto-placeholder';
-                
-                const imagen = document.createElement('img');
-                imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
-                imagen.alt = "Tattoo " + trabajo.estilo;
-                
-                const texto = document.createElement('span');
-                texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
-                
-                ficha.appendChild(imagen);
-                ficha.appendChild(texto);
-                contenedor.appendChild(ficha);
-            });
-        }
+        const imagen = document.createElement('img');
+        imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
+        
+        const texto = document.createElement('span');
+        texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
+        
+        ficha.appendChild(imagen);
+        ficha.appendChild(texto);
+        contenedor.appendChild(ficha);
+    });
+}
 
         // 3. INICIO AUTOMÁTICO
         window.addEventListener('DOMContentLoaded', cargarDatos);
@@ -392,24 +413,40 @@
             document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
         }
 
-        async function enviarDescuentoStock() {
-            const btn = event.target;
-            btn.innerText = "Sincronizando...";
-            btn.disabled = true;
+        // 2. MEJORA: Validación de Seguridad (Capa de Protección)
+async function enviarDescuentoStock() {
+    const filaTurno = document.getElementById('select-turno').value;
+    
+    // --- EL CANDADO ---
+    if (!filaTurno) {
+        return alert("⚠️ ERROR: Tenés que seleccionar qué cliente terminó para poder descontar el stock.");
+    }
 
-            let items = [];
-            datosCargados.inventario.forEach((item, i) => {
-                let cant = parseInt(document.getElementById(`inv-${i}`).value);
-                if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
-            });
+    const btn = event.target;
+    btn.innerText = "Sincronizando...";
+    btn.disabled = true;
 
-            await fetch(URL_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: document.getElementById('select-turno').value })
-            });
-            location.reload();
-        }
+    let items = [];
+    datosCargados.inventario.forEach((item, i) => {
+        let cant = parseInt(document.getElementById(`inv-${i}`).value);
+        if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
+    });
+
+    // Si no usaste ningún insumo, avisamos (opcional)
+    if (items.length === 0) {
+        btn.disabled = false;
+        btn.innerText = "DESCONTAR DEL EXCEL";
+        return alert("No pusiste ninguna cantidad de insumos.");
+    }
+
+    await fetch(URL_SCRIPT, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
+    });
+    alert("¡Stock y Turno actualizados!");
+    location.reload();
+}
 
         function reinicio() {
             document.getElementById('tamaño').value = "";
