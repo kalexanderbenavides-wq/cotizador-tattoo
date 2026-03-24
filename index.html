@@ -171,52 +171,60 @@
 
 /* Contenedor principal del Ticket */
 .ticket-quote {
-    background: #000000; /* Negro absoluto para que resalte el neón */
+    background: #000000; /* Negro profundo para máximo contraste */
     padding: 30px;
     border-radius: 20px;
-    /* Efecto Neón Rojo Triple (más profundo) */
-    border: 2px solid var(--rojo-tinta);
-    box-shadow: 0 0 10px rgba(230, 57, 70, 0.7), 
-                0 0 20px rgba(230, 57, 70, 0.5), 
-                inset 0 0 15px rgba(230, 57, 70, 0.3);
+    /* Borde fino y minimalista inspirado en la opción Minimal (ahora blanco) */
+    border: 1px solid #ffffff; 
     text-align: center;
     position: relative;
     margin-top: 20px;
+    box-sizing: border-box; /* Asegura que el padding no rompa el borde */
 }
 
-/* El Precio Gigante (Bungee Hairline) */
+/* 2. TEXTO GENERAL: Todo blanco */
+.ticket-quote,
+.ticket-quote span,
+.ticket-details,
+.ticket-footer {
+    color: #ffffff; /* Forzamos color blanco en todo el ticket */
+    font-family: 'Inter', sans-serif;
+}
+
+/* 3. EL PRECIO: Único elemento Rojo con Brillo Neón */
 .ticket-price {
     font-family: 'Bungee Hairline', sans-serif;
     font-size: 4rem; /* ¡Más grande! */
     font-weight: 400;
-    color: white;
     margin: 10px 0;
     line-height: 1;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    
+    /* CAMBIO CLAVE: Color Rojo Neón Tinta */
+    color: var(--rojo-tinta);
+    /* Efecto Neón Rojo Triple (más profundo) */
+    text-shadow: 0 0 10px rgba(230, 57, 70, 0.7), 
+                0 0 20px rgba(230, 57, 70, 0.5);
 }
 
-/* Detalles del Tatuaje (Estilo • Tamaño) */
+/* 4. DETALLES (Estilo y Tamaño): Blanco y Nítido */
 .ticket-details {
-    font-family: 'Inter', sans-serif;
     text-transform: uppercase;
     letter-spacing: 4px;
     font-size: 0.7rem;
-    color: var(--rojo-tinta);
     margin-top: 10px;
     font-weight: 700;
 }
 
-/* Decoración tipo Ticket (Línea punteada) */
+/* 5. EL DIVISOR: Línea punteada blanca y fina */
 .ticket-divider {
     border: none;
-    border-top: 2px dashed #333;
+    border-top: 1px dashed #ffffff; /* Ahora blanca y fina */
     margin: 25px 0;
 }
 
-/* Info del Estudio abajo */
+/* 6. PIE DE TICKET: Blanco y nítido */
 .ticket-footer {
     font-size: 0.6rem;
-    color: #666;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -408,7 +416,6 @@ ficha.onclick = () => {
     const selector = document.getElementById('complejidad');
     const comp = parseFloat(selector.value);
     
-    // Obtenemos el nombre del estilo para mostrarlo
     let fullText = selector.options[selector.selectedIndex].text;
     let match = fullText.match(/\(([^)]+)\)/);
     estiloNombre = match ? match[1] : fullText;
@@ -419,7 +426,7 @@ ficha.onclick = () => {
     const precios = datosCargados.precios;
     if(!precios.baja) return alert("☕ Cargando precios, esperá un segundo...");
 
-    // Lógica de cálculo (la misma de siempre)
+    // Lógica de cálculo (la misma)
     let base = (comp == 1) ? precios.baja : precios.mediaAlta;
     let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
     totalCalculado = base + extra;
@@ -429,8 +436,10 @@ ficha.onclick = () => {
     // --- NUEVO DISEÑO DEL TICKET (HTML Dinámico) ---
     resDiv.innerHTML = `
         <div id="tarjeta-downloadable" class="ticket-quote">
-            <img src="logo2026.png" style="width: 60px; opacity: 0.7; margin-bottom:10px;">
-            <div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:2px;">Cotización Oficial</div>
+            <img src="logo2026.png" style="width: 60px; margin-bottom:10px;">
+            <div style="font-size:0.65rem; color:#ffffff; text-transform:uppercase; letter-spacing:2px; font-weight:700;">
+                ALX.TATT ESTUDIO
+            </div>
             
             <h2 class="ticket-price">$${totalCalculado.toLocaleString()}</h2>
             
@@ -439,18 +448,19 @@ ficha.onclick = () => {
             <hr class="ticket-divider">
             
             <div class="ticket-footer">
-                ALX.TATT ESTUDIO • BUENOS AIRES<br>
-                Válido por 30 días • Sujeto a cambios
+                ALX.TATT ESTUDIO • VILLA DEL PARQUE<br>
+                VÁLIDO POR 30 DÍAS • SUJETO A CAMBIOS
+                
+                <img src="logo2026.png" style="width: 1px; height: 1px; opacity: 0; position: absolute; bottom: 0; left: 0;">
             </div>
         </div>
 
-        <div class="btn-ticket-group">
+        <div class="btn-ticket-group" style="margin-top: 25px;">
             <button onclick="descargarCotizacion()" class="btn-download">⬇️ DESCARGAR IMAGEN</button>
         </div>
     `;
     
     resDiv.style.display = "block";
-    // Mostramos la sección de reserva
     document.getElementById('seccion-reserva').style.display = "block";
 }
 
