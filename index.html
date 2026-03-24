@@ -280,25 +280,33 @@ function dibujarGaleria(lista) {
         ficha.className = 'foto-placeholder';
         
         // --- NUEVA LÓGICA DE CLIC ---
-        ficha.onclick = () => {
-            const selector = document.getElementById('complejidad');
-            const inputTam = document.getElementById('tamaño');
-            
-            // Si el estilo dice "Realismo", seleccionamos "Alta" (valor 2)
-            if (trabajo.estilo.toLowerCase().includes("realismo")) {
-                selector.value = "2";
-            } else if (trabajo.estilo.toLowerCase().includes("sombra") || trabajo.estilo.toLowerCase().includes("detalle")) {
-                selector.value = "1.5";
-            } else {
-                selector.value = "1";
-            }
-            
-            // Ponemos el foco en el tamaño para que el cliente solo tenga que escribir el número
-            inputTam.focus();
-            
-            // Scroll suave hacia arriba para que vea el cotizador
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+        // Dentro de dibujarGaleria, en la parte de ficha.onclick:
+        
+ficha.onclick = () => {
+    const selector = document.getElementById('complejidad');
+    const inputTam = document.getElementById('tamaño');
+    
+    // Convertimos el estilo a minúsculas para que no haya errores de dedo
+    const estiloTxt = trabajo.estilo.toLowerCase();
+
+    // --- NUESTRO TRADUCTOR DE ESTILOS ---
+    const mapaComplejidad = {
+        "realismo": "2",
+        "full color": "2",
+        "neo tradicional": "2",
+        "blackwork": "1.5",
+        "puntillismo": "1.5",
+        "linea fina": "1",
+        "tradicional": "2"
+    };
+
+    // Buscamos el valor en el traductor. Si no existe, por defecto ponemos "1" (Baja)
+    selector.value = mapaComplejidad[estiloTxt] || "1";
+    
+    // Efectos de UX
+    inputTam.focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
         const imagen = document.createElement('img');
         imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
@@ -366,26 +374,54 @@ function dibujarGaleria(lista) {
         }
 
         async function guardarTurno() {
-            const nombre = document.getElementById('nombre-cliente').value;
-            const whatsapp = document.getElementById('tel-cliente').value;
-            const tam = document.getElementById('tamaño').value;
-            const hora = document.getElementById('hora-turno').value;
+    // 1. Recolectamos los datos
+    const nombre = document.getElementById('nombre-cliente').value.trim();
+    const whatsapp = document.getElementById('tel-cliente').value.trim();
+    const tam = document.getElementById('tamaño').value;
+    const hora = document.getElementById('hora-turno').value;
 
-            if(!nombre || !whatsapp) return alert("Por favor, completa tus datos");
+    // --- CAPA DE SEGURIDAD 1: Campos Vacíos ---
+    if (!nombre || !whatsapp) {
+        return alert("⚠️ ¡Falta tu nombre o WhatsApp! No puedo agendar sin eso.");
+    }
 
-            try {
-                await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({accion: "reservar", nombre, whatsapp, tam, hora, comp: estiloNombre, total: totalCalculado })
-                });
+    // --- CAPA DE SEGURIDAD 2: Tamaño mínimo ---
+    if (!tam || tam < 5) {
+        return alert("⚠️ Primero calculá el tamaño del tattoo (mínimo 5cm).");
+    }
 
-                alert("¡Turno enviado!");
-                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de "${estiloNombre}" de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
-                window.location.href = `https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`;
-                
-            } catch (e) { alert("Error de conexión"); }
-        }
+    // --- CAPA DE SEGURIDAD 3: Formato de WhatsApp (Básico) ---
+    // Verificamos que tenga al menos 8 números
+    if (whatsapp.length < 8 || isNaN(whatsapp)) {
+        return alert("⚠️ Por favor, ingresá un número de WhatsApp válido.");
+    }
+
+    try {
+        // Si pasó todos los guardias, enviamos los datos
+        await fetch(URL_SCRIPT, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                accion: "reservar", 
+                nombre, 
+                whatsapp, 
+                tam, 
+                hora, 
+                comp: estiloNombre, 
+                total: totalCalculado 
+            })
+        });
+
+        alert("✅ ¡Éxito! Turno enviado al calendario.");
+        
+        // Armamos el mensaje de WhatsApp para el cierre de venta
+        const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+        window.location.href = `https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`;
+        
+    } catch (e) { 
+        alert("❌ Error de conexión. Intentá de nuevo."); 
+    }
+}
 
         // --- PANEL DE ARTISTA ---
         function abrirPanelArtista() {
