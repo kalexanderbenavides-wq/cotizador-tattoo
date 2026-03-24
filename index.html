@@ -242,7 +242,7 @@
     </div>
 
     <script>
-        let datosCargados = { precios: {}, inventario: [], turnos: [] };
+        let datosCargados = { precios: {}, inventario: [], turnos: [], galeria: [] };
         let totalCalculado = 0;
         let estiloNombre = ""; 
         let cargando = false; 
@@ -250,22 +250,29 @@
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
 
         async function cargarDatos() {
-            if (cargando) return;
-            cargando = true;
-            try {
-                const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
-                const data = await res.json();
-                datosCargados = {
-                    precios: data.precios || {},
-                    inventario: data.inventario || [],
-                    turnos: data.turnos || []
-                };
-            } catch (e) {
-                console.error("Error sincronizando:", e);
-            } finally {
-                cargando = false;
-            }
-        }
+    if (cargando) return;
+    cargando = true;
+    try {
+        const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
+        const data = await res.json();
+        
+        // Guardamos todo lo que llegó del Excel
+        datosCargados = {
+            precios: data.precios || {},
+            inventario: data.inventario || [],
+            turnos: data.turnos || [],
+            galeria: data.galeria || [] // <--- Guardamos la nueva galería
+        };
+
+        // ¡IMPORTANTE! Una vez que los datos llegaron, dibujamos la galería
+        dibujarGaleria(datosCargados.galeria);
+
+    } catch (e) {
+        console.error("Error sincronizando:", e);
+    } finally {
+        cargando = false;
+    }
+}
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
         async function calcular() {
@@ -419,47 +426,36 @@
     // SECCIÓN 6: GALERÍA DINÁMICA (Nivel 2)
     // ==========================================
     
-    // 1. TUS DATOS CENTRALIZADOS (Solo editás acá)
-    const misTrabajos = [
-        { estilo: "Blackwork", img: "https://images.pexels.com/photos/10311231/pexels-photo-10311231.jpeg?auto=compress&cs=tinysrgb&w=300" },
-        { estilo: "Realismo", img: "https://images.pexels.com/photos/4127632/pexels-photo-4127632.jpeg?auto=compress&cs=tinysrgb&w=300" },
-        { estilo: "Tradicional", img: "https://images.pexels.com/photos/10776822/pexels-photo-10776822.jpeg?auto=compress&cs=tinysrgb&w=300" },
-        { estilo: "Fine Line", img: "https://images.pexels.com/photos/11051913/pexels-photo-11051913.jpeg?auto=compress&cs=tinysrgb&w=300" },
-        { estilo: "Puntillismo", img: "https://images.pexels.com/photos/11051913/pexels-photo-11051913.jpeg?auto=compress&cs=tinysrgb&w=300" },
-        // Podés agregar más filas acá...
-    ];
+   // Ahora la función recibe "lista" como un paquete de afuera
+function dibujarGaleria(lista) {
+    const contenedor = document.getElementById('galeria-dinamica');
+    
+    // Limpiamos el contenedor por si había algo antes
+    contenedor.innerHTML = ""; 
 
-    // 2. FUNCIÓN PARA DIBUJAR LA GALERÍA
-    function dibujarGaleria() {
-        // Buscamos la cuna vacía en el HTML
-        const contenedor = document.getElementById('galeria-dinamica');
-        
-        // Bucle forEach: "Para cada trabajo de la lista..."
-        misTrabajos.forEach(trabajo => {
-            // Creamos la caja principal de la ficha
-            const ficha = document.createElement('div');
-            // Le agregamos las clases CSS que ya definimos
-            ficha.className = 'foto-placeholder img-ficha';
-            
-            // Creamos la imagen
-            const imagen = document.createElement('img');
-            imagen.src = trabajo.img;
-            imagen.alt = "Tatuaje estilo " + trabajo.estilo;
-            
-            // Creamos el texto del estilo
-            const texto = document.createElement('span');
-            texto.innerText = trabajo.estilo;
-            
-            // ENSAMBLAMOS LA FICHA: Metemos imagen y texto adentro del div
-            ficha.appendChild(imagen);
-            ficha.appendChild(texto);
-            
-            // Metemos la ficha completa adentro del contenedor principal
-            contenedor.appendChild(ficha);
-        });
-        
-        console.log("Galería dinámica dibujada con " + misTrabajos.length + " trabajos.");
+    if (!lista || lista.length === 0) {
+        contenedor.innerHTML = "<p style='color:#666;'>Cargando trabajos...</p>";
+        return;
     }
+
+    lista.forEach(trabajo => {
+        const ficha = document.createElement('div');
+        ficha.className = 'foto-placeholder img-ficha';
+        
+        // Si no hay imagen en el Excel, usamos un color gris
+        const imagen = document.createElement('img');
+        imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
+        imagen.alt = "Tattoo " + trabajo.estilo;
+        
+        const texto = document.createElement('span');
+        // Mostramos Estilo y Tamaño (el dato nuevo que agregamos)
+        texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
+        
+        ficha.appendChild(imagen);
+        ficha.appendChild(texto);
+        contenedor.appendChild(ficha);
+    });
+}
 
     // 3. EJECUTAR AL CARGAR LA PÁGINA
     // Agregamos esto a tu listener existente
