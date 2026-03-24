@@ -152,6 +152,31 @@
     color: #888;
     letter-spacing: 1px;
 }
+
+        /* Estilos específicos para la ficha que tiene imagen */
+.foto-placeholder.img-ficha {
+    padding: 0;           /* Quitamos el padding para que la foto llegue al borde */
+    overflow: hidden;     /* ¡OBLIGATORIO! Corta la foto si se sale del borde redondeado */
+}
+
+/* Estilo para la imagen real ADENTRO de la ficha */
+.foto-placeholder.img-ficha img {
+    width: 100%;          /* Ocupa todo el ancho */
+    height: 100%;         /* Ocupa todo el alto */
+    object-fit: cover;    /* ¡LA PROPIEDAD MÁGICA! Recorta sin deformar */
+    transition: 0.3s;
+}
+
+/* El texto de la ficha con imagen debe flotar arriba de la foto */
+.foto-placeholder.img-ficha span {
+    position: absolute;   /* Flota sobre la imagen */
+    bottom: 15px;         /* Separado del fondo */
+    left: 15px;           /* Separado de la izquierda */
+    background: rgba(0,0,0,0.7); /* Fondo oscuro para que se lea bien */
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -198,7 +223,11 @@
 <div class="galeria-container">
     <h2>Mis Trabajos</h2>
     <div class="galeria-flex">
-    <div class="foto-placeholder"><span>Blackwork</span></div>
+    <div class="foto-placeholder img-ficha">
+        <img src="https://images.pexels.com/photos/10311231/pexels-photo-10311231.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Tatuaje Rosa Blackwork">
+        <span>Blackwork</span>
+    </div>
+    
     <div class="foto-placeholder"><span>Realismo</span></div>
     <div class="foto-placeholder"><span>Tradicional</span></div>
     <div class="foto-placeholder"><span>Fine Line</span></div>
