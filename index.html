@@ -133,11 +133,13 @@
     border: 1px solid #333;
     border-radius: 15px;
     display: flex;
-    flex-direction: column;    /* ¡Cambiamos el riel a VERTICAL! */
-    justify-content: flex-end; /* Empuja el contenido al fondo de la caja */
+    flex-direction: column;
+    justify-content: center; /* Centramos el texto para las fichas sin imagen */
     padding: 15px;
     transition: 0.3s;
     cursor: pointer;
+    position: relative;     /* ¡LA LLAVE MÁGICA! Hace que el Absolute sea 'hijo' de esta ficha */
+    overflow: hidden;        /* Corta la imagen si se sale del borde redondeado */
 }
 
 .foto-placeholder:hover {
