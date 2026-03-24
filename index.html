@@ -509,8 +509,10 @@ ficha.onclick = () => {
         alert("✅ ¡Turno agendado!");
         
         // Redirigir a WhatsApp para cerrar la venta
-        const mensaje = `Hola! Soy ${nombre}, coticé un ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
-        window.location.href = `https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`;
+       // Reemplazá la línea de window.location.href por esta:
+const mensaje = `Hola! Soy ${nombre}, coticé un ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+
+window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(mensaje)}`;
         
     } catch (e) { 
         alert("❌ Error al conectar. Intentá de nuevo."); 
