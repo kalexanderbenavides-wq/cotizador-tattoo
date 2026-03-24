@@ -149,7 +149,7 @@
         .foto-placeholder img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Cubre la ficha sin estirarse */
+            object-fit: cover;
             transition: 0.3s;
         }
 
@@ -228,12 +228,15 @@
     </div>
 
     <script>
+        // --- VARIABLES DE ESTADO ---
         let datosCargados = { precios: {}, inventario: [], turnos: [], galeria: [] };
         let totalCalculado = 0;
         let estiloNombre = ""; 
         let cargando = false; 
         const MI_PIN = "1234"; 
-        const URL_SCRIPT = "TU_URL_DE_APPS_SCRIPT_AQUÍ"; // REEMPLAZÁ CON TU URL
+        
+        // --- TU URL REAL ---
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
 
         // 1. CARGAR DATOS DESDE EL EXCEL
         async function cargarDatos() {
@@ -250,24 +253,24 @@
                     galeria: data.galeria || []
                 };
 
-                // Dibujamos la galería con los datos que llegaron
+                // Dibujamos la galería con los datos del Excel
                 dibujarGaleria(datosCargados.galeria);
 
             } catch (e) {
                 console.error("Error sincronizando:", e);
-                document.getElementById('galeria-dinamica').innerHTML = "Error al conectar.";
+                document.getElementById('galeria-dinamica').innerHTML = "<p style='color:red;'>Error al conectar con la galería.</p>";
             } finally {
                 cargando = false;
             }
         }
 
-        // 2. DIBUJAR LA GALERÍA EN PANTALLA
+        // 2. DIBUJAR LA GALERÍA DINÁMICAMENTE
         function dibujarGaleria(lista) {
             const contenedor = document.getElementById('galeria-dinamica');
             contenedor.innerHTML = ""; 
 
             if (!lista || lista.length === 0) {
-                contenedor.innerHTML = "<p style='color:#666;'>No hay trabajos para mostrar.</p>";
+                contenedor.innerHTML = "<p style='color:#666;'>No hay trabajos cargados aún.</p>";
                 return;
             }
 
@@ -280,7 +283,6 @@
                 imagen.alt = "Tattoo " + trabajo.estilo;
                 
                 const texto = document.createElement('span');
-                // Mezclamos Estilo y Tamaño del Excel
                 texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
                 
                 ficha.appendChild(imagen);
@@ -292,7 +294,7 @@
         // 3. INICIO AUTOMÁTICO
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
-        // --- FUNCIONES DE COTIZACIÓN Y PANEL (SIN CAMBIOS) ---
+        // --- FUNCIONES DE CÁLCULO Y RESERVA ---
         async function calcular() {
             const tam = parseFloat(document.getElementById('tamaño').value);
             const selector = document.getElementById('complejidad');
@@ -304,23 +306,27 @@
             if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
 
             const precios = datosCargados.precios;
+            if(!precios.baja) return alert("Cargando precios, esperá un segundo...");
+
             let base = (comp == 1) ? precios.baja : precios.mediaAlta;
             let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
             totalCalculado = base + extra;
 
             const resDiv = document.getElementById('resultado');
             resDiv.innerHTML = `
-                <div id="tarjeta-quote" style="background: #0d0d0d; padding: 40px 20px; border-radius: 20px; border: 1px solid #333; text-align: center; position: relative;">
+                <div id="tarjeta-quote" style="background: #0d0d0d; padding: 40px 20px; border-radius: 20px; border: 1px solid #333; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
                     <img src="logo2026.png" style="width: 70px; margin-bottom: 20px; opacity: 0.8;">
-                    <h2 style="font-family: 'Bungee Hairline', sans-serif; font-size: 3.5rem; font-weight: 400; color: white; margin: 0;">
+                    <h2 style="font-family: 'Bungee Hairline', sans-serif; font-size: 3.5rem; font-weight: 400; color: white; margin: 0; line-height: 1;">
                         $${totalCalculado.toLocaleString()}
                     </h2>
-                    <p style="text-transform: uppercase; letter-spacing: 4px; font-size: 0.65rem; color: var(--rojo-tinta); margin-top: 15px; font-weight: 700;">
+                    <p style="font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 4px; font-size: 0.65rem; color: var(--rojo-tinta); margin-top: 15px; font-weight: 700;">
                         ${estiloNombre} • ${tam}CM
                     </p>
-                    <button onclick="prepararCaptura()" id="btn-foto" style="background: none; border: 1px solid #444; color: #666; padding: 10px 20px; border-radius: 50px; font-size: 0.6rem; cursor: pointer; margin-top:20px;">
-                        PREPARAR CAPTURA
-                    </button>
+                    <div style="margin-top: 30px;">
+                        <button onclick="prepararCaptura()" id="btn-foto" style="background: none; border: 1px solid #444; color: #666; padding: 10px 20px; border-radius: 50px; font-size: 0.6rem; letter-spacing: 1px; cursor: pointer; transition: 0.3s;">
+                            PREPARAR CAPTURA
+                        </button>
+                    </div>
                 </div>
             `;
             resDiv.style.display = "block";
@@ -341,38 +347,47 @@
         async function guardarTurno() {
             const nombre = document.getElementById('nombre-cliente').value;
             const whatsapp = document.getElementById('tel-cliente').value;
-            if(!nombre || !whatsapp) return alert("Completá tus datos");
+            const tam = document.getElementById('tamaño').value;
+            const hora = document.getElementById('hora-turno').value;
+
+            if(!nombre || !whatsapp) return alert("Por favor, completa tus datos");
+
             try {
                 await fetch(URL_SCRIPT, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify({
-                        accion: "reservar", 
-                        nombre, whatsapp, tam: document.getElementById('tamaño').value, 
-                        hora: document.getElementById('hora-turno').value, 
-                        comp: estiloNombre, total: totalCalculado
-                    })
+                    body: JSON.stringify({accion: "reservar", nombre, whatsapp, tam, hora, comp: estiloNombre, total: totalCalculado })
                 });
+
                 alert("¡Turno enviado!");
-                window.location.href = `https://wa.me/1157734552?text=Hola! Coticé un ${estiloNombre} de $${totalCalculado}`;
-            } catch (e) { alert("Error"); }
+                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de "${estiloNombre}" de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+                window.location.href = `https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`;
+                
+            } catch (e) { alert("Error de conexión"); }
         }
 
+        // --- PANEL DE ARTISTA ---
         function abrirPanelArtista() {
-            if (prompt("PIN de Artista:") !== MI_PIN) return alert("Incorrecto");
+            if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
             document.getElementById('panel-artista').style.display = "block";
             renderizarPanel();
         }
 
         function renderizarPanel() {
-            let htmlTurnos = "<h4>Turno:</h4><select id='select-turno' style='width:100%; padding:10px; background:#222; color:white;'>";
+            let htmlTurnos = "<h4>Turno terminado:</h4>";
+            htmlTurnos += "<select id='select-turno' style='width:100%; padding:10px; background:#222; color:white; border-radius:10px;'>";
             datosCargados.turnos.forEach(t => {
-                htmlTurnos += `<option value="${t.fila}">${t.cliente} (${t.detalle})</option>`;
+                htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${t.detalle})</option>`;
             });
             htmlTurnos += "</select>";
-            let htmlInv = "<h4>Insumos:</h4>";
+
+            let htmlInv = "<h4>Insumos usados:</h4>";
             datosCargados.inventario.forEach((item, i) => {
-                htmlInv += `<div class="inv-item"><span>${item.nombre} (Stock: ${item.stock})</span><input type="number" id="inv-${i}" value="0" style="width:50px; background:#000; color:#0ff;"></div>`;
+                htmlInv += `
+                <div class="inv-item">
+                    <span>${item.nombre} (Stock: ${item.stock})</span>
+                    <input type="number" id="inv-${i}" value="0" style="width:50px; background:#000; color:#0ff; border:1px solid #333; text-align:center;">
+                </div>`;
             });
             document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
         }
@@ -380,11 +395,14 @@
         async function enviarDescuentoStock() {
             const btn = event.target;
             btn.innerText = "Sincronizando...";
+            btn.disabled = true;
+
             let items = [];
             datosCargados.inventario.forEach((item, i) => {
                 let cant = parseInt(document.getElementById(`inv-${i}`).value);
                 if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
             });
+
             await fetch(URL_SCRIPT, {
                 method: 'POST',
                 mode: 'no-cors',
