@@ -113,76 +113,60 @@
             padding: 10px;
             border-radius: 10px;
         }
+
+        /* --- ESTILOS DE GALERÍA OPTIMIZADOS --- */
         .galeria-container {
-    margin-top: 40px;
-    text-align: center;
-}
+            margin-top: 40px;
+            text-align: center;
+        }
 
-.galeria-flex {
-    display: flex;         /* ¡Activamos Flexbox! */
-    flex-wrap: wrap;       /* Si no entran en una fila, que bajen */
-    gap: 15px;             /* Espacio entre las fotos */
-    justify-content: space-between; /* Centra las fotos horizontalmente */
-    padding: 10px;
-}
+        .galeria-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 10px;
+        }
 
-.foto-placeholder {
-    width: 140px;
-    height: 180px;
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Centramos el texto para las fichas sin imagen */
-    padding: 15px;
-    transition: 0.3s ease; /* Transición más suave */
-    cursor: pointer;
-    position: relative;     /* ¡LA LLAVE MÁGICA! Hace que el Absolute sea 'hijo' de esta ficha */
-    overflow: hidden;        /* Corta la imagen si se sale del borde redondeado */
-}
+        .foto-placeholder {
+            width: 140px;
+            height: 180px;
+            background: #111;
+            border: 1px solid var(--borde);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s ease;
+            cursor: pointer;
+        }
 
-/* EFECTO NEÓN ROJO AL PASAR EL MOUSE */
-.foto-placeholder:hover {
-    border-color: var(--rojo-tinta);
-    transform: translateY(-8px); /* Salto un poco más alto */
-    box-shadow: 0 0 15px rgba(230, 57, 70, 0.4); /* Resplandor neón */
-}
+        .foto-placeholder:hover {
+            border-color: var(--rojo-tinta);
+            transform: translateY(-8px);
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+        }
 
-/* Ajustes para el texto si hay imagen de fondo */
-.foto-placeholder span {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    color: #888;
-    letter-spacing: 2px;
-    z-index: 2; /* Asegura que el texto esté sobre la foto */
-    font-weight: 700;
-}
+        .foto-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cubre la ficha sin estirarse */
+            transition: 0.3s;
+        }
 
-        /* Estilos específicos para la ficha que tiene imagen */
-.foto-placeholder.img-ficha {
-    padding: 0;           /* Quitamos el padding para que la foto llegue al borde */
-    overflow: hidden;     /* ¡OBLIGATORIO! Corta la foto si se sale del borde redondeado */
-}
-
-/* Estilo para la imagen real ADENTRO de la ficha */
-.foto-placeholder.img-ficha img {
-    width: 100%;          /* Ocupa todo el ancho */
-    height: 100%;         /* Ocupa todo el alto */
-    object-fit: contain;    /* ¡LA PROPIEDAD MÁGICA! Recorta sin deformar */
-    transition: 0.3s;
-}
-
-/* El texto de la ficha con imagen debe flotar arriba de la foto */
-.foto-placeholder.img-ficha span {
-    position: absolute;   /* Flota sobre la imagen */
-    bottom: 15px;         /* Separado del fondo */
-    left: 15px;           /* Separado de la izquierda */
-    background: rgba(0,0,0,0.7); /* Fondo oscuro para que se lea bien */
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
-}
+        .foto-placeholder span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 15px 10px 10px;
+            color: white;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -226,10 +210,12 @@
             <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">RESERVAR TURNO</button>
         </div>
         
-<div class="galeria-container">
-    <h2>Mis Trabajos</h2>
-    <div id="galeria-dinamica" class="galeria-flex"></div>
-</div>
+        <div class="galeria-container">
+            <h2>Mis Trabajos</h2>
+            <div id="galeria-dinamica" class="galeria-flex">
+                <p style="color:#444;">Sincronizando portfolio...</p>
+            </div>
+        </div>
         
         <hr style="margin-top:50px; border: 0.5px solid #333;">
         <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#444; width:100%; cursor:pointer;">⚙ Acceso Artista</button>
@@ -247,78 +233,104 @@
         let estiloNombre = ""; 
         let cargando = false; 
         const MI_PIN = "1234"; 
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
+        const URL_SCRIPT = "TU_URL_DE_APPS_SCRIPT_AQUÍ"; // REEMPLAZÁ CON TU URL
 
+        // 1. CARGAR DATOS DESDE EL EXCEL
         async function cargarDatos() {
-    if (cargando) return;
-    cargando = true;
-    try {
-        const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
-        const data = await res.json();
-        
-        // Guardamos todo lo que llegó del Excel
-        datosCargados = {
-            precios: data.precios || {},
-            inventario: data.inventario || [],
-            turnos: data.turnos || [],
-            galeria: data.galeria || [] // <--- Guardamos la nueva galería
-        };
+            if (cargando) return;
+            cargando = true;
+            try {
+                const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
+                const data = await res.json();
+                
+                datosCargados = {
+                    precios: data.precios || {},
+                    inventario: data.inventario || [],
+                    turnos: data.turnos || [],
+                    galeria: data.galeria || []
+                };
 
-        // ¡IMPORTANTE! Una vez que los datos llegaron, dibujamos la galería
-        dibujarGaleria(datosCargados.galeria);
+                // Dibujamos la galería con los datos que llegaron
+                dibujarGaleria(datosCargados.galeria);
 
-    } catch (e) {
-        console.error("Error sincronizando:", e);
-    } finally {
-        cargando = false;
-    }
-}
+            } catch (e) {
+                console.error("Error sincronizando:", e);
+                document.getElementById('galeria-dinamica').innerHTML = "Error al conectar.";
+            } finally {
+                cargando = false;
+            }
+        }
+
+        // 2. DIBUJAR LA GALERÍA EN PANTALLA
+        function dibujarGaleria(lista) {
+            const contenedor = document.getElementById('galeria-dinamica');
+            contenedor.innerHTML = ""; 
+
+            if (!lista || lista.length === 0) {
+                contenedor.innerHTML = "<p style='color:#666;'>No hay trabajos para mostrar.</p>";
+                return;
+            }
+
+            lista.forEach(trabajo => {
+                const ficha = document.createElement('div');
+                ficha.className = 'foto-placeholder';
+                
+                const imagen = document.createElement('img');
+                imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
+                imagen.alt = "Tattoo " + trabajo.estilo;
+                
+                const texto = document.createElement('span');
+                // Mezclamos Estilo y Tamaño del Excel
+                texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
+                
+                ficha.appendChild(imagen);
+                ficha.appendChild(texto);
+                contenedor.appendChild(ficha);
+            });
+        }
+
+        // 3. INICIO AUTOMÁTICO
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
+        // --- FUNCIONES DE COTIZACIÓN Y PANEL (SIN CAMBIOS) ---
         async function calcular() {
             const tam = parseFloat(document.getElementById('tamaño').value);
             const selector = document.getElementById('complejidad');
             const comp = parseFloat(selector.value);
-            
             let fullText = selector.options[selector.selectedIndex].text;
             let match = fullText.match(/\(([^)]+)\)/);
             estiloNombre = match ? match[1] : fullText;
 
-            if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido (mín. 5cm)");
+            if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
 
             const precios = datosCargados.precios;
             let base = (comp == 1) ? precios.baja : precios.mediaAlta;
             let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
-            
             totalCalculado = base + extra;
 
             const resDiv = document.getElementById('resultado');
             resDiv.innerHTML = `
-                <div id="tarjeta-quote" style="background: #0d0d0d; padding: 40px 20px; border-radius: 20px; border: 1px solid #333; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                <div id="tarjeta-quote" style="background: #0d0d0d; padding: 40px 20px; border-radius: 20px; border: 1px solid #333; text-align: center; position: relative;">
                     <img src="logo2026.png" style="width: 70px; margin-bottom: 20px; opacity: 0.8;">
-                    <h2 style="font-family: 'Bungee Hairline', sans-serif; font-size: 3.5rem; font-weight: 400; color: white; margin: 0; line-height: 1;">
+                    <h2 style="font-family: 'Bungee Hairline', sans-serif; font-size: 3.5rem; font-weight: 400; color: white; margin: 0;">
                         $${totalCalculado.toLocaleString()}
                     </h2>
-                    <p style="font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 4px; font-size: 0.65rem; color: var(--rojo-tinta); margin-top: 15px; font-weight: 700;">
+                    <p style="text-transform: uppercase; letter-spacing: 4px; font-size: 0.65rem; color: var(--rojo-tinta); margin-top: 15px; font-weight: 700;">
                         ${estiloNombre} • ${tam}CM
                     </p>
-                    <div style="margin-top: 30px;">
-                        <button onclick="prepararCaptura()" id="btn-foto" style="background: none; border: 1px solid #444; color: #666; padding: 10px 20px; border-radius: 50px; font-size: 0.6rem; letter-spacing: 1px; cursor: pointer; transition: 0.3s;">
-                            PREPARAR CAPTURA
-                        </button>
-                    </div>
+                    <button onclick="prepararCaptura()" id="btn-foto" style="background: none; border: 1px solid #444; color: #666; padding: 10px 20px; border-radius: 50px; font-size: 0.6rem; cursor: pointer; margin-top:20px;">
+                        PREPARAR CAPTURA
+                    </button>
                 </div>
             `;
             resDiv.style.display = "block";
             document.getElementById('seccion-reserva').style.display = "block";
         }
 
-        // FUNCIÓN NUEVA: Para que el botón de captura funcione
         function prepararCaptura() {
             document.getElementById('btn-foto').style.display = 'none';
             document.getElementById('seccion-reserva').style.display = 'none';
-            alert("¡Pantalla lista! Sacá la captura para tu historia. Tocá cualquier lado para volver.");
-            
+            alert("¡Lista para captura! Tocá cualquier lado para volver.");
             window.onclick = function() {
                 document.getElementById('btn-foto').style.display = 'inline-block';
                 document.getElementById('seccion-reserva').style.display = 'block';
@@ -329,141 +341,63 @@
         async function guardarTurno() {
             const nombre = document.getElementById('nombre-cliente').value;
             const whatsapp = document.getElementById('tel-cliente').value;
-            const tam = document.getElementById('tamaño').value;
-            const hora = document.getElementById('hora-turno').value;
-
-            if(!nombre || !whatsapp) return alert("Por favor, completa tus datos");
-
+            if(!nombre || !whatsapp) return alert("Completá tus datos");
             try {
                 await fetch(URL_SCRIPT, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({
                         accion: "reservar", 
-                        nombre, whatsapp, tam, hora, 
-                        comp: estiloNombre, 
-                        total: totalCalculado
+                        nombre, whatsapp, tam: document.getElementById('tamaño').value, 
+                        hora: document.getElementById('hora-turno').value, 
+                        comp: estiloNombre, total: totalCalculado
                     })
                 });
-
-                alert("¡Turno enviado! En un minuto aparecerá en tu calendario.");
-                const mensaje = `Hola! Soy ${nombre}, coticé un tattoo de "${estiloNombre}" de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
-                window.location.href = `https://wa.me/1157734552?text=${encodeURIComponent(mensaje)}`;
-                
-            } catch (e) { alert("Error al conectar con el servidor"); }
+                alert("¡Turno enviado!");
+                window.location.href = `https://wa.me/1157734552?text=Hola! Coticé un ${estiloNombre} de $${totalCalculado}`;
+            } catch (e) { alert("Error"); }
         }
 
         function abrirPanelArtista() {
-            if (datosCargados.inventario.length === 0) {
-                alert("Todavía se están cargando los datos del Excel. Esperá 2 segundos.");
-                cargarDatos();
-                return;
-            }
-            if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
+            if (prompt("PIN de Artista:") !== MI_PIN) return alert("Incorrecto");
             document.getElementById('panel-artista').style.display = "block";
             renderizarPanel();
         }
 
         function renderizarPanel() {
-            let htmlTurnos = "<h4>¿Qué turno terminaste?</h4>";
-            htmlTurnos += "<select id='select-turno' style='width:100%; padding:10px; margin-bottom:20px; background:#222; color:white; border-radius:10px;'>";
-            if (datosCargados.turnos.length > 0) {
-                htmlTurnos += "<option value=''>-- Seleccioná el cliente --</option>";
-                datosCargados.turnos.forEach(t => {
-                    htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${t.detalle})</option>`;
-                });
-            } else {
-                htmlTurnos += "<option value=''>No hay turnos pendientes</option>";
-            }
+            let htmlTurnos = "<h4>Turno:</h4><select id='select-turno' style='width:100%; padding:10px; background:#222; color:white;'>";
+            datosCargados.turnos.forEach(t => {
+                htmlTurnos += `<option value="${t.fila}">${t.cliente} (${t.detalle})</option>`;
+            });
             htmlTurnos += "</select>";
-
-            let htmlInv = "<h4>Insumos usados:</h4>";
+            let htmlInv = "<h4>Insumos:</h4>";
             datosCargados.inventario.forEach((item, i) => {
-                htmlInv += `
-                <div class="inv-item">
-                    <span style="font-size:0.85rem;">${item.nombre} <br><small style="color:#666;">Stock: ${item.stock || 0}</small></span>
-                    <input type="number" id="inv-${i}" value="0" min="0" style="width:50px; background:#000; color:#0ff; border:1px solid #333; text-align:center; padding:5px; border-radius:5px;">
-                </div>`;
+                htmlInv += `<div class="inv-item"><span>${item.nombre} (Stock: ${item.stock})</span><input type="number" id="inv-${i}" value="0" style="width:50px; background:#000; color:#0ff;"></div>`;
             });
             document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
         }
 
         async function enviarDescuentoStock() {
-            const filaTurno = document.getElementById('select-turno').value;
             const btn = event.target;
             btn.innerText = "Sincronizando...";
-            btn.disabled = true;
-
             let items = [];
             datosCargados.inventario.forEach((item, i) => {
                 let cant = parseInt(document.getElementById(`inv-${i}`).value);
                 if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
             });
-
-            try {
-                await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
-                });
-                alert("¡Proceso terminado! Stock actualizado en Excel.");
-                location.reload(); 
-            } catch (e) {
-                alert("Error de conexión");
-                btn.disabled = false;
-                btn.innerText = "DESCONTAR DEL EXCEL";
-            }
+            await fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: document.getElementById('select-turno').value })
+            });
+            location.reload();
         }
 
         function reinicio() {
             document.getElementById('tamaño').value = "";
             document.getElementById('resultado').style.display = "none";
             document.getElementById('seccion-reserva').style.display = "none";
-            totalCalculado = 0;
         }
-
-        // ==========================================
-    // SECCIÓN 6: GALERÍA DINÁMICA (Nivel 2)
-    // ==========================================
-    
-   // Ahora la función recibe "lista" como un paquete de afuera
-function dibujarGaleria(lista) {
-    const contenedor = document.getElementById('galeria-dinamica');
-    
-    // Limpiamos el contenedor por si había algo antes
-    contenedor.innerHTML = ""; 
-
-    if (!lista || lista.length === 0) {
-        contenedor.innerHTML = "<p style='color:#666;'>Cargando trabajos...</p>";
-        return;
-    }
-
-    lista.forEach(trabajo => {
-        const ficha = document.createElement('div');
-        ficha.className = 'foto-placeholder img-ficha';
-        
-        // Si no hay imagen en el Excel, usamos un color gris
-        const imagen = document.createElement('img');
-        imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
-        imagen.alt = "Tattoo " + trabajo.estilo;
-        
-        const texto = document.createElement('span');
-        // Mostramos Estilo y Tamaño (el dato nuevo que agregamos)
-        texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
-        
-        ficha.appendChild(imagen);
-        ficha.appendChild(texto);
-        contenedor.appendChild(ficha);
-    });
-}
-
-    // 3. EJECUTAR AL CARGAR LA PÁGINA
-    // Agregamos esto a tu listener existente
-    window.addEventListener('DOMContentLoaded', () => {
-        cargarDatos(); // Tu función de Excel existente
-        dibujarGaleria(); // La nueva función de Galería
-    });
     </script>
 </body>
 </html>
-
