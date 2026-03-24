@@ -127,16 +127,30 @@
 }
 
 .foto-placeholder {
-    width: 150px;          /* Ancho fijo para la prueba */
-    height: 150px;         /* Alto fijo */
-    background: #222;      /* Color oscuro */
-    border: 1px solid #444;
-    border-radius: 12px;
-    display: flex;         /* También usamos flex adentro para centrar el texto */
-    align-items: center;   /* Centra el texto verticalmente */
-    justify-content: center; /* Centra el texto horizontalmente */
-    color: #555;
-    font-size: 0.8rem;
+    width: 160px;
+    height: 200px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;    /* ¡Cambiamos el riel a VERTICAL! */
+    justify-content: flex-end; /* Empuja el contenido al fondo de la caja */
+    padding: 15px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.foto-placeholder:hover {
+    border-color: var(--rojo-tinta);
+    transform: translateY(-5px); /* Un pequeño salto al pasar el mouse */
+}
+
+/* Estilo para el texto adentro de la ficha */
+.foto-placeholder span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 1px;
 }
     </style>
 </head>
@@ -184,11 +198,11 @@
 <div class="galeria-container">
     <h2>Mis Trabajos</h2>
     <div class="galeria-flex">
-        <div class="foto-placeholder">Foto 1</div>
-        <div class="foto-placeholder">Foto 2</div>
-        <div class="foto-placeholder">Foto 3</div>
-        <div class="foto-placeholder">Foto 4</div>
-    </div>
+    <div class="foto-placeholder"><span>Blackwork</span></div>
+    <div class="foto-placeholder"><span>Realismo</span></div>
+    <div class="foto-placeholder"><span>Tradicional</span></div>
+    <div class="foto-placeholder"><span>Fine Line</span></div>
+</div>
 </div>
         
         <hr style="margin-top:50px; border: 0.5px solid #333;">
