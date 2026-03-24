@@ -291,8 +291,8 @@
             
             <label>Tu Nombre:</label>
             <input type="text" id="nombre-cliente" placeholder="Nombre completo">
-            <label>WhatsApp:</label>
-            <input type="tel" id="tel-cliente" placeholder="Ej: 1123456789">
+            <label>WhatsApp (con código de país):</label>
+<input type="tel" id="tel-cliente" placeholder="Ej: 5491123456789">
             
             <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">RESERVAR TURNO</button>
         </div>
@@ -476,46 +476,39 @@ ficha.onclick = () => {
         }
 
         async function guardarTurno() {
-    // 1. Primero atrapamos los datos que escribió el cliente
     const nombre = document.getElementById('nombre-cliente').value.trim();
     const whatsapp = document.getElementById('tel-cliente').value.trim();
     const tam = document.getElementById('tamaño').value;
     const hora = document.getElementById('hora-turno').value;
 
-    // --- AQUÍ VA EL PASO 1: LOS GUARDIAS DE SEGURIDAD ---
-
-    // Guardia A: ¿Puso su nombre?
+    // --- EL GUARDIA INTERNACIONAL (Ponerlo aquí) ---
     if (!nombre) return alert("⚠️ Por favor, ingresá tu nombre.");
 
-    // Guardia B: ¿El WhatsApp tiene 10 números? 
-    // (Ejemplo: 1123456789 - Sin el 0 ni el 15)
-    const moldeCelular = /^\d{10}$/; 
-    if (!moldeCelular.test(whatsapp)) {
-        return alert("⚠️ El WhatsApp debe tener 10 números (ej: 1123456789). No uses espacios, guiones, ni el 0 o 15 inicial.");
+    // Acepta de 7 a 15 números (estándar mundial)
+    const moldeInternacional = /^\d{7,15}$/; 
+    if (!moldeInternacional.test(whatsapp)) {
+        return alert("⚠️ WhatsApp inválido. Poné solo números con código de país (ej: 54911...)");
     }
 
-    // --- SI PASÓ LOS GUARDIAS, RECIÉN AHÍ HACEMOS EL ENVÍO ---
+    // --- EL ENVÍO (Sigue igual) ---
     try {
         await fetch(URL_SCRIPT, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify({
-                accion: "reservar", 
-                nombre, whatsapp, tam, hora, 
+                accion: "reservar", nombre, whatsapp, tam, hora, 
                 comp: estiloNombre, total: totalCalculado 
             })
         });
 
         alert("✅ ¡Turno agendado!");
         
-        // Redirigir a WhatsApp para cerrar la venta
-       // Reemplazá la línea de window.location.href por esta:
-const mensaje = `Hola! Soy ${nombre}, coticé un ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
-
-window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(mensaje)}`;
+        // --- EL LINK CORREGIDO (Asegurate que tenga el 5491157734552) ---
+        const mensaje = `Hola! Soy ${nombre}, coticé un ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
+        window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(mensaje)}`;
         
     } catch (e) { 
-        alert("❌ Error al conectar. Intentá de nuevo."); 
+        alert("❌ Error de conexión."); 
     }
 }
 
