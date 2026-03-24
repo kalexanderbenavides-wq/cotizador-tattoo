@@ -92,7 +92,7 @@
             cursor: pointer;
         }
 
-        #resultado {
+        # {
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px dashed var(--borde);
@@ -249,7 +249,24 @@
     transition: 0.3s;
 }
 .btn-download:hover { background: #cccccc; }
-        
+
+/* --- ANIMACIÓN DEL LOADER --- */
+.pulse-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: var(--rojo-tinta);
+    font-weight: 700;
+    text-transform: uppercase;
+    /* Animación de palpitación */
+    animation: pulse-neon 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-neon {
+    0% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
+    50% { opacity: 1; text-shadow: 0 0 15px rgba(230, 57, 70, 0.8); }
+    100% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
+}        
         
     </style>
 
@@ -279,8 +296,11 @@
             <button class="btn-reset" onclick="reinicio()">LIMPIAR</button>
         </div>
 
-        <div id="resultado" style="display:none;"></div>
+        <div id="loader" style="display:none; text-align:center; margin: 20px 0;">
+    <div class="pulse-text">ALX.TATT • PROCESANDO...</div>
+</div>
 
+<div id="resultado" style="display:none;"></div>
         <div id="seccion-reserva" style="display:none; margin-top:20px;">
             <label>Elegí tu horario:</label>
             <select id="hora-turno">
@@ -327,29 +347,34 @@
 
         // 1. CARGAR DATOS DESDE EL EXCEL
         async function cargarDatos() {
-            if (cargando) return;
-            cargando = true;
-            try {
-                const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
-                const data = await res.json();
-                
-                datosCargados = {
-                    precios: data.precios || {},
-                    inventario: data.inventario || [],
-                    turnos: data.turnos || [],
-                    galeria: data.galeria || []
-                };
+    if (cargando) return;
+    cargando = true;
+    
+    // 1. PRENDEMOS EL LOADER (Se ve apenas entra el cliente)
+    document.getElementById('loader').style.display = 'block';
+    
+    try {
+        const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
+        const data = await res.json();
+        
+        datosCargados = {
+            precios: data.precios || {},
+            inventario: data.inventario || [],
+            turnos: data.turnos || [],
+            galeria: data.galeria || []
+        };
 
-                // Dibujamos la galería con los datos del Excel
-                dibujarGaleria(datosCargados.galeria);
+        dibujarGaleria(datosCargados.galeria);
 
-            } catch (e) {
-                console.error("Error sincronizando:", e);
-                document.getElementById('galeria-dinamica').innerHTML = "<p style='color:red;'>Error al conectar con la galería.</p>";
-            } finally {
-                cargando = false;
-            }
-        }
+    } catch (e) {
+        console.error("Error sincronizando:", e);
+        document.getElementById('galeria-dinamica').innerHTML = "<p style='color:red;'>Error de conexión.</p>";
+    } finally {
+        cargando = false;
+        // 2. APAGAMOS EL LOADER (Cuando ya tenemos los datos listos)
+        document.getElementById('loader').style.display = 'none';
+    }
+}
 
         // 2. DIBUJAR LA GALERÍA DINÁMICAMENTE
         // 1. MEJORA: Galería Interactiva
@@ -416,52 +441,52 @@ ficha.onclick = () => {
     const selector = document.getElementById('complejidad');
     const comp = parseFloat(selector.value);
     
-    let fullText = selector.options[selector.selectedIndex].text;
-    let match = fullText.match(/\(([^)]+)\)/);
-    estiloNombre = match ? match[1] : fullText;
-
-    // Validación de seguridad básica
+    // Validación rápida antes de mostrar carga
     if (isNaN(tam) || tam < 5) return alert("⚠️ Ingresá un tamaño válido (mín. 5cm)");
 
-    const precios = datosCargados.precios;
-    if(!precios.baja) return alert("☕ Cargando precios, esperá un segundo...");
+    // 1. ESCONDEMOS EL TICKET ANTERIOR Y PRENDEMOS EL LOADER
+    document.getElementById('resultado').style.display = 'none';
+    document.getElementById('loader').style.display = 'block';
 
-    // Lógica de cálculo (la misma)
-    let base = (comp == 1) ? precios.baja : precios.mediaAlta;
-    let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
-    totalCalculado = base + extra;
+    // 2. ESPERAMOS 500ms (Efecto de "procesamiento" pro)
+    setTimeout(() => {
+        let fullText = selector.options[selector.selectedIndex].text;
+        let match = fullText.match(/\(([^)]+)\)/);
+        estiloNombre = match ? match[1] : fullText;
 
-    const resDiv = document.getElementById('resultado');
-    
-    // --- NUEVO DISEÑO DEL TICKET (HTML Dinámico) ---
-    resDiv.innerHTML = `
-        <div id="tarjeta-downloadable" class="ticket-quote">
-            <img src="logo2026.png" style="width: 60px; margin-bottom:10px;">
-            <div style="font-size:0.65rem; color:#ffffff; text-transform:uppercase; letter-spacing:2px; font-weight:700;">
-                ALX.TATT ESTUDIO
+        const precios = datosCargados.precios;
+        let base = (comp == 1) ? precios.baja : precios.mediaAlta;
+        let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
+        totalCalculado = base + extra;
+
+        const resDiv = document.getElementById('resultado');
+        
+        // Dibujamos el Ticket Cyber-Minimal
+        resDiv.innerHTML = `
+            <div id="tarjeta-downloadable" class="ticket-quote">
+                <img src="logo2026.png" style="width: 60px; margin-bottom:10px;">
+                <div style="font-size:0.65rem; color:#ffffff; text-transform:uppercase; letter-spacing:2px; font-weight:700;">
+                    ALX.TATT ESTUDIO
+                </div>
+                <h2 class="ticket-price">$${totalCalculado.toLocaleString()}</h2>
+                <p class="ticket-details">${estiloNombre} • ${tam}CM</p>
+                <hr class="ticket-divider">
+                <div class="ticket-footer">
+                    ALX.TATT ESTUDIO • VILLA DEL PARQUE<br>
+                    VÁLIDO POR 30 DÍAS • SUJETO A CAMBIOS
+                </div>
             </div>
-            
-            <h2 class="ticket-price">$${totalCalculado.toLocaleString()}</h2>
-            
-            <p class="ticket-details">${estiloNombre} • ${tam}CM</p>
-            
-            <hr class="ticket-divider">
-            
-            <div class="ticket-footer">
-                ALX.TATT ESTUDIO • VILLA DEL PARQUE<br>
-                VÁLIDO POR 30 DÍAS • SUJETO A CAMBIOS
-                
-                <img src="logo2026.png" style="width: 1px; height: 1px; opacity: 0; position: absolute; bottom: 0; left: 0;">
+            <div class="btn-ticket-group" style="margin-top: 25px;">
+                <button onclick="descargarCotizacion()" class="btn-download">⬇️ DESCARGAR IMAGEN</button>
             </div>
-        </div>
-
-        <div class="btn-ticket-group" style="margin-top: 25px;">
-            <button onclick="descargarCotizacion()" class="btn-download">⬇️ DESCARGAR IMAGEN</button>
-        </div>
-    `;
-    
-    resDiv.style.display = "block";
-    document.getElementById('seccion-reserva').style.display = "block";
+        `;
+        
+        // 3. APAGAMOS LOADER Y MOSTRAMOS EL RESULTADO FINAL
+        document.getElementById('loader').style.display = 'none';
+        resDiv.style.display = "block";
+        document.getElementById('seccion-reserva').style.display = "block";
+        
+    }, 500); // Fin del tiempo de espera
 }
 
         function prepararCaptura() {
