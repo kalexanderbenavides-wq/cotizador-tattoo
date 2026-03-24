@@ -167,7 +167,86 @@
             letter-spacing: 1px;
             z-index: 2;
         }
+/* --- NUEVOS ESTILOS PARA LA TARJETA INSTAGRAMEABLE --- */
+
+/* Contenedor principal del Ticket */
+.ticket-quote {
+    background: #000000; /* Negro absoluto para que resalte el neón */
+    padding: 30px;
+    border-radius: 20px;
+    /* Efecto Neón Rojo Triple (más profundo) */
+    border: 2px solid var(--rojo-tinta);
+    box-shadow: 0 0 10px rgba(230, 57, 70, 0.7), 
+                0 0 20px rgba(230, 57, 70, 0.5), 
+                inset 0 0 15px rgba(230, 57, 70, 0.3);
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+/* El Precio Gigante (Bungee Hairline) */
+.ticket-price {
+    font-family: 'Bungee Hairline', sans-serif;
+    font-size: 4rem; /* ¡Más grande! */
+    font-weight: 400;
+    color: white;
+    margin: 10px 0;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Detalles del Tatuaje (Estilo • Tamaño) */
+.ticket-details {
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 0.7rem;
+    color: var(--rojo-tinta);
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+/* Decoración tipo Ticket (Línea punteada) */
+.ticket-divider {
+    border: none;
+    border-top: 2px dashed #333;
+    margin: 25px 0;
+}
+
+/* Info del Estudio abajo */
+.ticket-footer {
+    font-size: 0.6rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Botones dentro de la tarjeta al cotizar */
+.btn-ticket-group {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-download {
+    background: #ffffff; /* Blanco para contrastar */
+    color: #000000;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+}
+.btn-download:hover { background: #cccccc; }
+        
+        
     </style>
+
+<script src="https://html2canvas.hertzenberg.app/dist/html2canvas.min.js"></script>
+    
 </head>
 <body>
 
@@ -325,42 +404,55 @@ ficha.onclick = () => {
 
         // --- FUNCIONES DE CÁLCULO Y RESERVA ---
         async function calcular() {
-            const tam = parseFloat(document.getElementById('tamaño').value);
-            const selector = document.getElementById('complejidad');
-            const comp = parseFloat(selector.value);
-            let fullText = selector.options[selector.selectedIndex].text;
-            let match = fullText.match(/\(([^)]+)\)/);
-            estiloNombre = match ? match[1] : fullText;
+    const tam = parseFloat(document.getElementById('tamaño').value);
+    const selector = document.getElementById('complejidad');
+    const comp = parseFloat(selector.value);
+    
+    // Obtenemos el nombre del estilo para mostrarlo
+    let fullText = selector.options[selector.selectedIndex].text;
+    let match = fullText.match(/\(([^)]+)\)/);
+    estiloNombre = match ? match[1] : fullText;
 
-            if (isNaN(tam) || tam < 5) return alert("Ingresá un tamaño válido");
+    // Validación de seguridad básica
+    if (isNaN(tam) || tam < 5) return alert("⚠️ Ingresá un tamaño válido (mín. 5cm)");
 
-            const precios = datosCargados.precios;
-            if(!precios.baja) return alert("Cargando precios, esperá un segundo...");
+    const precios = datosCargados.precios;
+    if(!precios.baja) return alert("☕ Cargando precios, esperá un segundo...");
 
-            let base = (comp == 1) ? precios.baja : precios.mediaAlta;
-            let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
-            totalCalculado = base + extra;
+    // Lógica de cálculo (la misma de siempre)
+    let base = (comp == 1) ? precios.baja : precios.mediaAlta;
+    let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
+    totalCalculado = base + extra;
 
-            const resDiv = document.getElementById('resultado');
-            resDiv.innerHTML = `
-                <div id="tarjeta-quote" style="background: #0d0d0d; padding: 40px 20px; border-radius: 20px; border: 1px solid #333; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
-                    <img src="logo2026.png" style="width: 70px; margin-bottom: 20px; opacity: 0.8;">
-                    <h2 style="font-family: 'Bungee Hairline', sans-serif; font-size: 3.5rem; font-weight: 400; color: white; margin: 0; line-height: 1;">
-                        $${totalCalculado.toLocaleString()}
-                    </h2>
-                    <p style="font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 4px; font-size: 0.65rem; color: var(--rojo-tinta); margin-top: 15px; font-weight: 700;">
-                        ${estiloNombre} • ${tam}CM
-                    </p>
-                    <div style="margin-top: 30px;">
-                        <button onclick="prepararCaptura()" id="btn-foto" style="background: none; border: 1px solid #444; color: #666; padding: 10px 20px; border-radius: 50px; font-size: 0.6rem; letter-spacing: 1px; cursor: pointer; transition: 0.3s;">
-                            PREPARAR CAPTURA
-                        </button>
-                    </div>
-                </div>
-            `;
-            resDiv.style.display = "block";
-            document.getElementById('seccion-reserva').style.display = "block";
-        }
+    const resDiv = document.getElementById('resultado');
+    
+    // --- NUEVO DISEÑO DEL TICKET (HTML Dinámico) ---
+    resDiv.innerHTML = `
+        <div id="tarjeta-downloadable" class="ticket-quote">
+            <img src="logo2026.png" style="width: 60px; opacity: 0.7; margin-bottom:10px;">
+            <div style="font-size:0.6rem; color:#888; text-transform:uppercase; letter-spacing:2px;">Cotización Oficial</div>
+            
+            <h2 class="ticket-price">$${totalCalculado.toLocaleString()}</h2>
+            
+            <p class="ticket-details">${estiloNombre} • ${tam}CM</p>
+            
+            <hr class="ticket-divider">
+            
+            <div class="ticket-footer">
+                ALX.TATT ESTUDIO • BUENOS AIRES<br>
+                Válido por 30 días • Sujeto a cambios
+            </div>
+        </div>
+
+        <div class="btn-ticket-group">
+            <button onclick="descargarCotizacion()" class="btn-download">⬇️ DESCARGAR IMAGEN</button>
+        </div>
+    `;
+    
+    resDiv.style.display = "block";
+    // Mostramos la sección de reserva
+    document.getElementById('seccion-reserva').style.display = "block";
+}
 
         function prepararCaptura() {
             document.getElementById('btn-foto').style.display = 'none';
@@ -489,6 +581,45 @@ async function enviarDescuentoStock() {
             document.getElementById('resultado').style.display = "none";
             document.getElementById('seccion-reserva').style.display = "none";
         }
+
+// --- FUNCIÓN MÁGICA DE DESCARGA (html2canvas) ---
+function descargarCotizacion() {
+    const ticket = document.getElementById('tarjeta-downloadable');
+    const btnDescarga = event.target; // Capturamos el botón para cambiar el texto
+
+    btnDescarga.innerText = "📸 Capturando...";
+    btnDescarga.disabled = true;
+
+    // Usamos la librería html2canvas
+    html2canvas(ticket, {
+        backgroundColor: "#0d0d0d", // Fondo para que el neón resalte
+        scale: 2, // Aumentamos la calidad (doble resolución)
+        logging: false,
+        useCORS: true // Por si tenés imágenes externas
+    }).then(canvas => {
+        // Convertimos el canvas en una URL de imagen PNG
+        const image = canvas.toDataURL("image/png");
+        
+        // Creamos un link "fantasma" para forzar la descarga
+        const link = document.createElement('a');
+        link.href = image;
+        // Nombre del archivo: Cotizacion_Estilo_Tamaño.png
+        link.download = `Cotizacion_${estiloNombre.replace(" ", "")}_${document.getElementById('tamaño').value}cm.png`;
+        
+        // "Hacemos clic" en el link fantasma
+        link.click();
+
+        // Restauramos el botón
+        btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
+        btnDescarga.disabled = false;
+    }).catch(err => {
+        console.error("Error al descargar:", err);
+        alert("❌ No pude generar la imagen. Intentá de nuevo o sacá captura.");
+        btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
+        btnDescarga.disabled = false;
+    });
+}
+        
     </script>
 </body>
 </html>
