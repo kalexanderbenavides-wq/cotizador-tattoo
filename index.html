@@ -245,7 +245,7 @@
         
     </style>
 
-<script src="https://html2canvas.hertzenberg.app/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
 </head>
 <body>
@@ -585,39 +585,35 @@ async function enviarDescuentoStock() {
 // --- FUNCIÓN MÁGICA DE DESCARGA (html2canvas) ---
 function descargarCotizacion() {
     const ticket = document.getElementById('tarjeta-downloadable');
-    const btnDescarga = event.target; // Capturamos el botón para cambiar el texto
+    const btnDescarga = event.target;
 
-    btnDescarga.innerText = "📸 Capturando...";
+    btnDescarga.innerText = "📸 Procesando...";
     btnDescarga.disabled = true;
 
-    // Usamos la librería html2canvas
-    html2canvas(ticket, {
-        backgroundColor: "#0d0d0d", // Fondo para que el neón resalte
-        scale: 2, // Aumentamos la calidad (doble resolución)
-        logging: false,
-        useCORS: true // Por si tenés imágenes externas
-    }).then(canvas => {
-        // Convertimos el canvas en una URL de imagen PNG
-        const image = canvas.toDataURL("image/png");
-        
-        // Creamos un link "fantasma" para forzar la descarga
-        const link = document.createElement('a');
-        link.href = image;
-        // Nombre del archivo: Cotizacion_Estilo_Tamaño.png
-        link.download = `Cotizacion_${estiloNombre.replace(" ", "")}_${document.getElementById('tamaño').value}cm.png`;
-        
-        // "Hacemos clic" en el link fantasma
-        link.click();
+    // Pequeño truco: Esperamos 100ms para que el navegador "dibuje" bien el ticket antes de la foto
+    setTimeout(() => {
+        html2canvas(ticket, {
+            backgroundColor: "#000000",
+            scale: 2, 
+            useCORS: true, // Permite capturar imágenes de otros servidores
+            allowTaint: true, // Ignora bloqueos de seguridad de píxeles si es necesario
+            logging: false
+        }).then(canvas => {
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = `Cotizacion_Tattoo.png`;
+            link.click();
 
-        // Restauramos el botón
-        btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
-        btnDescarga.disabled = false;
-    }).catch(err => {
-        console.error("Error al descargar:", err);
-        alert("❌ No pude generar la imagen. Intentá de nuevo o sacá captura.");
-        btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
-        btnDescarga.disabled = false;
-    });
+            btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
+            btnDescarga.disabled = false;
+        }).catch(err => {
+            console.error("Error:", err);
+            alert("No se pudo generar la imagen. ¡Saca una captura de pantalla!");
+            btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
+            btnDescarga.disabled = false;
+        });
+    }, 100); 
 }
         
     </script>
