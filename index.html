@@ -332,21 +332,27 @@
 /* --- ESTILOS DE LA CUADRÍCULA PRINCIPAL (GRID) --- */
 .galeria-dinamica {
     display: grid;
-    /* Crea 2 columnas iguales en celulares y 3 en PC automáticamente */
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px; /* Espacio entre las fotos */
-    margin-top: 20px;
+    /* En celular: 2 columnas fijas. En PC: las que entren de min 200px */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+    padding: 10px;
 }
 
+@media (min-width: 768px) {
+    .galeria-dinamica {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+}
+        
 /* La ficha (tarjeta) de cada estilo */
 .ficha-galeria {
     position: relative;
-    border-radius: 10px;
-    overflow: hidden; /* Corta el zoom de la foto al pasar el cursor */
-    cursor: pointer;
-    background: #111; /* Fondo oscuro por si la foto tarda en cargar */
-    transition: transform 0.3s ease; /* Animación de movimiento suave */
-    border: 1px solid #333; /* Borde sutil */
+    aspect-ratio: 1 / 1; /* FORZAMOS CUADRADO PERFECTO */
+    border-radius: 8px;
+    overflow: hidden;
+    background: #111;
+    border: 1px solid #222;
 }
 
 /* --- ANIMACIÓN AL PASAR EL CURSOR (HOVER) --- */
@@ -358,9 +364,8 @@
 /* La foto de portada dentro de la ficha */
 .ficha-galeria img {
     width: 100%;
-    height: 180px; /* Altura fija para uniformar tamaños */
-    object-fit: cover; /* Recorta la foto para que llene el espacio sin deformarse */
-    transition: transform 0.3s ease; /* Animación de zoom suave */
+    height: 100%;
+    object-fit: cover; /* La foto llena el cuadrado sin deformarse */
 }
 
 /* Animación de Zoom en la foto al pasar el cursor */
@@ -371,32 +376,66 @@
 /* --- DETALLES DE INFORMACIÓN SOBRE LA FOTO --- */
 .info-estilo {
     position: absolute;
-    bottom: 0; left: 0;
-    width: 100%;
-    padding: 15px 10px 10px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); /* Degradado para legibilidad */
-    color: white;
-    text-align: left;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 10px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 30%, transparent);
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    flex-direction: column; /* Texto uno arriba del otro */
+    align-items: flex-start;
 }
 
 .info-estilo span {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: white;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    white-space: nowrap; /* No salta de línea */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Pone "..." si es muy largo */
+    width: 100%;
 }
 
 /* --- INDICADOR DE 'MÁS FOTOS' (El cue visual) --- */
 .small-counter {
     font-size: 0.6rem;
     color: var(--rojo-tinta);
-    font-weight: 700;
-    letter-spacing: 1px;
+    margin-top: 2px;
 }
+
+/* --- CARRETE: FLECHAS PC Y SNAP --- */
+.contenedor-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth; /* Desplazamiento suave */
+}
+
+.slide-item {
+    min-width: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always; /* EVITA QUE SE PASEN 2 FOTOS */
+    display: flex;
+    justify-content: center;
+}
+
+/* Flechas para PC */
+.nav-arrow {
+    display: none; /* Escondidas en celular */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 20px 10px;
+    cursor: pointer;
+    z-index: 3100;
+}
+@media (min-width: 768px) { .nav-arrow { display: block; } }
+.arrow-left { left: 10px; }
+.arrow-right { right: 10px; }
+        
         
     </style>
 
@@ -772,42 +811,39 @@ function abrirCarrete(nombreEstilo) {
     const overlay = document.getElementById('overlay-carrete');
     const slider = document.getElementById('slider-fotos');
     const titulo = document.getElementById('titulo-carrete');
-    const btnCotizar = document.getElementById('btn-cotizar-carrete');
 
     const fotos = fotosPorEstilo[nombreEstilo];
     
-    // 1. Limpiamos y cargamos las fotos del grupo
+    // 1. ORDENAR estrictamente por la columna 'orden' del Excel
+    fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
+
     slider.innerHTML = "";
-    fotos.sort((a, b) => a.orden - b.orden); // Ordenamos según el Excel
-    
     fotos.forEach(f => {
         const item = document.createElement('div');
         item.className = "slide-item";
-        item.innerHTML = `<img src="${f.imagen}">`;
+        item.innerHTML = `<img src="${f.imagen}" style="max-height:80vh; max-width:90%;">`;
         slider.appendChild(item);
     });
 
-    // 2. Configuramos info y botones
     titulo.innerText = nombreEstilo.toUpperCase();
+    
+    // 2. RESETEAR EL SCROLL (Muy importante para que empiece en la foto 1)
+    slider.scrollLeft = 0; 
+    
     overlay.style.display = "flex";
+    document.body.style.overflow = "hidden"; // Bloquea el scroll del fondo
+}
 
-    // 3. Al tocar COTIZAR, aplicamos el estilo y cerramos
-    btnCotizar.onclick = () => {
-        const selector = document.getElementById('complejidad');
-        const mapaComplejidad = {
-            "realismo": "2", "full color": "2", "neo tradicional": "2",
-            "blackwork": "2", "puntillismo": "2", "tradicional": "2", "linea fina": "1"
-        };
-        selector.value = mapaComplejidad[nombreEstilo.toLowerCase()] || "1.5";
-        
-        cerrarCarrete();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.getElementById('tamaño').focus();
-    };
+// NUEVA FUNCIÓN PARA LAS FLECHAS PC
+function moverSlider(direccion) {
+    const slider = document.getElementById('slider-fotos');
+    const anchoFoto = slider.clientWidth;
+    slider.scrollBy({ left: direccion * anchoFoto, behavior: 'smooth' });
 }
 
 function cerrarCarrete() {
     document.getElementById('overlay-carrete').style.display = "none";
+    document.body.style.overflow = "auto";
 }
         
     </script>
@@ -815,11 +851,13 @@ function cerrarCarrete() {
 <div id="overlay-carrete" class="overlay-carrete" style="display:none;">
     <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
     
-    <div class="contenedor-slider" id="slider-fotos">
-        </div>
+    <button class="nav-arrow arrow-left" onclick="moverSlider(-1)">&#10094;</button>
+    <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
+
+    <div class="contenedor-slider" id="slider-fotos"></div>
 
     <div class="footer-carrete">
-        <h3 id="titulo-carrete">ESTILO</h3>
+        <h3 id="titulo-carrete"></h3>
         <button id="btn-cotizar-carrete" class="btn-cotizar-pro">COTIZAR ESTE ESTILO</button>
     </div>
 </div>
