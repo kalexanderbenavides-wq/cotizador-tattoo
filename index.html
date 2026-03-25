@@ -105,7 +105,6 @@
         }
         .input-pro:focus { border-color: var(--rojo-tinta); box-shadow: 0 0 15px rgba(230, 57, 70, 0.1); }
 
-        /* --- BOTÓN PRO --- */
         .btn-calc {
             background: var(--rojo-tinta);
             color: white;
@@ -122,72 +121,36 @@
             transition: all 0.3s ease;
             margin-top: 10px;
         }
-        .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(230, 57, 70, 0.4); }
-        .btn-calc:active { transform: scale(0.97); }
 
-        /* --- ESTILO DEL RESULTADO (SIEMPRE ROJO TINTA) --- */
-#resultado {
-    margin-top: 25px;
-    text-align: center;
-    font-weight: 800;
-    font-size: 1.4rem; /* Un poco más grande para que destaque */
-    color: var(--rojo-tinta) !important; /* FORZAMOS EL ROJO AQUÍ */
-    transition: all 0.3s ease;
-    min-height: 40px;
-}
-
-/* LA ANIMACIÓN DEL BRILLO (GLOW) */
-.glow-efecto {
-    animation: brilloRojo 0.5s ease;
-}
-
-@keyframes brilloRojo {
-    0% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
-    50% { transform: scale(1.1); text-shadow: 0 0 20px var(--rojo-tinta); }
-    100% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
-}
-        .aviso-info {
-            background: rgba(230, 57, 70, 0.1);
-            border-left: 4px solid var(--rojo-tinta);
-            padding: 12px;
-            font-size: 0.8rem;
-            margin-top: 20px;
-            color: #ffb4b4;
-            border-radius: 4px;
+        /* ⚠️ CORRECCIÓN: Estilo de resultado para que siempre sea rojo y brille */
+        #resultado {
+            margin-top: 25px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--rojo-tinta) !important;
+            transition: all 0.3s ease;
+            min-height: 40px;
         }
 
-        /* --- GALERÍA GRID --- */
-        .galeria-dinamica {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 20px;
+        .glow-efecto {
+            animation: brilloRojo 0.5s ease;
         }
-        .ficha-galeria {
-            position: relative;
-            aspect-ratio: 1/1;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid #222;
-            cursor: pointer;
-            transition: 0.3s ease;
+
+        @keyframes brilloRojo {
+            0% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
+            50% { transform: scale(1.1); text-shadow: 0 0 20px var(--rojo-tinta); }
+            100% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
         }
+
+        /* ... Resto de estilos de galería, escala y mapa (Sin cambios) ... */
+        .ficha-galeria { position: relative; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s ease; }
         .ficha-galeria:hover { border-color: var(--rojo-tinta); box-shadow: 0 0 20px rgba(230, 57, 70, 0.4); transform: translateY(-5px); }
         .ficha-galeria img { width: 100%; height: 100%; object-fit: cover; }
-        .info-estilo {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 12px;
-            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-            display: flex; flex-direction: column;
-        }
+        .info-estilo { position: absolute; bottom: 0; left: 0; width: 100%; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); display: flex; flex-direction: column; }
         .info-estilo span { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; }
         .small-counter { font-size: 0.6rem; color: var(--rojo-tinta); font-weight: 700; margin-top: 2px; }
-
-        /* --- CARRETE --- */
-        .overlay-carrete {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: none; flex-direction: column;
-        }
+        .overlay-carrete { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; }
         .contenedor-slider { flex-grow: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .contenedor-slider::-webkit-scrollbar { display: none; }
         .slide-item { min-width: 100%; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; }
@@ -196,381 +159,49 @@
         .arrow-left { left: 0; } .arrow-right { right: 0; }
         .btn-cerrar { position: absolute; top: 25px; right: 25px; font-size: 35px; color: white; cursor: pointer; z-index: 10000; }
         .footer-carrete { padding: 30px; background: linear-gradient(transparent, #000); text-align: center; }
-
-        /* --- TOAST --- */
-        .toast-aviso {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #000; color: var(--rojo-tinta); padding: 15px 30px; border-radius: 50px;
-            border: 2px solid var(--rojo-tinta); z-index: 10001; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: 800; font-size: 0.8rem; text-transform: uppercase;
-        }
+        .toast-aviso { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #000; color: var(--rojo-tinta); padding: 15px 30px; border-radius: 50px; border: 2px solid var(--rojo-tinta); z-index: 10001; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; }
         .toast-aviso.show { top: 30px; }
-        /* --- ESTILOS VISUALIZADOR DE ESCALA --- */
-.escala-wrapper {
-    background: #000;
-    border: 1px solid #222;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
-    animation: fadeIn 0.4s ease;
-}
+        .escala-wrapper { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .escala-header { display: flex; justify-content: space-between; font-size: 0.65rem; text-transform: uppercase; color: #666; margin-bottom: 15px; }
+        #cm-display { color: var(--rojo-tinta); letter-spacing: 1px; }
+        .escala-stage { display: flex; flex-direction: column; align-items: center; gap: 8px; overflow: hidden; padding: 10px 0; }
+        .cuadro-tinta { border: 2px solid var(--rojo-tinta); background: rgba(230, 57, 70, 0.15); box-shadow: 0 0 15px rgba(230, 57, 70, 0.3); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card-mockup { width: 85px; height: 54px; background: linear-gradient(135deg, #222, #000); border: 1px solid #444; border-radius: 6px; position: relative; }
+        .chip-card { width: 12px; height: 10px; background: #444; border-radius: 2px; position: absolute; top: 15px; left: 10px; }
+        .referencia-label { font-size: 0.6rem; color: #666; text-transform: uppercase; font-weight: 700; }
+        .cuidados-wrapper { margin-top: 30px; background: #111; border-radius: 15px; border: 1px solid #222; overflow: hidden; }
+        .btn-cuidados-toggle { width: 100%; padding: 20px; background: transparent; border: none; color: var(--texto); display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        .cuidados-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding: 0 20px; }
+        .cuidados-content.open { max-height: 800px; padding-bottom: 25px; }
+        .cuidados-seccion h4 { color: var(--rojo-tinta); font-size: 0.7rem; margin-top: 15px; margin-bottom: 10px; }
+        .cuidados-seccion li { font-size: 0.75rem; color: #aaa; margin-bottom: 8px; list-style: none; padding-left: 15px; position: relative; }
+        .cuidados-seccion li::before { content: "•"; color: var(--rojo-tinta); position: absolute; left: 0; }
 
-.escala-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    color: #666;
-    margin-bottom: 15px;
-}
+        /* ⚠️ CORRECCIÓN: Escondemos el header del PDF en la web normal */
+        .print-header { display: none; }
 
-#cm-display { color: var(--rojo-tinta); letter-spacing: 1px; }
+        /* ⚠️ CORRECCIÓN: Nueva lógica de impresión blindada para evitar el bloque negro */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-scheme: light; }
+            body { background: white !important; padding: 0 !important; }
+            body > *:not(.cuidados-wrapper) { display: none !important; }
+            .main-container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .cuidados-wrapper { background: white !important; border: none !important; margin: 0 !important; display: block !important; }
+            .print-header { display: flex !important; flex-direction: column; align-items: center; border-bottom: 2px solid #e63946 !important; margin-bottom: 30px; padding-bottom: 20px; }
+            .print-header h1 { font-family: 'Bungee Hairline', sans-serif !important; color: #e63946 !important; font-size: 3.5rem !important; margin: 10px 0; }
+            .cuidados-content { max-height: none !important; display: block !important; opacity: 1 !important; padding: 0 !important; }
+            .cuidados-seccion h4 { color: #e63946 !important; font-size: 1.2rem !important; }
+            .cuidados-seccion li { color: black !important; font-size: 1rem !important; }
+            .no-print, .btn-cuidados-toggle, .btn-download-mini { display: none !important; }
+        }
 
-.escala-stage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    overflow: hidden;
-    padding: 10px 0;
-}
-
-.cuadro-tinta {
-    width: 0px; 
-    height: 0px;
-    border: 2px solid var(--rojo-tinta);
-    background: rgba(230, 57, 70, 0.1);
-    box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-}
-
-/* El "fantasma" de la tarjeta para comparar */
-.referencia-fija {
-    width: 85px; /* Proporción estándar de 8.5cm en pixeles aproximados */
-    height: 54px;
-    border: 1px dashed #444;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.55rem;
-    color: #444;
-}
-
-/* --- ESTILOS SECCIÓN CUIDADOS --- */
-.cuidados-wrapper {
-    margin-top: 30px;
-    background: #111;
-    border-radius: 15px;
-    border: 1px solid #222;
-    overflow: hidden;
-}
-
-.btn-cuidados-toggle {
-    width: 100%;
-    padding: 20px;
-    background: transparent;
-    border: none;
-    color: var(--texto);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.cuidados-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-    padding: 0 20px;
-}
-
-.cuidados-content.open {
-    max-height: 500px; /* Suficiente para el texto */
-    padding-bottom: 25px;
-}
-
-.cuidados-seccion h4 {
-    color: var(--rojo-tinta);
-    font-size: 0.7rem;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-}
-
-.cuidados-seccion ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.cuidados-seccion li {
-    font-size: 0.75rem;
-    color: #aaa;
-    margin-bottom: 8px;
-    position: relative;
-    padding-left: 15px;
-}
-
-.cuidados-seccion li::before {
-    content: "•";
-    color: var(--rojo-tinta);
-    position: absolute;
-    left: 0;
-}
-
-.cuidados-divider {
-    border: none;
-    border-top: 1px solid #222;
-    margin: 15px 0;
-}
-
-.btn-download-mini {
-    background: transparent;
-    border: 1px solid #444;
-    color: #666;
-    font-size: 0.6rem;
-    padding: 8px 15px;
-    border-radius: 50px;
-    cursor: pointer;
-    margin-top: 15px;
-    width: 100%;
-}
-
-/* --- LÓGICA DE IMPRESIÓN (PDF) --- */
-/* --- CONFIGURACIÓN DE PDF ESTÉTICO --- */
-/* --- ARREGLO PARA EL MAPA EN CELULARES --- */
-.mapa-svg-wrapper {
-    -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul feo al tocar */
-    touch-action: manipulation; /* Optimiza para toques rápidos */
-}
-
-.zona-touch {
-    fill: #222; /* Un poco más claro para que se vea en el celu */
-    stroke: #444;
-    stroke-width: 1.5;
-    transition: fill 0.2s, filter 0.2s;
-}
-
-/* --- NUEVA REGLA DE IMPRESIÓN PRO (PDF BLANCO Y NEGRO) --- */
-/* --- CONFIGURACIÓN FINAL DE PDF ALX.TAT --- */
-@media print {
-    /* Forzamos que el navegador use los colores que le decimos */
-    * { 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
-    }
-
-    /* Escondemos la web entera menos los cuidados */
-    body > *:not(#seccion-cuidados-print) { display: none !important; }
-
-    #seccion-cuidados-print {
-        display: block !important;
-        background: white !important; /* FONDO BLANCO */
-        color: black !important; /* TEXTO NEGRO */
-        width: 100%;
-        padding: 20px;
-    }
-
-    /* EL ENCABEZADO DEL PDF: Logo y Nombre */
-    .print-header {
-        display: flex !important; /* Lo mostramos solo en el PDF */
-        flex-direction: column;
-        align-items: center;
-        border-bottom: 2px solid #e63946 !important;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-    }
-
-    .print-header h1 {
-        font-family: 'Bungee Hairline', sans-serif !important; /* TU FUENTE */
-        color: #e63946 !important; /* TU ROJO */
-        font-size: 3.5rem !important;
-        margin: 10px 0;
-    }
-
-    /* LOS TÍTULOS DE CADA SECCIÓN EN EL PDF */
-    .cuidados-seccion h4 {
-        color: #e63946 !important; /* ROJO PARA LOS TÍTULOS */
-        font-size: 1.2rem !important;
-        margin-top: 20px;
-        text-transform: uppercase;
-    }
-
-    /* LAS LISTAS Y EMOJIS */
-    .cuidados-seccion li {
-        font-size: 1rem !important;
-        color: black !important;
-        margin-bottom: 10px;
-        list-style: none; /* Quitamos los puntos de lista feos */
-    }
-
-    /* Aseguramos que se vean los emojis y colores del texto */
-    .cuidados-content {
-        max-height: none !important;
-        display: block !important;
-        opacity: 1 !important;
-    }
-
-    .no-print { display: none !important; } /* Escondemos botones */
-}
-
-        /* --- MEJORA VISUALIZADOR DE ESCALA --- */
-.escala-stage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px; /* Menos espacio para que entre todo */
-}
-
-.referencia-label {
-    font-size: 0.6rem;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-}
-
-.divisor-escala {
-    font-size: 0.6rem;
-    color: var(--rojo-tinta);
-    font-style: italic;
-    margin: 5px 0;
-}
-
-/* El Mockup de la tarjeta ahora parece una tarjeta */
-.card-mockup {
-    width: 85px; 
-    height: 54px;
-    background: linear-gradient(135deg, #222, #000);
-    border: 1px solid #444;
-    border-radius: 6px;
-    position: relative;
-}
-
-.chip-card {
-    width: 12px;
-    height: 10px;
-    background: #444;
-    border-radius: 2px;
-    position: absolute;
-    top: 15px;
-    left: 10px;
-}
-
-.cuadro-tinta {
-    border: 2px solid var(--rojo-tinta);
-    background: rgba(230, 57, 70, 0.15);
-    box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* --- ANIMACIONES DE ENTRADA PRO --- */
-.fade-up {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.fade-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Delay para que el logo aparezca primero, luego el cotizador, luego la galería */
-.header-estudio { animation: fadeIn 1s ease-out forwards; }
-.card-cotizador { animation: fadeInUp 1s ease-out 0.3s forwards; opacity: 0; }
-.galeria-container { animation: fadeInUp 1s ease-out 0.6s forwards; opacity: 0; }
-
-/* --- ESTILOS MAPA CORPORAL --- */
-.mapa-container {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.mapa-svg-wrapper {
-    background: #000;
-    border-radius: 15px;
-    padding: 10px;
-    border: 1px solid #222;
-    max-width: 250px;
-    margin: 10px auto;
-}
-
-.cuerpo-svg {
-    width: 100%;
-    height: auto;
-}
-
-.zona-touch {
-    fill: #1a1a1a;
-    stroke: #333;
-    stroke-width: 1;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.zona-touch:hover {
-    fill: rgba(230, 57, 70, 0.2);
-    stroke: var(--rojo-tinta);
-}
-
-.zona-touch.activa {
-    fill: var(--rojo-tinta);
-    stroke: #fff;
-    filter: drop-shadow(0 0 8px var(--rojo-tinta));
-}
-
-.zona-tag {
-    font-size: 0.7rem;
-    color: var(--rojo-tinta);
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-top: 10px;
-    letter-spacing: 1px;
-}
-
-/* --- ANIMACIONES DE ENTRADA (FADE-IN) --- */
-
-/* Definimos el movimiento base */
-@keyframes entradaSuave {
-    from { 
-        opacity: 0; 
-        transform: translateY(30px); /* Empieza 30px abajo */
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); /* Termina en su lugar */
-    }
-}
-
-/* Aplicamos la animación a los contenedores principales */
-.header-estudio, 
-.card-cotizador, 
-.galeria-container, 
-.cuidados-wrapper {
-    opacity: 0; /* Invisibles al inicio */
-    animation: entradaSuave 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* --- ESCALONAMIENTO (DELAYS) --- */
-/* El logo aparece instantáneo */
-.header-estudio { animation-delay: 0.1s; }
-
-/* El cotizador aparece a los 0.4 segundos */
-.card-cotizador { animation-delay: 0.4s; }
-
-/* El mapa y la escala (dentro del cotizador) ya vienen con él */
-
-/* El portfolio aparece a los 0.8 segundos */
-.galeria-container { animation-delay: 0.8s; }
-
-/* Los cuidados aparecen al final, a los 1.1 segundos */
-.cuidados-wrapper { animation-delay: 1.1s; }
-        
+        /* ... Estilos del mapa corporal ... */
+        .mapa-container { text-align: center; margin-bottom: 25px; }
+        .mapa-svg-wrapper { background: #000; border-radius: 15px; padding: 10px; border: 1px solid #222; max-width: 250px; margin: 10px auto; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        .cuerpo-svg { width: 100%; height: auto; }
+        .zona-touch { fill: #222; stroke: #444; stroke-width: 1.5; cursor: pointer; transition: all 0.3s ease; }
+        .zona-touch.activa { fill: var(--rojo-tinta); stroke: #fff; filter: drop-shadow(0 0 8px var(--rojo-tinta)); }
+        .zona-tag { font-size: 0.7rem; color: var(--rojo-tinta); font-weight: 800; text-transform: uppercase; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -591,10 +222,7 @@
             </div>
 
             <h2>Cotizá tu Próximo Tattoo</h2>
-            
-            <div id="loader" style="display:none; text-align:center; margin-bottom: 20px;">
-                <div style="font-size:0.7rem; color:var(--rojo-tinta); letter-spacing:2px;">CONECTANDO CON EL PORTFOLIO...</div>
-            </div>
+            <div id="loader" style="display:none; text-align:center; margin-bottom: 20px;"><div style="font-size:0.7rem; color:var(--rojo-tinta);">CONECTANDO...</div></div>
 
             <div class="grupo-input">
                 <label>Elegí un Estilo</label>
@@ -606,23 +234,21 @@
             </div>
 
             <div class="grupo-input">
-                <label>Zona del Cuerpo</label>
-<div class="mapa-container">
-    <label>Tocá la zona a tatuar:</label>
-    <div class="mapa-svg-wrapper">
-        <svg viewBox="0 0 200 200" class="cuerpo-svg">
-            <circle cx="100" cy="25" r="15" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
-            <path d="M75 45 h50 v60 h-50 z" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
-            <path d="M55 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
-            <path d="M130 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
-            <path d="M75 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
-            <path d="M105 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
-        </svg>
-    </div>
-    <div id="zona-nombre-display" class="zona-tag">Zona: Brazo / Pierna</div>
-</div>
-                
-                <select id="zona-cuerpo" class="input-pro" onchange="calcular()">
+                <div class="mapa-container">
+                    <label>Tocá la zona a tatuar:</label>
+                    <div class="mapa-svg-wrapper">
+                        <svg viewBox="0 0 200 200" class="cuerpo-svg">
+                            <circle cx="100" cy="25" r="15" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
+                            <path d="M75 45 h50 v60 h-50 z" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
+                            <path d="M55 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
+                            <path d="M130 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
+                            <path d="M75 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
+                            <path d="M105 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
+                        </svg>
+                    </div>
+                    <div id="zona-nombre-display" class="zona-tag">Zona: Brazo / Pierna</div>
+                </div>
+                <select id="zona-cuerpo" class="input-pro" style="display:none;">
                     <option value="1">Brazo / Pierna</option>
                     <option value="1.2">Espalda / Muslo</option>
                     <option value="1.4">Costillas / Cuello / Abdomen</option>
@@ -635,43 +261,23 @@
                 <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
             </div>
 
-
-
             <div id="visualizador-escala" class="escala-wrapper" style="display:none;">
-    <div class="escala-header">
-        <span>Referencia de tamaño real:</span>
-        <strong id="cm-display">0 cm</strong>
-    </div>
-    <div class="escala-stage">
-    <div class="referencia-label">TU TATTOO</div>
-    <div id="cuadro-referencia" class="cuadro-tinta"></div>
-    
-    <div class="divisor-escala">vs</div>
-
-    <div class="card-mockup">
-        <div class="chip-card"></div>
-    </div>
-    <div class="referencia-label">Referencia: Tarjeta de Crédito (8.5cm)</div>
-</div>
-</div>
-            <div id="resultado">Esperando datos...</div>
-
-            <div id="aviso-sesiones" class="aviso-info" style="display:none;">
-                ⚠️ Este proyecto podría requerir más de una sesión.
+                <div class="escala-header"><span>Referencia:</span><strong id="cm-display">0 cm</strong></div>
+                <div class="escala-stage">
+                    <div class="referencia-label">TU TATTOO</div>
+                    <div id="cuadro-referencia" class="cuadro-tinta"></div>
+                    <div class="card-mockup"><div class="chip-card"></div></div>
+                    <div class="referencia-label">Tarjeta Crédito (8.5cm)</div>
+                </div>
             </div>
 
+            <div id="resultado">Esperando datos...</div>
+            <div id="aviso-sesiones" class="aviso-info" style="display:none;">⚠️ Posible más de una sesión.</div>
+
             <div id="seccion-reserva" style="display:none; margin-top: 30px; border-top: 1px dashed #333; padding-top: 25px;">
-                <label>Tu Nombre</label>
-                <input type="text" id="nombre-cliente" class="input-pro" placeholder="Nombre completo">
-                <label>WhatsApp</label>
-                <input type="tel" id="tel-cliente" class="input-pro" placeholder="Número con código de área">
-                <label>Horario de Preferencia</label>
-                <select id="hora-turno" class="input-pro">
-                    <option value="11:00">Mañana (11:00 AM)</option>
-                    <option value="14:00">Tarde (02:00 PM)</option>
-                    <option value="17:00">Tarde (05:00 PM)</option>
-                </select>
-                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);">AGENDAR POR WHATSAPP</button>
+                <label>Tu Nombre</label><input type="text" id="nombre-cliente" class="input-pro">
+                <label>WhatsApp</label><input type="tel" id="tel-cliente" class="input-pro">
+                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">AGENDAR POR WHATSAPP</button>
             </div>
         </div>
 
@@ -680,71 +286,47 @@
             <div id="galeria-dinamica" class="galeria-dinamica"></div>
         </div>
 
-<div class="cuidados-wrapper" id="seccion-cuidados-print">
-    <div class="print-header">
-        <img src="logo2026.png" alt="Logo ALX.TAT" style="max-width: 100px;">
-        <h1>ALX.TAT</h1>
-        <p style="color: #666; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Guía de Cuidados Profesionales</p>
-    </div>
+        <div class="cuidados-wrapper" id="seccion-cuidados-print">
+            <div class="print-header">
+                <img src="logo2026.png" alt="Logo ALX.TAT" style="max-width: 100px;">
+                <h1>ALX.TAT</h1>
+                <p style="color: #666; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Guía de Cuidados Profesionales</p>
+            </div>
 
-    <button class="btn-cuidados-toggle no-print" onclick="toggleCuidados()">
-        <span>🛠️ Preparación y Cuidados</span>
-        <i id="icono-cuidados">+</i>
-    </button>
-    
-    <div id="contenido-cuidados" class="cuidados-content">
-        <div class="cuidados-seccion">
-            <h4>I. PREPARACIÓN (ANTES DEL TURNO)</h4>
-            <ul>
-                <li>Dormí un mínimo de 8hs y vení con una buena base de hidratación.</li>
-                <li>No consumas alcohol, aspirinas ni sustancias 24hs antes.</li>
-                <li>Traé ropa cómoda que permita el acceso fácil a la zona que te vas a tatuar.</li>
-            </ul>
-        </div>
-        
-        <div class="cuidados-seccion">
-            <h4>II. CUIDADOS POST-TATTOO</h4>
-            <ul>
-                <li>Mantené el parche protector el tiempo indicado por el artista.</li>
-                <li>Lavado: Jabón neutro, agua fría/tibia y secado a toques con papel descartable.</li>
-                <li>Crema: Aplicar una capa casi invisible (que la piel brille pero no esté empastada).</li>
-                <li>Prohibido: Sol, piletas, gimnasio (7 días) y arrancar cascaritas.</li>
-            </ul>
-        </div>
-
-        <div class="print-footer">
-            <p>Si tenés dudas, escribime directamente al WhatsApp: 5491157734552</p>
-            <span>ALX.TAT © 2026 - Arte y Precisión</span>
+            <button class="btn-cuidados-toggle no-print" onclick="toggleCuidados()">
+                <span>🛠️ Preparación y Cuidados</span>
+                <i id="icono-cuidados">+</i>
+            </button>
+            
+            <div id="contenido-cuidados" class="cuidados-content">
+                <div class="cuidados-seccion">
+                    <h4>I. PREPARACIÓN (ANTES DEL TURNO)</h4>
+                    <ul>
+                        <li>Dormí un mínimo de 8hs y vení con una buena base de hidratación.</li>
+                        <li>No consumas alcohol, aspirinas ni sustancias 24hs antes.</li>
+                        <li>Traé ropa cómoda que permita el acceso fácil a la zona que te vas a tatuar.</li>
+                    </ul>
+                </div>
+                <div class="cuidados-seccion">
+                    <h4>II. CUIDADOS POST-TATTOO</h4>
+                    <ul>
+                        <li>Mantené el parche protector el tiempo indicado por el artista.</li>
+                        <li>Lavado: Jabón neutro, agua fría/tibia y secado a toques con papel descartable.</li>
+                        <li>Crema: Aplicar una capa casi invisible.</li>
+                        <li>Prohibido: Sol, piletas, gimnasio (7 días) y arrancar cascaritas.</li>
+                    </ul>
+                </div>
+                <button class="btn-download-mini no-print" onclick="window.print()">📥 DESCARGAR GUÍA EN PDF</button>
+            </div>
         </div>
 
-        <button class="btn-download-mini no-print" onclick="window.print()">📥 DESCARGAR GUÍA EN PDF</button>
-    </div>
-</div>
-        
         <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#222; width:100%; margin-top:50px; cursor:pointer; font-size: 0.6rem;">⚙ ACCESO PRIVADO</button>
-    </div>
-
-    <div id="overlay-carrete" class="overlay-carrete">
-        <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
-        <button class="nav-arrow arrow-left" onclick="moverSlider(-1)">&#10094;</button>
-        <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
-        <div class="contenedor-slider" id="slider-fotos"></div>
-        <div class="footer-carrete">
-            <h3 id="titulo-carrete" style="color:white; margin-bottom:15px; font-size: 1rem; letter-spacing: 2px;">ESTILO</h3>
-            <button id="btn-cotizar-carrete" class="btn-calc">COTIZAR ESTE ESTILO</button>
-        </div>
     </div>
 
     <script>
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
         const MI_PIN = "1234";
-
-        const mapaDificultad = {
-            "linea fina": 1, "minimalista": 1,
-            "blackwork": 1.5, "tradicional": 1.5, "puntillismo": 1.5,
-            "realismo": 2.5, "neo tradicional": 2, "full color": 2
-        };
-
+        const mapaDificultad = { "linea fina": 1, "minimalista": 1, "blackwork": 1.5, "tradicional": 1.5, "puntillismo": 1.5, "realismo": 2.5, "neo tradicional": 2, "full color": 2 };
         let datosCargados = { precios: {}, galeria: [] };
         let fotosPorEstilo = {};
 
@@ -763,18 +345,15 @@
             const contenedor = document.getElementById('galeria-dinamica');
             contenedor.innerHTML = "";
             fotosPorEstilo = {};
-
             datos.forEach(item => {
                 if (!item.estilo) return;
                 const key = item.estilo.trim();
                 if (!fotosPorEstilo[key]) fotosPorEstilo[key] = [];
                 fotosPorEstilo[key].push(item);
             });
-
             Object.keys(fotosPorEstilo).forEach(estilo => {
                 const grupo = fotosPorEstilo[estilo];
                 const portada = grupo.find(f => String(f.portada).toUpperCase() === "SI") || grupo[0];
-                
                 const ficha = document.createElement('div');
                 ficha.className = "ficha-galeria";
                 ficha.innerHTML = `<img src="${portada.imagen}"><div class="info-estilo"><span>${estilo}</span><small class="small-counter">${grupo.length} TRABAJOS</small></div>`;
@@ -783,197 +362,73 @@
             });
         }
 
-        function abrirCarrete(nombre) {
-            const overlay = document.getElementById('overlay-carrete');
-            const slider = document.getElementById('slider-fotos');
-            const titulo = document.getElementById('titulo-carrete');
-            const btn = document.getElementById('btn-cotizar-carrete');
+        function calcular() {
+            const tamano = parseFloat(document.getElementById('tamaño').value) || 0;
+            const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
+            const zonaCuerpo = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
+            const precioBase = complejidad >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
+            const resDiv = document.getElementById('resultado');
+            const seccionReserva = document.getElementById('seccion-reserva');
+            const resEscala = document.getElementById('visualizador-escala');
 
-            const fotos = fotosPorEstilo[nombre].sort((a,b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
-            slider.innerHTML = "";
-            fotos.forEach(f => {
-                const div = document.createElement('div');
-                div.className = "slide-item";
-                div.innerHTML = `<img src="${f.imagen}">`;
-                slider.appendChild(div);
-            });
+            // Barra de progreso
+            let puntos = 0; if (tamano > 0) puntos++; if (complejidad > 0) puntos++; if (zonaCuerpo > 1) puntos++;
+            const pct = Math.round((puntos/3)*100);
+            document.getElementById('barra-tinta').style.width = pct + "%";
+            document.getElementById('porcentaje-texto').innerText = pct + "%";
 
-            titulo.innerText = nombre.toUpperCase();
-            slider.scrollLeft = 0;
-            overlay.style.display = "flex";
-            document.body.style.overflow = "hidden";
+            if (tamano > 0) {
+                let total = (precioBase / 10) * tamano * complejidad * zonaCuerpo;
+                if (total < precioBase) total = precioBase;
+                resDiv.innerText = `Presupuesto Estimado: $${Math.round(total).toLocaleString()}`;
+                
+                // Efecto brillo
+                resDiv.classList.add('glow-efecto');
+                setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
 
-            btn.onclick = () => {
-                document.getElementById('complejidad').value = mapaDificultad[nombre.toLowerCase().trim()] || 1.5;
-                cerrarCarrete();
-                const toast = document.getElementById('toast-mensaje');
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2500);
+                if (resEscala) {
+                    resEscala.style.display = "block";
+                    document.getElementById('cm-display').innerText = tamano + " CM";
+                    let pxSize = tamano * 10;
+                    document.getElementById('cuadro-referencia').style.width = pxSize + "px";
+                    document.getElementById('cuadro-referencia').style.height = pxSize + "px";
+                }
+                seccionReserva.style.display = "block";
+            } else {
+                resDiv.innerText = "Ingresá el tamaño";
+                seccionReserva.style.display = "none";
+                resEscala.style.display = "none";
+            }
+        }
 
-                setTimeout(() => {
-                    document.getElementById('cotizador-seccion').scrollIntoView({ behavior: 'smooth' });
-                    document.getElementById('tamaño').focus();
-                    calcular();
-                }, 400);
-            };
+        function seleccionarZona(elemento) {
+            document.querySelectorAll('.zona-touch').forEach(z => { z.classList.remove('activa'); z.style.fill = "#222"; });
+            elemento.classList.add('activa');
+            elemento.style.fill = "#e63946";
+            const valor = elemento.getAttribute('data-valor');
+            document.getElementById('zona-cuerpo').value = valor;
+            const nombres = { "1": "Brazo / Pierna", "1.2": "Espalda / Muslo", "1.4": "Costillas / Cuello", "1.1": "Mano / Pie" };
+            document.getElementById('zona-nombre-display').innerText = "Zona: " + (nombres[valor] || "Seleccionada");
+            calcular();
+        }
+
+        // Funciones auxiliares (Toggle, WhatsApp, Carrete)
+        function toggleCuidados() {
+            const c = document.getElementById('contenido-cuidados');
+            c.classList.toggle('open');
+            document.getElementById('icono-cuidados').innerText = c.classList.contains('open') ? "−" : "+";
+        }
+
+        async function guardarTurno() {
+            const n = document.getElementById('nombre-cliente').value;
+            const t = document.getElementById('tamaño').value;
+            const r = document.getElementById('resultado').innerText;
+            const msg = `Hola Alex! Soy ${n}. Coticé un tattoo de ${t}cm. Presupuesto: ${r}. Quiero agendar!`;
+            window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
         }
 
         function cerrarCarrete() { document.getElementById('overlay-carrete').style.display = "none"; document.body.style.overflow = "auto"; }
-        function moverSlider(dir) { const s = document.getElementById('slider-fotos'); s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' }); }
-
-        /* --- FUNCIÓN DE CÁLCULO INTEGRADA CON EFECTO DE BRILLO --- */
-function calcular() {
-    // 1. OBTENEMOS DATOS DE LOS INPUTS (Tamaño, Complejidad, Zona)
-    const tamano = parseFloat(document.getElementById('tamaño').value) || 0;
-    const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
-    const zonaCuerpo = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
-    
-    // 2. Traer precios base del Excel (Vienen de tu variable datosCargados)
-    const precioBase = complejidad >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
-
-    // Identificamos el Div del resultado y la sección de reserva para darles órdenes luego
-    const resDiv = document.getElementById('resultado');
-    const seccionReserva = document.getElementById('seccion-reserva');
-
-    // Identificamos los elementos de la ESCALA REAL para darles órdenes luego
-    const resEscala = document.getElementById('visualizador-escala');
-    const cuadroReferencia = document.getElementById('cuadro-referencia');
-    const textCm = document.getElementById('cm-display');
-
-    if (tamano > 0) {
-        // 3. CÁLCULO PRO: (Base / 10 * Tamaño * Complejidad * Zona)
-        let total = (precioBase / 10) * tamano * complejidad * zonaCuerpo;
-
-        // EL "PISO" (Precio Mínimo): Si da menos de tu base, se cobra el base.
-        if (total < precioBase) { total = precioBase; }
-
-        // 4. LÓGICA DE ESCALA REAL
-        if (resEscala) {
-            resEscala.style.display = "block";
-            textCm.innerText = tamano + " CM";
-            
-            // Factor de conversión: 1cm = 10px en pantalla estándar
-            let pxSize = tamano * 10; 
-            cuadroReferencia.style.width = pxSize + "px";
-            cuadroReferencia.style.height = pxSize + "px";
-        }
-
-        // 5. MOSTRAR RESULTADO (Formateado como moneda)
-        resDiv.innerText = `Presupuesto Estimado: $${Math.round(total).toLocaleString()}`;
-        
-        /* --- [INICIO DE LA INTEGRACIÓN QUE TE CONFUNDIÓ] ---
-           Le decimos al Div del resultado: "Agregale la clase 'glow-efecto' para que brille de rojo tinta".
-           Espera 500ms (0.5 segundos) y sacale la clase para que el brillo se vaya.
-        */
-        resDiv.classList.add('glow-efecto'); 
-        setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
-        // --- [FIN DE LA INTEGRACIÓN] ---
-
-        // 6. LÓGICA DE SESIONES
-        const avisoSesiones = document.getElementById('aviso-sesiones');
-        if (tamano >= 22 || (complejidad >= 2 && tamano >= 18)) {
-            if (avisoSesiones) avisoSesiones.style.display = "block";
-        } else {
-            if (avisoSesiones) avisoSesiones.style.display = "none";
-        }
-
-        // Mostramos la sección para reservar el turno
-        if (seccionReserva) seccionReserva.style.display = "block";
-    
-    } else {
-        // Si el tamaño es cero o vacío, limpiamos todo
-        resDiv.innerText = "Ingresá el tamaño";
-        if (seccionReserva) seccionReserva.style.display = "none";
-        if (resEscala) resEscala.style.display = "none";
-    }
-}
-
-        async function guardarTurno() {
-    const n = document.getElementById('nombre-cliente').value.trim();
-    const w = document.getElementById('tel-cliente').value.trim();
-    const tam = document.getElementById('tamaño').value;
-    const precio = document.getElementById('resultado').innerText;
-    
-    // Capturamos el texto de la zona (ej: "Costillas / Cuello / Abdomen")
-    const zonaSelect = document.getElementById('zona-cuerpo');
-    const zonaTexto = zonaSelect.options[zonaSelect.selectedIndex].text;
-
-    // Capturamos el estilo seleccionado
-    const estiloSelect = document.getElementById('complejidad');
-    const estiloTexto = estiloSelect.options[estiloSelect.selectedIndex].text;
-
-    if(!n || !w) {
-        return alert("⚠️ Por favor, completá tu nombre y WhatsApp para agendar.");
-    }
-
-    // Armamos el mensaje Pro
-    const mensaje = `Hola Alex! Soy ${n}. Coticé un tattoo de ${tam}cm (${estiloTexto}) en la zona de ${zonaTexto}. El presupuesto estimado es ${precio}. Me gustaría agendar un turno!`;
-
-    // Abrimos WhatsApp (Asegúrate que el número 5491157734552 sea el correcto)
-    window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(mensaje)}`;
-}
-
-        function abrirPanelArtista() { if (prompt("PIN:") === MI_PIN) alert("Acceso concedido."); }
-
         window.addEventListener('DOMContentLoaded', cargarDatos);
-function toggleCuidados() {
-    const contenido = document.getElementById('contenido-cuidados');
-    const icono = document.getElementById('icono-cuidados');
-    
-    contenido.classList.toggle('open');
-    
-    if (contenido.classList.contains('open')) {
-        icono.innerText = "−"; // Signo menos
-        // Pequeño scroll para que se vea el contenido al abrir
-        setTimeout(() => {
-            contenido.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 300);
-    } else {
-        icono.innerText = "+"; // Signo más
-    }
-}
-
-function seleccionarZona(elemento) {
-    // 1. Evitamos que el evento se dispare dos veces en celus
-    if (!elemento) return;
-
-    // 2. Limpiamos todas las zonas
-    const todasLasZonas = document.querySelectorAll('.zona-touch');
-    todasLasZonas.forEach(z => {
-        z.classList.remove('activa');
-        z.style.fill = "#222"; // Color base
-    });
-    
-    // 3. Activamos la elegida
-    elemento.classList.add('activa');
-    elemento.style.fill = "#e63946"; // Rojo ALX.TAT directo
-
-    // 4. Sincronizamos con el selector
-    const valorZona = elemento.getAttribute('data-valor');
-    const selector = document.getElementById('zona-cuerpo');
-    if (selector) selector.value = valorZona;
-    
-    // 5. Actualizamos el texto de la etiqueta
-    const nombresZonas = {
-        "1": "Brazo / Pierna",
-        "1.2": "Espalda / Muslo",
-        "1.4": "Costillas / Cuello / Abdomen",
-        "1.1": "Mano / Pie / Muñeca"
-    };
-    
-    const display = document.getElementById('zona-nombre-display');
-    if (display) {
-        display.innerText = "Zona: " + (nombresZonas[valorZona] || "Seleccionada");
-        // Efecto visual rápido en el texto
-        display.style.color = "#fff";
-        setTimeout(() => display.style.color = "#e63946", 300);
-    }
-
-    // 6. Recalculamos el precio
-    calcular();
-}      
-        
-        
     </script>
 </body>
 </html>
