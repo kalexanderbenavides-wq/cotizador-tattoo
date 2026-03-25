@@ -480,7 +480,8 @@
 <body>
 
 <div id="toast-mensaje" class="toast-aviso">⚡ ESTILO SELECCIONADO</div>
-    
+    <div id="cotizador-seccion" class="card-cotizador">
+    </div>
     <div class="card">
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="logo2026.png" alt="Logo Estudio" style="max-width: 120px; height: auto;">
@@ -545,16 +546,17 @@
 // --- [DICCIONARIO MAESTRO DE ESTILOS Y DIFICULTAD] ---
 // Editá esto cuando agregues estilos nuevos al Excel.
 // Valores: 1 = Baja, 1.5 = Media, 2 = Alta
+// --- [DICCIONARIO MAESTRO ACTUALIZADO] ---
+// Escribí los estilos SIEMPRE en minúsculas aquí para que el buscador los encuentre.
 const mapaDificultad = {
-    "Linea Fina": 1,
-    "Minimalista": 1,
-    "Blackwork": 1.5,
-    "Tradicional": 2,
-    "Puntillismo": 1.5,
-    "Realismo": 2,
-    "Neo Tradicional": 2,
-    "Full Color": 2
-    // Agregá acá los estilos nuevos...
+    "linea fina": 1,
+    "minimalista": 1,
+    "blackwork": 1.5,
+    "tradicional": 1.5,
+    "puntillismo": 1.5,
+    "realismo": 2,
+    "neo tradicional": 2, // Ahora con n y t minúsculas
+    "full color": 2
 };
         
         // --- VARIABLES DE ESTADO ---
@@ -894,24 +896,37 @@ function abrirCarrete(nombreEstilo) {
     btnCotizar.onclick = () => {
         const selectorComplejidad = document.getElementById('complejidad');
         
-        // 1. Obtenemos la dificultad del mapa usando el nombre del estilo.
-        // Si el estilo no está en el mapa, usamos "1.5" (Media) por defecto.
-        const dificultadAutomatica = mapaDificultad[nombreEstilo] || 1.5;
+        // 1. NORMALIZACIÓN: Pasamos el nombre a minúsculas y quitamos espacios extra
+        const estiloNormalizado = nombreEstilo.toLowerCase().trim();
+        
+        // 2. BUSQUEDA: Obtenemos la dificultad del mapa
+        const dificultadAutomatica = mapaDificultad[estiloNormalizado] || 1.5;
 
-        // 2. Seteamos el valor en el menú desplegable del cotizador (invisible o visible)
+        // 3. ASIGNACIÓN: Seteamos el valor en el menú
         selectorComplejidad.value = dificultadAutomatica;
 
-        // 3. Cerramos el carrete y subimos (Esto ya lo tenías)
+        // 4. CIERRE Y NAVEGACIÓN (Corregido para PC)
         cerrarCarrete();
-        
-        // Toast de confirmación (Opcional, si lo agregaste)
-        mostrarToast(`Estilo ${nombreEstilo} seleccionado (Dificultad: ${dificultadAutomatica})`);
 
-        // Volamos al cotizador y enfocamos
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Pequeño delay para dejar que el DOM se acomode tras cerrar el carrete
         setTimeout(() => {
-            document.getElementById('tamaño').focus();
-        }, 600);
+            // Intentamos ir al cotizador usando el ID del contenedor principal
+            const seccionDestino = document.getElementById('cotizador-seccion') || document.body;
+            
+            seccionDestino.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+
+            // Foco en el tamaño para UX pro
+            const inputTam = document.getElementById('tamaño');
+            if(inputTam) inputTam.focus();
+
+            // Toast de confirmación (si lo tenés implementado)
+            if(typeof mostrarToast === 'function') {
+                mostrarToast(`Estilo: ${nombreEstilo} • Dificultad: ${dificultadAutomatica === 2 ? 'Alta' : 'Media'}`);
+            }
+        }, 150); // 150ms es el tiempo ideal para que no se "trabe" el scroll
     };
 }
 
