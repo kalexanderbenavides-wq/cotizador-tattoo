@@ -447,6 +447,12 @@
 /* Animación para que el formulario "brille" al ser seleccionado */
 .card-cotizador {
     transition: box-shadow 0.5s ease;
+    <div class="progreso-container">
+    <div class="progreso-texto">Progreso de Cotización: <span id="porcentaje-texto">0%</span></div>
+    <div class="barra-fondo">
+        <div id="barra-tinta" class="barra-tinta"></div>
+    </div>
+</div>
 }
         
 .toast-aviso {
@@ -470,7 +476,77 @@
     top: 20px; /* Aparece en pantalla */
 }
 
+/* Animación de entrada suave */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-cotizador, .ficha-galeria, .titulo-seccion {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* El aviso de sesiones con un parpadeo sutil */
+.pulse-anim {
+    animation: pulse 2s infinite;
+    background: rgba(230, 57, 70, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 4px solid var(--rojo-tinta);
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: #ffb4b4;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
         
+/* --- ESTILOS BARRA DE PROGRESO --- */
+.progreso-container {
+    margin-bottom: 25px;
+    padding: 0 5px;
+}
+
+.progreso-texto {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+#porcentaje-texto {
+    color: var(--rojo-tinta);
+}
+
+.barra-fondo {
+    width: 100%;
+    height: 6px;
+    background: #1a1a1a; /* Fondo oscuro del tubo */
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.barra-tinta {
+    width: 0%; /* Inicia en cero */
+    height: 100%;
+    background: linear-gradient(90deg, #ff4d4d, var(--rojo-tinta));
+    box-shadow: 0 0 10px rgba(230, 57, 70, 0.8); /* Brillo de la tinta */
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Movimiento fluido */
+    border-radius: 10px;
+}
+    
         
     </style>
 
@@ -491,6 +567,20 @@
         <label>Tamaño (5cm - 50cm):</label>
         <input type="number" id="tamaño" placeholder="Ej: 15" min="5" max="50">
 
+<div class="grupo-input">
+    <label for="zona-cuerpo">¿En qué parte del cuerpo?</label>
+    <select id="zona-cuerpo" class="input-pro">
+        <option value="1">Brazo / Pierna (Zona fácil)</option>
+        <option value="1.2">Espalda / Muslo (Zona media)</option>
+        <option value="1.6">Costillas / Cuello / Abdomen (Zona compleja)</option>
+        <option value="1.4">Mano / Pie / Muñeca</option>
+    </select>
+</div>
+
+<div id="aviso-sesiones" class="aviso-info" style="display:none;">
+    ⚠️ Este proyecto podría requerir más de una sesión.
+</div>
+        
         <label>Complejidad / Estilo:</label>
         <select id="complejidad">
             <option value="1">Baja (Solo líneas)</option>
@@ -554,7 +644,7 @@ const mapaDificultad = {
     "blackwork": 1.5,
     "tradicional": 1.5,
     "puntillismo": 1.5,
-    "realismo": 2,
+    "realismo": 2.5,
     "neo tradicional": 2, // Ahora con n y t minúsculas
     "full color": 2
 };
@@ -665,56 +755,77 @@ function dibujarGaleria(datos) {
 
         // --- FUNCIONES DE CÁLCULO Y RESERVA ---
         async function calcular() {
-    const tam = parseFloat(document.getElementById('tamaño').value);
-    const selector = document.getElementById('complejidad');
-    const comp = parseFloat(selector.value);
+    // 1. CAPTURA DE DATOS
+    const tamano = parseFloat(document.getElementById('tamaño').value) || 0;
+    const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
+    const zonaCuerpo = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
     
-    // Validación rápida antes de mostrar carga
-    if (isNaN(tam) || tam < 5) return alert("⚠️ Ingresá un tamaño válido (mín. 5cm)");
+    // 2. PRECIOS BASE (Vienen de tu Excel)
+    // 'baja' suele ser el mínimo por abrir materiales.
+    // 'mediaAlta' es tu tarifa para trabajos que requieren más técnica.
+    const baseSegunEstilo = complejidad >= 2 ? datosCargados.precios.mediaAlta : datosCargados.precios.baja;
 
-    // 1. ESCONDEMOS EL TICKET ANTERIOR Y PRENDEMOS EL LOADER
-    document.getElementById('resultado').style.display = 'none';
-    document.getElementById('loader').style.display = 'block';
-
-    // 2. ESPERAMOS 500ms (Efecto de "procesamiento" pro)
-    setTimeout(() => {
-        let fullText = selector.options[selector.selectedIndex].text;
-        let match = fullText.match(/\(([^)]+)\)/);
-        estiloNombre = match ? match[1] : fullText;
-
-        const precios = datosCargados.precios;
-        let base = (comp == 1) ? precios.baja : precios.mediaAlta;
-        let extra = (tam < 15) ? 0 : Math.ceil((tam - 15) / 5) * 40000;
-        totalCalculado = base + extra;
-
-        const resDiv = document.getElementById('resultado');
+    if (tamano > 0) {
         
-        // Dibujamos el Ticket Cyber-Minimal
-        resDiv.innerHTML = `
-            <div id="tarjeta-downloadable" class="ticket-quote">
-                <img src="logo2026.png" style="width: 60px; margin-bottom:10px;">
-                <div style="font-size:0.65rem; color:#ffffff; text-transform:uppercase; letter-spacing:2px; font-weight:700;">
-                    ALX.TATT ESTUDIO
-                </div>
-                <h2 class="ticket-price">$${totalCalculado.toLocaleString()}</h2>
-                <p class="ticket-details">${estiloNombre} • ${tam}CM</p>
-                <hr class="ticket-divider">
-                <div class="ticket-footer">
-                    ALX.TATT ESTUDIO • VILLA DEL PARQUE<br>
-                    VÁLIDO POR 30 DÍAS • SUJETO A CAMBIOS
-                </div>
-            </div>
-            <div class="btn-ticket-group" style="margin-top: 25px;">
-                <button onclick="descargarCotizacion()" class="btn-download">⬇️ DESCARGAR IMAGEN</button>
-            </div>
-        `;
+        // --- AQUÍ MODIFICÁS TU LÓGICA DE AUMENTO ---
         
-        // 3. APAGAMOS LOADER Y MOSTRAMOS EL RESULTADO FINAL
-        document.getElementById('loader').style.display = 'none';
-        resDiv.style.display = "block";
-        document.getElementById('seccion-reserva').style.display = "block";
-        
-    }, 500); // Fin del tiempo de espera
+        // A. COSTO POR CM: ¿Cuánto cobrás cada centímetro extra?
+        // Ejemplo: Si el base es 60.000, dividimos por 10 para que cada cm cueste 6.000
+        const factorCentimetro = baseSegunEstilo / 10; 
+
+        // B. CÁLCULO MATEMÁTICO:
+        // Multiplicamos (Costo x Cm) * (Tamaño) * (Dificultad del Estilo) * (Dificultad de la Zona)
+        let total = factorCentimetro * tamano * complejidad * zonaCuerpo;
+
+        // C. EL "PISO" (Precio Mínimo): 
+        // Pase lo que pase, si el resultado es menor a tu base, se cobra el base.
+        // Esto te asegura cubrir siempre los materiales descartables.
+        if (total < baseSegunEstilo) {
+            total = baseSegunEstilo;
+        }
+
+        // --- FIN DE LA LÓGICA ---
+
+        // 3. AVISO DE SESIONES (Lógica de aviso)
+        const avisoSesiones = document.getElementById('aviso-sesiones');
+        // Podés cambiar el '20' por el tamaño que vos consideres que ya es otra sesión.
+        if (tamano >= 22 || (complejidad >= 2 && tamano >= 18)) {
+            avisoSesiones.style.display = "block";
+        } else {
+            avisoSesiones.style.display = "none";
+        }
+
+        // 4. RENDERIZADO EN PANTALLA
+        document.getElementById('resultado').innerText = `Estimado: $${Math.round(total).toLocaleString()}`;
+    }
+            function actualizarProgreso() {
+    const inputs = {
+        tamano: document.getElementById('tamaño').value,
+        complejidad: document.getElementById('complejidad').value,
+        zona: document.getElementById('zona-cuerpo').value,
+        cliente: document.getElementById('nombre')?.value || "" // Opcional si tenés el nombre
+    };
+
+    let completados = 0;
+    let totalCampos = 3; // Tamaño, Complejidad, Zona
+
+    if (parseFloat(inputs.tamano) > 0) completados++;
+    if (inputs.complejidad !== "") completados++;
+    if (inputs.zona !== "") completados++;
+
+    // Calculamos el porcentaje
+    const porcentaje = Math.round((completados / totalCampos) * 100);
+    
+    // Actualizamos visualmente
+    const barra = document.getElementById('barra-tinta');
+    const texto = document.getElementById('porcentaje-texto');
+    
+    if(barra) barra.style.width = porcentaje + "%";
+    if(texto) texto.innerText = porcentaje + "%";
+}
+
+// IMPORTANTE: Agregá esta línea al final de tu función calcular()
+// actualizarProgreso();
 }
 
         function prepararCaptura() {
