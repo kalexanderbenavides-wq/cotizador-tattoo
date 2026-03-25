@@ -342,56 +342,73 @@
     transition: fill 0.2s, filter 0.2s;
 }
 
-/* --- REFORMA TOTAL DEL PDF (IMPRESIÓN) --- */
+/* --- NUEVA REGLA DE IMPRESIÓN PRO (PDF BLANCO Y NEGRO) --- */
 @media print {
-    /* Forzamos que se vea el color en el PDF */
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-
-    /* Escondemos TODO lo que no sea la guía */
-    body > *:not(#seccion-cuidados-print) { display: none !important; }
-
-    #seccion-cuidados-print {
-        display: block !important;
-        position: absolute;
-        top: 0; left: 0; width: 100%;
-        background-color: #ffffff !important; /* Fondo blanco para que no salga negro */
-        color: #000000 !important; /* Texto negro para máxima nitidez */
-        padding: 0;
-        margin: 0;
+    /* Forzamos al navegador a imprimir fondos y colores tal cual */
+    * { 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
     }
 
+    /* ESCONDEMOS TODO menos la sección de cuidados */
+    body > *:not(#seccion-cuidados-print) { 
+        display: none !important; 
+    }
+    
+    /* Configuración para que la guía de cuidados se vea profesional en papel */
+    #seccion-cuidados-print, #seccion-cuidados-print * { 
+        display: block !important; 
+        visibility: visible !important; 
+    }
+
+    #seccion-cuidados-print {
+        position: absolute;
+        top: 0; left: 0; width: 100%;
+        background-color: #ffffff !important; /* Fondo blanco forzado */
+        color: #000000 !important; /* Texto negro forzado */
+        padding: 0;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* El encabezado de la guía impreso (Solo visible en el PDF) */
     .print-header { 
         display: block !important; 
         text-align: center; 
-        border-bottom: 3px solid #e63946 !important; 
+        border-bottom: 2px solid #e63946 !important; /* Borde rojo */
         padding-bottom: 20px;
         margin-bottom: 30px;
     }
 
     .print-header h1 { 
-        color: #e63946 !important; 
+        color: #e63946 !important; /* Título rojo neón */
         font-family: 'Bungee Hairline', sans-serif; 
-        font-size: 3.5rem !important;
+        font-size: 3rem !important;
         margin: 0;
+        letter-spacing: 3px;
     }
 
+    .cuidados-seccion { margin-bottom: 20px; }
     .cuidados-seccion h4 { 
-        color: #e63946 !important; 
-        font-size: 1.2rem !important; 
-        margin-top: 25px;
+        color: #e63946 !important; /* Subtítulos rojos */
+        font-size: 1.1rem !important; 
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
         text-transform: uppercase;
     }
-
     .cuidados-seccion li { 
-        color: #333333 !important; 
-        font-size: 1rem !important; 
-        margin-bottom: 10px;
+        color: #333333 !important; /* Texto gris muy oscuro */
+        font-size: 0.95rem !important; 
+        margin-bottom: 8px; 
     }
 
-    /* Escondemos los botones en el papel */
-    .no-print, .btn-download-mini, .btn-cuidados-toggle { display: none !important; }
+    /* Escondemos los botones y elementos interactivos que no sirven en papel */
+    .no-print, .btn-download-mini, .btn-cuidados-toggle { 
+        display: none !important; 
+    }
 
-    /* Forzamos que el contenido se vea aunque esté cerrado en la web */
+    /* Forzamos que el contenido esté visible aunque esté cerrado en la web */
     .cuidados-content { 
         max-height: none !important; 
         display: block !important; 
@@ -684,7 +701,7 @@
             <ul>
                 <li>Dormí un mínimo de 8hs y vení con una buena base de hidratación.</li>
                 <li>No consumas alcohol, aspirinas ni sustancias 24hs antes.</li>
-                <li>Traé ropa cómoda que permita el acceso fácil a la zona: <strong>${document.getElementById('zona-cuerpo').options[document.getElementById('zona-cuerpo').selectedIndex].text}</strong>.</li>
+                <li>Traé ropa cómoda que permita el acceso fácil a la zona que te vas a tatuar.</li>
             </ul>
         </div>
         
@@ -807,48 +824,72 @@
         function cerrarCarrete() { document.getElementById('overlay-carrete').style.display = "none"; document.body.style.overflow = "auto"; }
         function moverSlider(dir) { const s = document.getElementById('slider-fotos'); s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' }); }
 
-        function calcular() {
+        /* --- FUNCIÓN DE CÁLCULO INTEGRADA CON EFECTO DE BRILLO --- */
+function calcular() {
+    // 1. OBTENEMOS DATOS DE LOS INPUTS (Tamaño, Complejidad, Zona)
+    const tamano = parseFloat(document.getElementById('tamaño').value) || 0;
+    const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
+    const zonaCuerpo = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
+    
+    // 2. Traer precios base del Excel (Vienen de tu variable datosCargados)
+    const precioBase = complejidad >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
 
-            // Dentro de tu función calcular()
-resDiv.classList.add('glow-efecto');
-setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
-    const tam = parseFloat(document.getElementById('tamaño').value) || 0;
-            const comp = parseFloat(document.getElementById('complejidad').value) || 1;
-            const zona = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
-            const resEscala = document.getElementById('visualizador-escala');
-    const cuadro = document.getElementById('cuadro-referencia');
+    // Identificamos el Div del resultado y la sección de reserva para darles órdenes luego
+    const resDiv = document.getElementById('resultado');
+    const seccionReserva = document.getElementById('seccion-reserva');
+
+    // Identificamos los elementos de la ESCALA REAL para darles órdenes luego
+    const resEscala = document.getElementById('visualizador-escala');
+    const cuadroReferencia = document.getElementById('cuadro-referencia');
     const textCm = document.getElementById('cm-display');
+
+    if (tamano > 0) {
+        // 3. CÁLCULO PRO: (Base / 10 * Tamaño * Complejidad * Zona)
+        let total = (precioBase / 10) * tamano * complejidad * zonaCuerpo;
+
+        // EL "PISO" (Precio Mínimo): Si da menos de tu base, se cobra el base.
+        if (total < precioBase) { total = precioBase; }
+
+        // 4. LÓGICA DE ESCALA REAL
+        if (resEscala) {
+            resEscala.style.display = "block";
+            textCm.innerText = tamano + " CM";
             
-            let puntos = 0; if (tam > 0) puntos++; if (comp > 0) puntos++; if (zona > 1) puntos++;
-            const pct = Math.round((puntos/3)*100);
-            document.getElementById('barra-tinta').style.width = pct + "%";
-            document.getElementById('porcentaje-texto').innerText = pct + "%";
-
-            const resDiv = document.getElementById('resultado');
-            if (tam > 0) {
-                // --- LÓGICA DE ESCALA ---
-        resEscala.style.display = "block";
-        textCm.innerText = tam + " CM";
-        
-        // Factor de conversión aproximado: 1cm = 10px en pantalla móvil estándar
-        // Usamos un factor que se vea bien pero no rompa la pantalla
-        let pxSize = tam * 10; 
-        
-        cuadro.style.width = pxSize + "px";
-        cuadro.style.height = pxSize + "px";
-                
-                const base = comp >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
-                let total = (base / 10) * tam * comp * zona;
-                if (total < base) total = base;
-
-                resDiv.innerHTML = `Presupuesto Estimado: <span style="color:var(--rojo-tinta);">$${Math.round(total).toLocaleString()}</span>`;
-                document.getElementById('aviso-sesiones').style.display = (tam >= 22) ? "block" : "none";
-                document.getElementById('seccion-reserva').style.display = "block";
-            } else {
-                resDiv.innerText = "Ingresá el tamaño";
-                document.getElementById('seccion-reserva').style.display = "none";
-            }
+            // Factor de conversión: 1cm = 10px en pantalla estándar
+            let pxSize = tamano * 10; 
+            cuadroReferencia.style.width = pxSize + "px";
+            cuadroReferencia.style.height = pxSize + "px";
         }
+
+        // 5. MOSTRAR RESULTADO (Formateado como moneda)
+        resDiv.innerText = `Presupuesto Estimado: $${Math.round(total).toLocaleString()}`;
+        
+        /* --- [INICIO DE LA INTEGRACIÓN QUE TE CONFUNDIÓ] ---
+           Le decimos al Div del resultado: "Agregale la clase 'glow-efecto' para que brille de rojo tinta".
+           Espera 500ms (0.5 segundos) y sacale la clase para que el brillo se vaya.
+        */
+        resDiv.classList.add('glow-efecto'); 
+        setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
+        // --- [FIN DE LA INTEGRACIÓN] ---
+
+        // 6. LÓGICA DE SESIONES
+        const avisoSesiones = document.getElementById('aviso-sesiones');
+        if (tamano >= 22 || (complejidad >= 2 && tamano >= 18)) {
+            if (avisoSesiones) avisoSesiones.style.display = "block";
+        } else {
+            if (avisoSesiones) avisoSesiones.style.display = "none";
+        }
+
+        // Mostramos la sección para reservar el turno
+        if (seccionReserva) seccionReserva.style.display = "block";
+    
+    } else {
+        // Si el tamaño es cero o vacío, limpiamos todo
+        resDiv.innerText = "Ingresá el tamaño";
+        if (seccionReserva) seccionReserva.style.display = "none";
+        if (resEscala) resEscala.style.display = "none";
+    }
+}
 
         async function guardarTurno() {
     const n = document.getElementById('nombre-cliente').value.trim();
