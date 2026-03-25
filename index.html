@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALX.TATT | Cotizador Profesional</title>
+    <title>ALX.TAT | Cotizador Profesional</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,120 +19,114 @@
             --borde: #333;
         }
 
-        /* --- RESET Y BASE --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             background-color: var(--negro-profundo);
             color: var(--texto);
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
             padding: 20px;
             overflow-x: hidden;
         }
 
-        /* --- ANIMACIONES --- */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes pulse-neon {
-            0% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
-            50% { opacity: 1; text-shadow: 0 0 15px rgba(230, 57, 70, 0.8); }
-            100% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
-        }
-
-        /* --- CONTENEDOR PRINCIPAL --- */
         .main-container {
             max-width: 450px;
             margin: 0 auto;
             animation: fadeInUp 0.8s ease-out;
         }
 
+        /* --- LOGO --- */
+        .header-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header-logo img {
+            max-width: 180px; /* Ajustá el tamaño de tu logo aquí */
+            height: auto;
+        }
+
         .card-cotizador {
             background: var(--gris-oscuro);
-            padding: 25px;
+            padding: 30px;
             border-radius: 24px;
             border: 1px solid var(--borde);
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             margin-bottom: 30px;
-            transition: box-shadow 0.5s ease;
         }
 
-        h1, h2 {
+        h2 {
             color: var(--rojo-tinta);
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
         }
 
-        /* --- INPUTS Y FORMULARIO --- */
-        .grupo-input { margin-bottom: 15px; }
+        /* --- BARRA DE PROGRESO --- */
+        .progreso-container { margin-bottom: 25px; }
+        .progreso-texto { font-size: 0.65rem; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+        .barra-fondo { width: 100%; height: 6px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #222; }
+        .barra-tinta { width: 0%; height: 100%; background: var(--rojo-tinta); box-shadow: 0 0 10px var(--rojo-tinta); transition: width 0.5s ease; }
+
+        /* --- INPUTS --- */
+        .grupo-input { margin-bottom: 20px; }
+        label { font-size: 0.75rem; color: #888; margin-bottom: 8px; display: block; text-transform: uppercase; font-weight: 700; }
         
-        label {
-            font-size: 0.75rem;
-            color: #888;
-            margin-bottom: 6px;
-            display: block;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-
         .input-pro {
             width: 100%;
             background: #000;
             border: 1px solid var(--borde);
-            padding: 14px;
+            padding: 16px;
             border-radius: 12px;
             color: white;
             font-size: 1rem;
             outline: none;
             transition: 0.3s;
         }
+        .input-pro:focus { border-color: var(--rojo-tinta); box-shadow: 0 0 15px rgba(230, 57, 70, 0.1); }
 
-        .input-pro:focus { border-color: var(--rojo-tinta); box-shadow: 0 0 10px rgba(230, 57, 70, 0.2); }
-
-        /* --- BARRA DE PROGRESO --- */
-        .progreso-container { margin-bottom: 20px; }
-        .progreso-texto { font-size: 0.65rem; color: #666; margin-bottom: 5px; text-transform: uppercase; }
-        .barra-fondo { width: 100%; height: 6px; background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #222; }
-        .barra-tinta { width: 0%; height: 100%; background: var(--rojo-tinta); box-shadow: 0 0 10px var(--rojo-tinta); transition: width 0.5s ease; }
-
-        /* --- BOTONES --- */
+        /* --- EL BOTÓN "ANTIGUO" CON LOOK NUEVO --- */
         .btn-calc {
             background: var(--rojo-tinta);
             color: white;
             width: 100%;
-            padding: 16px;
-            border-radius: 12px;
+            padding: 20px; /* Más robusto como el anterior */
+            border-radius: 15px;
             border: none;
             font-weight: 800;
             cursor: pointer;
             text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3);
+            transition: all 0.3s ease;
             margin-top: 10px;
-            transition: transform 0.2s;
         }
-        .btn-calc:active { transform: scale(0.98); }
+        .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(230, 57, 70, 0.4); }
+        .btn-calc:active { transform: scale(0.97); }
 
-        /* --- RESULTADOS --- */
         #resultado {
-            margin-top: 20px;
+            margin-top: 25px;
             text-align: center;
             font-weight: 800;
-            font-size: 1.1rem;
-            min-height: 30px;
+            font-size: 1.2rem;
+            color: #fff;
         }
 
         .aviso-info {
             background: rgba(230, 57, 70, 0.1);
             border-left: 4px solid var(--rojo-tinta);
-            padding: 10px;
+            padding: 12px;
             font-size: 0.8rem;
-            margin-top: 15px;
+            margin-top: 20px;
             color: #ffb4b4;
+            border-radius: 4px;
         }
 
         /* --- GALERÍA GRID --- */
@@ -142,74 +136,48 @@
             gap: 12px;
             margin-top: 20px;
         }
-
         .ficha-galeria {
             position: relative;
             aspect-ratio: 1/1;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-            border: 1px solid #333;
+            border: 1px solid #222;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s ease;
         }
-
-        .ficha-galeria:hover {
-            transform: translateY(-5px);
-            border-color: var(--rojo-tinta);
-            box-shadow: 0 0 15px rgba(230, 57, 70, 0.5);
-        }
-
+        .ficha-galeria:hover { border-color: var(--rojo-tinta); box-shadow: 0 0 20px rgba(230, 57, 70, 0.4); transform: translateY(-5px); }
         .ficha-galeria img { width: 100%; height: 100%; object-fit: cover; }
-
         .info-estilo {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            padding: 10px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 12px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
             display: flex; flex-direction: column;
         }
+        .info-estilo span { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; }
+        .small-counter { font-size: 0.6rem; color: var(--rojo-tinta); font-weight: 700; margin-top: 2px; }
 
-        .info-estilo span { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #fff; }
-        .small-counter { font-size: 0.55rem; color: var(--rojo-tinta); font-weight: 700; }
-
-        /* --- CARRETE (OVERLAY) --- */
+        /* --- CARRETE --- */
         .overlay-carrete {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999;
-            display: none; flex-direction: column;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: none; flex-direction: column;
         }
-
-        .contenedor-slider {
-            flex-grow: 1; display: flex;
-            overflow-x: auto; scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-        }
+        .contenedor-slider { flex-grow: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .contenedor-slider::-webkit-scrollbar { display: none; }
-
         .slide-item { min-width: 100%; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; }
         .slide-item img { max-width: 90%; max-height: 75vh; object-fit: contain; }
-
-        .nav-arrow {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.1); color: white; border: none;
-            padding: 20px 10px; cursor: pointer; font-size: 1.5rem;
-        }
+        .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); color: white; border: none; padding: 30px 15px; cursor: pointer; font-size: 2rem; z-index: 10; }
         .arrow-left { left: 0; } .arrow-right { right: 0; }
-
-        .btn-cerrar { position: absolute; top: 20px; right: 20px; font-size: 30px; color: white; cursor: pointer; z-index: 10000; }
+        .btn-cerrar { position: absolute; top: 25px; right: 25px; font-size: 35px; color: white; cursor: pointer; z-index: 10000; }
+        .footer-carrete { padding: 30px; background: linear-gradient(transparent, #000); text-align: center; }
 
         /* --- TOAST --- */
         .toast-aviso {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #000; color: var(--rojo-tinta);
-            padding: 12px 25px; border-radius: 50px; border: 2px solid var(--rojo-tinta);
-            z-index: 10001; transition: top 0.5s ease; font-weight: 800; font-size: 0.8rem;
+            background: #000; color: var(--rojo-tinta); padding: 15px 30px; border-radius: 50px;
+            border: 2px solid var(--rojo-tinta); z-index: 10001; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 800; font-size: 0.8rem; text-transform: uppercase;
         }
-        .toast-aviso.show { top: 20px; }
-
-        /* --- PANEL ARTISTA --- */
-        #panel-artista { background: #111; padding: 20px; border-radius: 15px; margin-top: 30px; border: 1px solid #222; }
+        .toast-aviso.show { top: 30px; }
     </style>
 </head>
 <body>
@@ -218,20 +186,25 @@
 
     <div class="main-container">
         
+        <div class="header-logo">
+            <img src="tu-logo.png" alt="ALX.TATT LOGO" onerror="this.style.display='none'">
+            <h1 style="font-family:'Bungee Hairline'; font-size: 2.5rem; color: #fff; margin-top: 10px;">ALX.TATT</h1>
+        </div>
+
         <div id="cotizador-seccion" class="card-cotizador">
             <div class="progreso-container">
-                <div class="progreso-texto">Progreso: <span id="porcentaje-texto">0%</span></div>
+                <div class="progreso-texto">Progreso de Reserva: <span id="porcentaje-texto">0%</span></div>
                 <div class="barra-fondo"><div id="barra-tinta" class="barra-tinta"></div></div>
             </div>
 
-            <h1>ALX.TATT</h1>
+            <h2>Cotizador de Turnos</h2>
             
             <div id="loader" style="display:none; text-align:center; margin-bottom: 20px;">
-                <div style="animation: pulse-neon 1.5s infinite" class="small-counter">Sincronizando...</div>
+                <div style="font-size:0.7rem; color:var(--rojo-tinta); letter-spacing:2px;">SINCRONIZANDO PORTFOLIO...</div>
             </div>
 
             <div class="grupo-input">
-                <label>Estilo / Complejidad</label>
+                <label>Estilo Deseado</label>
                 <select id="complejidad" class="input-pro" onchange="calcular()">
                     <option value="1">Línea Fina / Minimalista</option>
                     <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
@@ -242,52 +215,45 @@
             <div class="grupo-input">
                 <label>Zona del Cuerpo</label>
                 <select id="zona-cuerpo" class="input-pro" onchange="calcular()">
-                    <option value="1">Brazo / Pierna (Estándar)</option>
-                    <option value="1.2">Espalda / Muslo (+20%)</option>
-                    <option value="1.4">Costillas / Cuello / Abdomen (+40%)</option>
-                    <option value="1.1">Mano / Pie / Muñeca (+10%)</option>
+                    <option value="1">Brazo / Pierna</option>
+                    <option value="1.2">Espalda / Muslo</option>
+                    <option value="1.4">Costillas / Cuello / Abdomen</option>
+                    <option value="1.1">Mano / Pie / Muñeca</option>
                 </select>
             </div>
 
             <div class="grupo-input">
-                <label>Tamaño (cm)</label>
+                <label>Tamaño aproximado (cm)</label>
                 <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
             </div>
 
-            <div id="resultado">Ingresá los datos para cotizar</div>
+            <div id="resultado">Esperando datos...</div>
 
             <div id="aviso-sesiones" class="aviso-info" style="display:none;">
                 ⚠️ Este proyecto podría requerir más de una sesión.
             </div>
 
-            <div id="seccion-reserva" style="display:none; margin-top: 25px;">
-                <label>Nombre del Cliente</label>
-                <input type="text" id="nombre-cliente" class="input-pro" placeholder="Tu nombre">
+            <div id="seccion-reserva" style="display:none; margin-top: 30px; border-top: 1px dashed #333; padding-top: 25px;">
+                <label>Tu Nombre</label>
+                <input type="text" id="nombre-cliente" class="input-pro" placeholder="Nombre completo">
                 <label>WhatsApp</label>
-                <input type="tel" id="tel-cliente" class="input-pro" placeholder="Código + Número">
-                <label>Horario Estimado</label>
+                <input type="tel" id="tel-cliente" class="input-pro" placeholder="Código de área + número">
+                <label>Preferencia Horaria</label>
                 <select id="hora-turno" class="input-pro">
                     <option value="11:00">Mañana (11:00 AM)</option>
                     <option value="14:00">Tarde (02:00 PM)</option>
                     <option value="17:00">Tarde (05:00 PM)</option>
                 </select>
-                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">RESERVAR TURNO</button>
+                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);">RESERVAR VÍA WHATSAPP</button>
             </div>
         </div>
 
         <div class="galeria-container">
-            <h2>Mis Trabajos</h2>
-            <div id="galeria-dinamica" class="galeria-dinamica">
-                <p style="grid-column: 1/-1; text-align:center; color:#444;">Cargando portfolio...</p>
-            </div>
+            <h2 style="text-align: left; font-size: 0.9rem; margin-left: 10px;">Explorá mis trabajos</h2>
+            <div id="galeria-dinamica" class="galeria-dinamica"></div>
         </div>
-
-        <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#333; width:100%; margin-top:40px; cursor:pointer; font-size: 0.7rem;">⚙ ACCESO ARTISTA</button>
-        <div id="panel-artista" style="display:none;">
-            <h3>Gestión Interna</h3>
-            <div id="lista-inventario"></div>
-            <button class="btn-calc" onclick="enviarDescuentoStock()">Sincronizar Stock</button>
-        </div>
+        
+        <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#222; width:100%; margin-top:50px; cursor:pointer; font-size: 0.6rem;">⚙ ACCESO PRIVADO</button>
     </div>
 
     <div id="overlay-carrete" class="overlay-carrete">
@@ -296,8 +262,8 @@
         <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
         <div class="contenedor-slider" id="slider-fotos"></div>
         <div class="footer-carrete">
-            <h3 id="titulo-carrete" style="color:white; margin-bottom:10px;">ESTILO</h3>
-            <button id="btn-cotizar-carrete" class="btn-cotizar-pro">COTIZAR ESTE ESTILO</button>
+            <h3 id="titulo-carrete" style="color:white; margin-bottom:15px; font-size: 1rem; letter-spacing: 2px;">ESTILO</h3>
+            <button id="btn-cotizar-carrete" class="btn-calc">COTIZAR ESTE ESTILO</button>
         </div>
     </div>
 
@@ -311,10 +277,9 @@
             "realismo": 2.5, "neo tradicional": 2, "full color": 2
         };
 
-        let datosCargados = { precios: {}, inventario: [], turnos: [], galeria: [] };
+        let datosCargados = { precios: {}, galeria: [] };
         let fotosPorEstilo = {};
 
-        // --- CARGA INICIAL ---
         async function cargarDatos() {
             document.getElementById('loader').style.display = 'block';
             try {
@@ -322,14 +287,10 @@
                 const data = await res.json();
                 datosCargados = data;
                 dibujarGaleria(data.galeria);
-            } catch (e) {
-                console.error("Error:", e);
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-            }
+            } catch (e) { console.error(e); } 
+            finally { document.getElementById('loader').style.display = 'none'; }
         }
 
-        // --- GALERÍA Y CARRETE ---
         function dibujarGaleria(datos) {
             const contenedor = document.getElementById('galeria-dinamica');
             contenedor.innerHTML = "";
@@ -348,13 +309,7 @@
                 
                 const ficha = document.createElement('div');
                 ficha.className = "ficha-galeria";
-                ficha.innerHTML = `
-                    <img src="${portada.imagen}" alt="${estilo}">
-                    <div class="info-estilo">
-                        <span>${estilo}</span>
-                        <small class="small-counter">${grupo.length} FOTOS • VER</small>
-                    </div>
-                `;
+                ficha.innerHTML = `<img src="${portada.imagen}"><div class="info-estilo"><span>${estilo}</span><small class="small-counter">${grupo.length} TRABAJOS</small></div>`;
                 ficha.onclick = () => abrirCarrete(estilo);
                 contenedor.appendChild(ficha);
             });
@@ -381,11 +336,8 @@
             document.body.style.overflow = "hidden";
 
             btn.onclick = () => {
-                const sel = document.getElementById('complejidad');
-                sel.value = mapaDificultad[nombre.toLowerCase().trim()] || 1.5;
+                document.getElementById('complejidad').value = mapaDificultad[nombre.toLowerCase().trim()] || 1.5;
                 cerrarCarrete();
-                
-                // Mostrar Toast
                 const toast = document.getElementById('toast-mensaje');
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 2500);
@@ -394,66 +346,48 @@
                     document.getElementById('cotizador-seccion').scrollIntoView({ behavior: 'smooth' });
                     document.getElementById('tamaño').focus();
                     calcular();
-                }, 300);
+                }, 400);
             };
         }
 
-        function cerrarCarrete() {
-            document.getElementById('overlay-carrete').style.display = "none";
-            document.body.style.overflow = "auto";
-        }
+        function cerrarCarrete() { document.getElementById('overlay-carrete').style.display = "none"; document.body.style.overflow = "auto"; }
+        function moverSlider(dir) { const s = document.getElementById('slider-fotos'); s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' }); }
 
-        function moverSlider(dir) {
-            const s = document.getElementById('slider-fotos');
-            s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' });
-        }
-
-        // --- CÁLCULO Y PROGRESO ---
         function calcular() {
             const tam = parseFloat(document.getElementById('tamaño').value) || 0;
             const comp = parseFloat(document.getElementById('complejidad').value) || 1;
             const zona = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
-            const resDiv = document.getElementById('resultado');
-
-            // Barra de progreso
-            let puntos = 0;
-            if (tam > 0) puntos++;
-            if (comp > 0) puntos++;
-            if (zona > 1) puntos++;
+            
+            // Progreso
+            let puntos = 0; if (tam > 0) puntos++; if (comp > 0) puntos++; if (zona > 1) puntos++;
             const pct = Math.round((puntos/3)*100);
             document.getElementById('barra-tinta').style.width = pct + "%";
             document.getElementById('porcentaje-texto').innerText = pct + "%";
 
+            const resDiv = document.getElementById('resultado');
             if (tam > 0) {
-                const base = comp >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 60000);
+                const base = comp >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
                 let total = (base / 10) * tam * comp * zona;
                 if (total < base) total = base;
 
-                resDiv.innerHTML = `Presupuesto estimado: <span style="color:var(--rojo-tinta);">$${Math.round(total).toLocaleString()}</span>`;
-                document.getElementById('aviso-sesiones').style.display = (tam >= 20) ? "block" : "none";
+                resDiv.innerHTML = `Presupuesto Estimado: <span style="color:var(--rojo-tinta);">$${Math.round(total).toLocaleString()}</span>`;
+                document.getElementById('aviso-sesiones').style.display = (tam >= 22) ? "block" : "none";
                 document.getElementById('seccion-reserva').style.display = "block";
-                resDiv.classList.add('glow-efecto');
-                setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
             } else {
-                resDiv.innerText = "Esperando tamaño...";
+                resDiv.innerText = "Ingresá el tamaño";
                 document.getElementById('seccion-reserva').style.display = "none";
             }
         }
 
-        // --- RESERVA Y WHATSAPP ---
         async function guardarTurno() {
             const n = document.getElementById('nombre-cliente').value;
             const w = document.getElementById('tel-cliente').value;
-            if(!n || !w) return alert("Completá tus datos de contacto.");
-
-            const msg = `Hola! Soy ${n}. Coticé un tattoo de ${document.getElementById('tamaño').value}cm. Mi presupuesto es ${document.getElementById('resultado').innerText}. Quiero agendar!`;
+            if(!n || !w) return alert("Por favor, completá tu contacto.");
+            const msg = `Hola Alex! Soy ${n}. Coticé un tattoo de ${document.getElementById('tamaño').value}cm. Mi presupuesto estimado es ${document.getElementById('resultado').innerText}. Me gustaría agendar!`;
             window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
         }
 
-        // --- ARTISTA ---
-        function abrirPanelArtista() {
-            if (prompt("PIN:") === MI_PIN) document.getElementById('panel-artista').style.display = "block";
-        }
+        function abrirPanelArtista() { if (prompt("PIN:") === MI_PIN) alert("Acceso concedido al Excel de gestión."); }
 
         window.addEventListener('DOMContentLoaded', cargarDatos);
     </script>
