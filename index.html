@@ -443,28 +443,45 @@
 let fotosPorEstilo = {};
 
 function dibujarGaleria(datos) {
+    console.log("Datos recibidos:", datos); // Esto nos dirá en la consola si llegan las fotos
     const contenedor = document.getElementById('galeria-dinamica');
-    contenedor.innerHTML = "";
-    fotosPorEstilo = {}; // Limpiamos
+    
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = "<p>No se encontraron fotos en el Excel.</p>";
+        return;
+    }
 
-    // 1. AGRUPAR: Convertimos la lista plana en "cajas" por estilo
+    contenedor.innerHTML = "";
+    fotosPorEstilo = {}; 
+
+    // 1. AGRUPAR (Con limpieza de texto para evitar errores)
     datos.forEach(item => {
-        if (!fotosPorEstilo[item.estilo]) {
-            fotosPorEstilo[item.estilo] = [];
+        if (!item.estilo) return; // Si la fila está vacía, la salta
+        
+        const nombreLimpio = item.estilo.trim(); 
+        if (!fotosPorEstilo[nombreLimpio]) {
+            fotosPorEstilo[nombreLimpio] = [];
         }
-        fotosPorEstilo[item.estilo].push(item);
+        fotosPorEstilo[nombreLimpio].push(item);
     });
 
-    // 2. DIBUJAR PORTADAS: Solo mostramos la que dice "SI" en Portada
-    Object.keys(fotosPorEstilo).forEach(nombreEstilo => {
+    // 2. DIBUJAR PORTADAS
+    const estilosEncontrados = Object.keys(fotosPorEstilo);
+    
+    if (estilosEncontrados.length === 0) {
+        contenedor.innerHTML = "<p>Error al agrupar los estilos. Revisá los nombres en el Excel.</p>";
+        return;
+    }
+
+    estilosEncontrados.forEach(nombreEstilo => {
         const grupo = fotosPorEstilo[nombreEstilo];
-        // Buscamos la portada, si no hay, usamos la primera del grupo
-        const portada = grupo.find(f => f.portada === "SI") || grupo[0];
+        // Buscamos la que diga "SI" (en mayúsculas o minúsculas)
+        const portada = grupo.find(f => String(f.portada).toUpperCase() === "SI") || grupo[0];
 
         const ficha = document.createElement('div');
         ficha.className = "ficha-galeria";
         ficha.innerHTML = `
-            <img src="${portada.imagen}" alt="${nombreEstilo}" loading="lazy">
+            <img src="${portada.imagen}" alt="${nombreEstilo}" onerror="this.src='error.png'">
             <div class="info-estilo">
                 <span>${nombreEstilo}</span>
                 <small>${grupo.length} fotos</small>
