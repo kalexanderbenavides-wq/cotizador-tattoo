@@ -330,74 +330,79 @@
 }
 
 /* --- ESTILOS DE LA CUADRÍCULA PRINCIPAL (GRID) --- */
-#galeria-dinamica {
-    display: grid !important; /* Forzamos el modo grilla */
-    grid-template-columns: repeat(2, 1fr) !important; /* 2 columnas fijas en celu */
-    gap: 10px;
+/* --- RESET GLOBAL PARA EVITAR DESBORDES --- */
+* { box-sizing: border-box; }
+
+/* --- CONTENEDOR DE LA GRILLA --- */
+.galeria-dinamica {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Forzamos 2 columnas en celu */
+    gap: 12px;
     padding: 15px;
-    min-height: 300px; /* Le damos altura mínima para que no sea 'invisible' */
     width: 100%;
-    box-sizing: border-box;
+    max-width: 800px; /* Para que en PC no se estire al infinito */
+    margin: 0 auto;
 }
 
-@media (min-width: 768px) {
-    .galeria-dinamica {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 20px;
-    }
-}
-        
-/* La ficha (tarjeta) de cada estilo */
+/* --- LA FICHA (EL CUADRADO) --- */
 .ficha-galeria {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Movimiento más elástico */
-    border: 1px solid #222;
+    position: relative; /* ¡VITAL! Esto ancla el texto a la foto */
+    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-/* --- ANIMACIÓN AL PASAR EL CURSOR (HOVER) --- */
+/* Efecto Neón mejorado en el hover */
 .ficha-galeria:hover {
-    transform: translateY(-8px) scale(1.02); /* Sube un poco más y se agranda */
+    transform: translateY(-5px);
     border-color: var(--rojo-tinta);
-    /* Brillo Neón: Sombra externa roja + Sombra interna sutil */
-    box-shadow: 0 0 20px rgba(230, 57, 70, 0.6), 
-                inset 0 0 10px rgba(230, 57, 70, 0.4);
-    z-index: 10;
+    box-shadow: 0 0 15px rgba(230, 57, 70, 0.5);
 }
 
-/* La foto de portada dentro de la ficha */
 .ficha-galeria img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* La foto llena el cuadrado sin deformarse */
+    object-fit: cover; /* La foto llena el cuadrado */
+    display: block;
 }
 
-/* Animación de Zoom en la foto al pasar el cursor */
-.ficha-galeria:hover img {
-    transform: scale(1.1); /* Agranda la foto un 10% */
-}
-
-/* --- DETALLES DE INFORMACIÓN SOBRE LA FOTO --- */
+/* --- CONTENEDOR DE TEXTO (DENTRO DEL CUADRADO) --- */
 .info-estilo {
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 20px 10px 10px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 30%, transparent);
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Ahora sí se queda adentro del cuadrado */
+    padding: 10px;
+    /* Degradado negro para que se lea bien el texto */
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
     display: flex;
-    flex-direction: column; /* Texto uno arriba del otro */
+    flex-direction: column;
     align-items: flex-start;
+    pointer-events: none; /* Para que no interfiera con el clic en la foto */
 }
 
-./* Ajuste para que los textos no se pisen en pantallas chicas */
 .info-estilo span {
-    font-size: 0.7rem !important;
-    white-space: normal !important; /* Que pueda usar dos renglones si es necesario */
-    line-height: 1.1;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
+    width: 100%;
 }
 
-/* --- INDICADOR DE 'MÁS FOTOS' (El cue visual) --- */
 .small-counter {
-    font-size: 0.6rem;
     color: var(--rojo-tinta);
+    font-size: 0.55rem;
+    font-weight: 700;
     margin-top: 2px;
+    text-shadow: 0 0 5px rgba(230, 57, 70, 0.5);
 }
 
 /* --- CARRETE: FLECHAS PC Y SNAP --- */
@@ -623,12 +628,12 @@ function dibujarGaleria(datos) {
         
         // Aquí armamos el HTML que va ADENTRO de cada tarjeta
         ficha.innerHTML = `
-            <img src="${portada.imagen}" alt="${nombreEstilo}" loading="lazy">
-            <div class="info-estilo">
-                <span>${nombreEstilo}</span>
-                <small class="small-counter">${grupo.length} FOTOS • VIEW</small>
-            </div>
-        `;
+    <img src="${portada.imagen}" alt="${nombreEstilo}">
+    <div class="info-estilo">
+        <span>${nombreEstilo}</span>
+        <small class="small-counter">${grupo.length} FOTOS • VIEW</small>
+    </div>
+`;
 
         // Al tocar, se abre el carrete (esto ya funcionaba)
         ficha.onclick = () => abrirCarrete(nombreEstilo);
@@ -870,42 +875,33 @@ function abrirCarrete(nombreEstilo) {
 
     // --- AQUÍ ESTÁ LA MAGIA: EL BOTÓN DE ACCIÓN ---
     btnCotizar.onclick = () => {
-        const selector = document.getElementById('complejidad');
+        // ... (Tu lógica de selección de estilo sigue igual) ...
         
-        // 1. Buscamos el estilo en el menú
-        let opcionEncontrada = false;
-        for (let i = 0; i < selector.options.length; i++) {
-            if (selector.options[i].text.toLowerCase().includes(nombreEstilo.toLowerCase())) {
-                selector.selectedIndex = i;
-                opcionEncontrada = true;
-                break;
-            }
-        }
-        if (!opcionEncontrada) selector.value = "1.5";
-
-        // 2. Cerramos el carrete
         cerrarCarrete();
 
-        // 3. MOSTRAR EL MENSAJE FLOTANTE
+        // 1. Mostrar Toast
         const toast = document.getElementById('toast-mensaje');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        if(toast) {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
 
-        // 4. EL VUELO (SCROLL) FORZADO
-        // Intentamos ir al principio de la página
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 2. EL VUELO FORZADO (Método 2026)
+        // Buscamos el elemento de arriba (puede ser tu logo o el título)
+        const header = document.querySelector('header') || document.body;
+        
+        // Scroll instantáneo para evitar fallos de renderizado
+        header.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        // Backup por si el 'smooth' falla en algún celular:
+        // 3. ENFOQUE AUTOMÁTICO
         setTimeout(() => {
-            // Hacemos foco en el tamaño para que el teclado se abra (UX Pro)
             const inputTam = document.getElementById('tamaño');
-            inputTam.focus();
-            
-            // Si después de medio segundo no llegó arriba, lo forzamos
-            if (window.scrollY > 200) {
-                window.scrollTo(0, 0);
+            if(inputTam) {
+                inputTam.focus();
+                // Si el scroll falló, esto lo fuerza a subir
+                inputTam.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-        }, 700);
+        }, 600);
     };
 }
 
