@@ -328,39 +328,74 @@
 }
 
 /* --- LÓGICA DE IMPRESIÓN (PDF) --- */
+/* --- CONFIGURACIÓN DE PDF ESTÉTICO --- */
 @media print {
-    /* Escondemos TODO */
-    body * { visibility: hidden; background: white !important; }
-    
-    /* Mostramos SOLO la sección de cuidados */
-    .cuidados-wrapper, .cuidados-wrapper * { visibility: visible; }
-    
-    /* Posicionamos los cuidados al inicio de la hoja */
-    .cuidados-wrapper {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        border: none !important;
-        background: white !important;
-        color: black !important;
+    /* Forzamos al navegador a imprimir fondos y colores */
+    * { 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
     }
 
-    .cuidados-seccion li, .cuidados-seccion h4 { color: black !important; }
-    .btn-cuidados-toggle, .btn-download-mini { display: none !important; } /* Escondemos botones en el PDF */
+    /* Escondemos todo lo que no sea el PDF */
+    body * { display: none !important; }
     
-    /* Agregamos tu marca al PDF automáticamente */
-    .cuidados-wrapper::before {
-        content: "ALX.TAT - GUÍA DE CUIDADOS";
-        display: block;
-        text-align: center;
-        font-weight: 800;
-        margin-bottom: 30px;
-        font-size: 1.2rem;
-        border-bottom: 2px solid black;
-        padding-bottom: 10px;
+    /* Mostramos y formateamos la sección de cuidados */
+    #seccion-cuidados-print, #seccion-cuidados-print * { 
+        display: block !important; 
+        visibility: visible !important; 
     }
+
+    #seccion-cuidados-print {
+        position: absolute;
+        top: 0; left: 0; width: 100%;
+        background-color: #0d0d0d !important;
+        color: #f1f1f1 !important;
+        padding: 40px;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Estética del Encabezado en el PDF */
+    .print-header { text-align: center; margin-bottom: 40px; }
+    .print-header img { max-width: 100px; margin-bottom: 10px; }
+    .print-header h1 { 
+        font-family: 'Bungee Hairline', sans-serif; 
+        font-size: 3rem; 
+        color: #e63946 !important; 
+        margin: 0;
+    }
+    .print-divider { 
+        height: 2px; 
+        background: #e63946 !important; 
+        width: 100px; 
+        margin: 15px auto; 
+    }
+
+    .cuidados-seccion { margin-bottom: 30px; }
+    .cuidados-seccion h4 { 
+        color: #e63946 !important; 
+        font-size: 1rem; 
+        border-bottom: 1px solid #333;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+    }
+    .cuidados-seccion li { margin-bottom: 10px; font-size: 0.9rem; }
+
+    .print-footer {
+        margin-top: 50px;
+        text-align: center;
+        font-size: 0.7rem;
+        color: #666 !important;
+        border-top: 1px solid #222;
+        padding-top: 20px;
+    }
+
+    /* Escondemos los botones dentro del PDF */
+    .no-print { display: none !important; }
 }
+
+/* Estilo para que el header de impresión no se vea en la web normal */
+.print-header { display: none; }
 
         /* --- MEJORA VISUALIZADOR DE ESCALA --- */
 .escala-stage {
@@ -586,32 +621,45 @@
             <div id="galeria-dinamica" class="galeria-dinamica"></div>
         </div>
 
-<div class="cuidados-wrapper">
-    <button class="btn-cuidados-toggle" onclick="toggleCuidados()">
+<div class="cuidados-wrapper" id="seccion-cuidados-print">
+    <div class="print-header">
+        <img src="logo2026.png" alt="Logo">
+        <h1>ALX.TAT</h1>
+        <div class="print-divider"></div>
+        <p>GUÍA PROFESIONAL DE PREPARACIÓN Y CUIDADOS</p>
+    </div>
+
+    <button class="btn-cuidados-toggle no-print" onclick="toggleCuidados()">
         <span>🛠️ Preparación y Cuidados</span>
         <i id="icono-cuidados">+</i>
     </button>
     
     <div id="contenido-cuidados" class="cuidados-content">
         <div class="cuidados-seccion">
-            <h4>ANTES DEL TURNO:</h4>
+            <h4>I. PREPARACIÓN (ANTES DEL TURNO)</h4>
             <ul>
-                <li>Dormí bien y vení desayunado/a.</li>
-                <li>No consumas alcohol ni drogas 24hs antes.</li>
-                <li>Hidratá la zona los días previos.</li>
+                <li>Dormí un mínimo de 8hs y vení con una buena base de hidratación.</li>
+                <li>No consumas alcohol, aspirinas ni sustancias 24hs antes.</li>
+                <li>Traé ropa cómoda que permita el acceso fácil a la zona: <strong>${document.getElementById('zona-cuerpo').options[document.getElementById('zona-cuerpo').selectedIndex].text}</strong>.</li>
             </ul>
         </div>
-        <hr class="cuidados-divider">
+        
         <div class="cuidados-seccion">
-            <h4>DESPUÉS DEL TATTOO:</h4>
+            <h4>II. CUIDADOS POST-TATTOO</h4>
             <ul>
-                <li>Mantené el film/parche por el tiempo indicado.</li>
-                <li>Lavá con jabón neutro y agua tibia.</li>
-                <li>Aplicá la crema recomendada (capa fina).</li>
-                <li>No sol, no pileta, no rascar la zona.</li>
+                <li>Mantené el parche protector el tiempo indicado por el artista.</li>
+                <li>Lavado: Jabón neutro, agua fría/tibia y secado a toques con papel descartable.</li>
+                <li>Crema: Aplicar una capa casi invisible (que la piel brille pero no esté empastada).</li>
+                <li>Prohibido: Sol, piletas, gimnasio (7 días) y arrancar cascaritas.</li>
             </ul>
         </div>
-        <button class="btn-download-mini" onclick="window.print()">📥 Guardar como PDF</button>
+
+        <div class="print-footer">
+            <p>Si tenés dudas, escribime directamente al WhatsApp: 5491157734552</p>
+            <span>ALX.TAT © 2026 - Arte y Precisión</span>
+        </div>
+
+        <button class="btn-download-mini no-print" onclick="window.print()">📥 DESCARGAR GUÍA EN PDF</button>
     </div>
 </div>
         
