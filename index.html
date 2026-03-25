@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALX.TATT Cotizador</title>
+    <title>ALX.TATT | Cotizador Profesional</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee+Hairline&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Hairline&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         :root {
             --negro-profundo: #0d0d0d;
@@ -16,1096 +19,443 @@
             --borde: #333;
         }
 
+        /* --- RESET Y BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             background-color: var(--negro-profundo);
             color: var(--texto);
-            font-family: 'Inter', -apple-system, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        .card {
+        /* --- ANIMACIONES --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-neon {
+            0% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
+            50% { opacity: 1; text-shadow: 0 0 15px rgba(230, 57, 70, 0.8); }
+            100% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .main-container {
+            max-width: 450px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .card-cotizador {
             background: var(--gris-oscuro);
-            padding: 30px;
+            padding: 25px;
             border-radius: 24px;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             border: 1px solid var(--borde);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            margin-bottom: 30px;
+            transition: box-shadow 0.5s ease;
         }
 
-        h1 {
-            font-size: 1.2rem;
+        h1, h2 {
+            color: var(--rojo-tinta);
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
-            margin-bottom: 30px;
-            color: var(--rojo-tinta);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
         }
 
+        /* --- INPUTS Y FORMULARIO --- */
+        .grupo-input { margin-bottom: 15px; }
+        
         label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #888;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: block;
+            text-transform: uppercase;
+            font-weight: 700;
         }
 
-        input, select {
+        .input-pro {
             width: 100%;
-            background: #111;
+            background: #000;
             border: 1px solid var(--borde);
-            padding: 15px;
+            padding: 14px;
             border-radius: 12px;
             color: white;
             font-size: 1rem;
-            margin-bottom: 20px;
             outline: none;
             transition: 0.3s;
         }
 
-        input:focus { border-color: var(--rojo-tinta); }
+        .input-pro:focus { border-color: var(--rojo-tinta); box-shadow: 0 0 10px rgba(230, 57, 70, 0.2); }
 
+        /* --- BARRA DE PROGRESO --- */
+        .progreso-container { margin-bottom: 20px; }
+        .progreso-texto { font-size: 0.65rem; color: #666; margin-bottom: 5px; text-transform: uppercase; }
+        .barra-fondo { width: 100%; height: 6px; background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #222; }
+        .barra-tinta { width: 0%; height: 100%; background: var(--rojo-tinta); box-shadow: 0 0 10px var(--rojo-tinta); transition: width 0.5s ease; }
+
+        /* --- BOTONES --- */
         .btn-calc {
             background: var(--rojo-tinta);
             color: white;
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border-radius: 12px;
             border: none;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
-        }
-
-        .btn-reset {
-            background: transparent;
-            color: #666;
-            margin-top: 15px;
-            width: 100%;
-            border: none;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        # {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px dashed var(--borde);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .inv-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            align-items: center;
-            background: #111;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        /* --- ESTILOS DE GALERÍA OPTIMIZADOS --- */
-        .galeria-container {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .galeria-flex {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            padding: 10px;
-        }
-
-        .foto-placeholder {
-            width: 140px;
-            height: 180px;
-            background: #111;
-            border: 1px solid var(--borde);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s ease;
-            cursor: pointer;
-        }
-
-        .foto-placeholder:hover {
-            border-color: var(--rojo-tinta);
-            transform: translateY(-8px);
-            box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
-        }
-
-        .foto-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.3s;
-        }
-
-        .foto-placeholder span {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            padding: 15px 10px 10px;
-            color: white;
-            font-size: 0.65rem;
             text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 1px;
-            z-index: 2;
+            margin-top: 10px;
+            transition: transform 0.2s;
         }
-/* --- NUEVOS ESTILOS PARA LA TARJETA INSTAGRAMEABLE --- */
+        .btn-calc:active { transform: scale(0.98); }
 
-/* Contenedor principal del Ticket */
-.ticket-quote {
-    background: #000000; /* Negro profundo para máximo contraste */
-    padding: 30px;
-    border-radius: 20px;
-    /* Borde fino y minimalista inspirado en la opción Minimal (ahora blanco) */
-    border: 1px solid #ffffff; 
-    text-align: center;
-    position: relative;
-    margin-top: 20px;
-    box-sizing: border-box; /* Asegura que el padding no rompa el borde */
-}
+        /* --- RESULTADOS --- */
+        #resultado {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            min-height: 30px;
+        }
 
-/* 2. TEXTO GENERAL: Todo blanco */
-.ticket-quote,
-.ticket-quote span,
-.ticket-details,
-.ticket-footer {
-    color: #ffffff; /* Forzamos color blanco en todo el ticket */
-    font-family: 'Inter', sans-serif;
-}
+        .aviso-info {
+            background: rgba(230, 57, 70, 0.1);
+            border-left: 4px solid var(--rojo-tinta);
+            padding: 10px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            color: #ffb4b4;
+        }
 
-/* 3. EL PRECIO: Único elemento Rojo con Brillo Neón */
-.ticket-price {
-    font-family: 'Bungee Hairline', sans-serif;
-    font-size: 4rem; /* ¡Más grande! */
-    font-weight: 400;
-    margin: 10px 0;
-    line-height: 1;
-    
-    /* CAMBIO CLAVE: Color Rojo Neón Tinta */
-    color: var(--rojo-tinta);
-    /* Efecto Neón Rojo Triple (más profundo) */
-    text-shadow: 0 0 10px rgba(230, 57, 70, 0.7), 
-                0 0 20px rgba(230, 57, 70, 0.5);
-}
+        /* --- GALERÍA GRID --- */
+        .galeria-dinamica {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
 
-/* 4. DETALLES (Estilo y Tamaño): Blanco y Nítido */
-.ticket-details {
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    font-size: 0.7rem;
-    margin-top: 10px;
-    font-weight: 700;
-}
+        .ficha-galeria {
+            position: relative;
+            aspect-ratio: 1/1;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-/* 5. EL DIVISOR: Línea punteada blanca y fina */
-.ticket-divider {
-    border: none;
-    border-top: 1px dashed #ffffff; /* Ahora blanca y fina */
-    margin: 25px 0;
-}
+        .ficha-galeria:hover {
+            transform: translateY(-5px);
+            border-color: var(--rojo-tinta);
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.5);
+        }
 
-/* 6. PIE DE TICKET: Blanco y nítido */
-.ticket-footer {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+        .ficha-galeria img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Botones dentro de la tarjeta al cotizar */
-.btn-ticket-group {
-    margin-top: 25px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
+        .info-estilo {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            display: flex; flex-direction: column;
+        }
 
-.btn-download {
-    background: #ffffff; /* Blanco para contrastar */
-    color: #000000;
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: 0.3s;
-}
-.btn-download:hover { background: #cccccc; }
+        .info-estilo span { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #fff; }
+        .small-counter { font-size: 0.55rem; color: var(--rojo-tinta); font-weight: 700; }
 
-/* --- ANIMACIÓN DEL LOADER --- */
-.pulse-text {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 4px;
-    color: var(--rojo-tinta);
-    font-weight: 700;
-    text-transform: uppercase;
-    /* Animación de palpitación */
-    animation: pulse-neon 1.5s infinite ease-in-out;
-}
+        /* --- CARRETE (OVERLAY) --- */
+        .overlay-carrete {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: none; flex-direction: column;
+        }
 
-@keyframes pulse-neon {
-    0% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
-    50% { opacity: 1; text-shadow: 0 0 15px rgba(230, 57, 70, 0.8); }
-    100% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
-}        
+        .contenedor-slider {
+            flex-grow: 1; display: flex;
+            overflow-x: auto; scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .contenedor-slider::-webkit-scrollbar { display: none; }
 
+        .slide-item { min-width: 100%; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; }
+        .slide-item img { max-width: 90%; max-height: 75vh; object-fit: contain; }
 
-/* --- ESTILOS CARRETE INSTAGRAM --- */
-.overlay-carrete {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: #000;
-    z-index: 3000;
-    display: flex;
-    flex-direction: column;
-}
+        .nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.1); color: white; border: none;
+            padding: 20px 10px; cursor: pointer; font-size: 1.5rem;
+        }
+        .arrow-left { left: 0; } .arrow-right { right: 0; }
 
-.contenedor-slider {
-    flex-grow: 1;
-    display: flex;
-    overflow-x: auto; /* Habilita el scroll horizontal */
-    scroll-snap-type: x mandatory; /* Efecto imán de Instagram */
-    scrollbar-width: none; /* Esconde barra en Firefox */
-}
-.contenedor-slider::-webkit-scrollbar { display: none; } /* Esconde barra en Chrome */
+        .btn-cerrar { position: absolute; top: 20px; right: 20px; font-size: 30px; color: white; cursor: pointer; z-index: 10000; }
 
-.slide-item {
-    min-width: 100%;
-    height: 100%;
-    scroll-snap-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        /* --- TOAST --- */
+        .toast-aviso {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #000; color: var(--rojo-tinta);
+            padding: 12px 25px; border-radius: 50px; border: 2px solid var(--rojo-tinta);
+            z-index: 10001; transition: top 0.5s ease; font-weight: 800; font-size: 0.8rem;
+        }
+        .toast-aviso.show { top: 20px; }
 
-.slide-item img {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-}
-
-.footer-carrete {
-    padding: 20px;
-    background: linear-gradient(transparent, #000);
-    text-align: center;
-    color: white;
-}
-
-.btn-cotizar-pro {
-    background: var(--rojo-tinta);
-    color: white;
-    padding: 15px 40px;
-    border-radius: 50px;
-    border: none;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.btn-cerrar {
-    position: absolute;
-    top: 20px; right: 20px;
-    color: white; font-size: 40px; z-index: 3001;
-}
-
-/* --- ESTILOS DE LA CUADRÍCULA PRINCIPAL (GRID) --- */
-/* --- RESET GLOBAL PARA EVITAR DESBORDES --- */
-* { box-sizing: border-box; }
-
-/* --- CONTENEDOR DE LA GRILLA --- */
-.galeria-dinamica {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important; /* Forzamos 2 columnas en celu */
-    gap: 12px;
-    padding: 15px;
-    width: 100%;
-    max-width: 800px; /* Para que en PC no se estire al infinito */
-    margin: 0 auto;
-}
-
-/* --- LA FICHA (EL CUADRADO) --- */
-.ficha-galeria {
-    position: relative; /* ¡VITAL! Esto ancla el texto a la foto */
-    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
-    border-radius: 12px;
-    overflow: hidden;
-    background: #111;
-    border: 1px solid #333;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Efecto Neón mejorado en el hover */
-.ficha-galeria:hover {
-    transform: translateY(-5px);
-    border-color: var(--rojo-tinta);
-    box-shadow: 0 0 15px rgba(230, 57, 70, 0.5);
-}
-
-.ficha-galeria img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* La foto llena el cuadrado */
-    display: block;
-}
-
-/* --- CONTENEDOR DE TEXTO (DENTRO DEL CUADRADO) --- */
-.info-estilo {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%; /* Ahora sí se queda adentro del cuadrado */
-    padding: 10px;
-    /* Degradado negro para que se lea bien el texto */
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    pointer-events: none; /* Para que no interfiera con el clic en la foto */
-}
-
-.info-estilo span {
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
-    width: 100%;
-}
-
-.small-counter {
-    color: var(--rojo-tinta);
-    font-size: 0.55rem;
-    font-weight: 700;
-    margin-top: 2px;
-    text-shadow: 0 0 5px rgba(230, 57, 70, 0.5);
-}
-
-/* --- CARRETE: FLECHAS PC Y SNAP --- */
-.contenedor-slider {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth; /* Desplazamiento suave */
-}
-
-.slide-item {
-    min-width: 100%;
-    scroll-snap-align: center;
-    scroll-snap-stop: always; /* EVITA QUE SE PASEN 2 FOTOS */
-    display: flex;
-    justify-content: center;
-}
-
-/* Flechas para PC */
-.nav-arrow {
-    display: none; /* Escondidas en celular */
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.1);
-    color: white;
-    border: none;
-    font-size: 2rem;
-    padding: 20px 10px;
-    cursor: pointer;
-    z-index: 3100;
-}
-@media (min-width: 768px) { .nav-arrow { display: block; } }
-.arrow-left { left: 10px; }
-.arrow-right { right: 10px; }
-
-.btn-cotizar-pro:active {
-    transform: scale(0.95); /* Se achica un poquito al tocarlo */
-    background-color: #b51d28; /* Se oscurece el rojo */
-}
-
-/* Animación para que el formulario "brille" al ser seleccionado */
-.card-cotizador {
-    transition: box-shadow 0.5s ease;
-    <div class="progreso-container">
-    <div class="progreso-texto">Progreso de Cotización: <span id="porcentaje-texto">0%</span></div>
-    <div class="barra-fondo">
-        <div id="barra-tinta" class="barra-tinta"></div>
-    </div>
-</div>
-}
-        
-.toast-aviso {
-    position: fixed;
-    top: -100px; /* Escondido arriba */
-    left: 50%;
-    transform: translateX(-50%);
-    background: #000;
-    color: var(--rojo-tinta);
-    padding: 15px 30px;
-    border: 2px solid var(--rojo-tinta);
-    border-radius: 50px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    z-index: 9999;
-    transition: top 0.5s ease;
-    box-shadow: 0 0 20px rgba(230, 57, 70, 0.5);
-}
-
-.toast-aviso.show {
-    top: 20px; /* Aparece en pantalla */
-}
-
-/* Animación de entrada suave */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.card-cotizador, .ficha-galeria, .titulo-seccion {
-    animation: fadeInUp 0.8s ease-out forwards;
-}
-
-/* El aviso de sesiones con un parpadeo sutil */
-.pulse-anim {
-    animation: pulse 2s infinite;
-    background: rgba(230, 57, 70, 0.1);
-    padding: 10px;
-    border-radius: 5px;
-    border-left: 4px solid var(--rojo-tinta);
-    margin-top: 10px;
-    font-size: 0.8rem;
-    color: #ffb4b4;
-}
-
-@keyframes pulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
-}
-        
-/* --- ESTILOS BARRA DE PROGRESO --- */
-.progreso-container {
-    margin-bottom: 25px;
-    padding: 0 5px;
-}
-
-.progreso-texto {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-    font-weight: 700;
-}
-
-#porcentaje-texto {
-    color: var(--rojo-tinta);
-}
-
-.barra-fondo {
-    width: 100%;
-    height: 6px;
-    background: #1a1a1a; /* Fondo oscuro del tubo */
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #333;
-}
-
-.barra-tinta {
-    width: 0%; /* Inicia en cero */
-    height: 100%;
-    background: linear-gradient(90deg, #ff4d4d, var(--rojo-tinta));
-    box-shadow: 0 0 10px rgba(230, 57, 70, 0.8); /* Brillo de la tinta */
-    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Movimiento fluido */
-    border-radius: 10px;
-}
-
-/* Brillo neón solo en PC o cuando se hace click */
-.ficha-galeria:active, .ficha-galeria:hover {
-    border-color: var(--rojo-tinta);
-    box-shadow: 0 0 20px rgba(230, 57, 70, 0.6);
-}
-
-/* Animación para el resultado al calcular */
-.glow-efecto {
-    animation: flash 0.5s ease;
-}
-
-@keyframes flash {
-    0% { color: #fff; text-shadow: 0 0 0px #fff; }
-    50% { color: var(--rojo-tinta); text-shadow: 0 0 15px var(--rojo-tinta); }
-    100% { color: #fff; text-shadow: 0 0 0px #fff; }
-}
-    
-        
+        /* --- PANEL ARTISTA --- */
+        #panel-artista { background: #111; padding: 20px; border-radius: 15px; margin-top: 30px; border: 1px solid #222; }
     </style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
 </head>
 <body>
 
-<div id="toast-mensaje" class="toast-aviso">⚡ ESTILO SELECCIONADO</div>
-    
-   <div id="cotizador-seccion" class="card-cotizador">
-    
-    <div class="progreso-container">
-        <div class="progreso-texto">Progreso: <span id="porcentaje-texto">0%</span></div>
-        <div class="barra-fondo">
-            <div id="barra-tinta" class="barra-tinta"></div>
-        </div>
-    </div>
+    <div id="toast-mensaje" class="toast-aviso">⚡ ESTILO SELECCIONADO</div>
 
-    <h2 class="titulo-seccion">Cotizá tu Tattoo</h2>
-
-    <div class="grupo-input">
-        <label>Estilo / Complejidad</label>
-        <select id="complejidad" class="input-pro" onchange="calcular()">
-            <option value="1">Línea Fina / Minimalista</option>
-            <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
-            <option value="2">Realismo / Neo tradicional / Full Color</option>
-        </select>
-    </div>
-
-    <div class="grupo-input">
-        <label>¿En qué parte del cuerpo?</label>
-        <select id="zona-cuerpo" class="input-pro" onchange="calcular()">
-            <option value="1">Brazo / Pierna (Zona estándar)</option>
-            <option value="1.2">Espalda / Muslo (+20%)</option>
-            <option value="1.4">Costillas / Cuello / Abdomen (+40%)</option>
-            <option value="1.1">Mano / Pie / Muñeca (+10%)</option>
-        </select>
-    </div>
-
-    <div class="grupo-input">
-        <label>Tamaño aproximado (cm)</label>
-        <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
-    </div>
-
-    <button class="btn-cotizar-pro" onclick="calcular()">CALCULAR PRECIO</button>
-    
-    <div id="resultado" class="resultado-estilo">Esperando datos...</div>
-
-    <div id="aviso-sesiones" class="aviso-info" style="display:none;">
-        ⚠️ Este proyecto podría requerir más de una sesión.
-    </div>
-</div>
+    <div class="main-container">
         
-        <label>Complejidad / Estilo:</label>
-        <select id="complejidad">
-            <option value="1">Baja (Solo líneas)</option>
-            <option value="1.5">Media (Sombras / Detalle)</option>
-            <option value="2">Alta (Realismo / Full Color)</option>
-        </select>
+        <div id="cotizador-seccion" class="card-cotizador">
+            <div class="progreso-container">
+                <div class="progreso-texto">Progreso: <span id="porcentaje-texto">0%</span></div>
+                <div class="barra-fondo"><div id="barra-tinta" class="barra-tinta"></div></div>
+            </div>
 
-        <div class="btn-group">
-            <button class="btn-calc" onclick="calcular()">COTIZAR</button>
-            <button class="btn-reset" onclick="reinicio()">LIMPIAR</button>
-        </div>
-
-        <div id="loader" style="display:none; text-align:center; margin: 20px 0;">
-    <div class="pulse-text">ALX.TATT • PROCESANDO...</div>
-</div>
-
-<div id="resultado" style="display:none;"></div>
-        <div id="seccion-reserva" style="display:none; margin-top:20px;">
-            <label>Elegí tu horario:</label>
-            <select id="hora-turno">
-                <option value="11:00">Mañana (11:00 AM)</option>
-                <option value="14:00">Tarde 1 (02:00 PM)</option>
-                <option value="17:00">Tarde 2 (05:00 PM)</option>
-            </select>
+            <h1>ALX.TATT</h1>
             
-            <label>Tu Nombre:</label>
-            <input type="text" id="nombre-cliente" placeholder="Nombre completo">
-            <label>WhatsApp (con código de país):</label>
-<input type="tel" id="tel-cliente" placeholder="Ej: 5491123456789">
-            
-            <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">RESERVAR TURNO</button>
-        </div>
-        
-        <div class="galeria-container">
-            <h2>Mis Trabajos</h2>
-            <div id="galeria-dinamica" class="galeria-flex">
-                <p style="color:#444;">Sincronizando portfolio...</p>
+            <div id="loader" style="display:none; text-align:center; margin-bottom: 20px;">
+                <div style="animation: pulse-neon 1.5s infinite" class="small-counter">Sincronizando...</div>
+            </div>
+
+            <div class="grupo-input">
+                <label>Estilo / Complejidad</label>
+                <select id="complejidad" class="input-pro" onchange="calcular()">
+                    <option value="1">Línea Fina / Minimalista</option>
+                    <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
+                    <option value="2">Realismo / Neo tradicional / Full Color</option>
+                </select>
+            </div>
+
+            <div class="grupo-input">
+                <label>Zona del Cuerpo</label>
+                <select id="zona-cuerpo" class="input-pro" onchange="calcular()">
+                    <option value="1">Brazo / Pierna (Estándar)</option>
+                    <option value="1.2">Espalda / Muslo (+20%)</option>
+                    <option value="1.4">Costillas / Cuello / Abdomen (+40%)</option>
+                    <option value="1.1">Mano / Pie / Muñeca (+10%)</option>
+                </select>
+            </div>
+
+            <div class="grupo-input">
+                <label>Tamaño (cm)</label>
+                <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
+            </div>
+
+            <div id="resultado">Ingresá los datos para cotizar</div>
+
+            <div id="aviso-sesiones" class="aviso-info" style="display:none;">
+                ⚠️ Este proyecto podría requerir más de una sesión.
+            </div>
+
+            <div id="seccion-reserva" style="display:none; margin-top: 25px;">
+                <label>Nombre del Cliente</label>
+                <input type="text" id="nombre-cliente" class="input-pro" placeholder="Tu nombre">
+                <label>WhatsApp</label>
+                <input type="tel" id="tel-cliente" class="input-pro" placeholder="Código + Número">
+                <label>Horario Estimado</label>
+                <select id="hora-turno" class="input-pro">
+                    <option value="11:00">Mañana (11:00 AM)</option>
+                    <option value="14:00">Tarde (02:00 PM)</option>
+                    <option value="17:00">Tarde (05:00 PM)</option>
+                </select>
+                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">RESERVAR TURNO</button>
             </div>
         </div>
-        
-        <hr style="margin-top:50px; border: 0.5px solid #333;">
-        <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#444; width:100%; cursor:pointer;">⚙ Acceso Artista</button>
 
-        <div id="panel-artista" style="display:none; background:#111; padding:20px; border-radius:15px; margin-top:20px;">
-            <h3>Gestión de Insumos</h3>
+        <div class="galeria-container">
+            <h2>Mis Trabajos</h2>
+            <div id="galeria-dinamica" class="galeria-dinamica">
+                <p style="grid-column: 1/-1; text-align:center; color:#444;">Cargando portfolio...</p>
+            </div>
+        </div>
+
+        <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#333; width:100%; margin-top:40px; cursor:pointer; font-size: 0.7rem;">⚙ ACCESO ARTISTA</button>
+        <div id="panel-artista" style="display:none;">
+            <h3>Gestión Interna</h3>
             <div id="lista-inventario"></div>
-            <button class="btn-calc" onclick="enviarDescuentoStock()" style="margin-top:20px; background:#444;">DESCONTAR DEL EXCEL</button>
+            <button class="btn-calc" onclick="enviarDescuentoStock()">Sincronizar Stock</button>
+        </div>
+    </div>
+
+    <div id="overlay-carrete" class="overlay-carrete">
+        <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
+        <button class="nav-arrow arrow-left" onclick="moverSlider(-1)">&#10094;</button>
+        <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
+        <div class="contenedor-slider" id="slider-fotos"></div>
+        <div class="footer-carrete">
+            <h3 id="titulo-carrete" style="color:white; margin-bottom:10px;">ESTILO</h3>
+            <button id="btn-cotizar-carrete" class="btn-cotizar-pro">COTIZAR ESTE ESTILO</button>
         </div>
     </div>
 
     <script>
-
-// --- [DICCIONARIO MAESTRO DE ESTILOS Y DIFICULTAD] ---
-// Editá esto cuando agregues estilos nuevos al Excel.
-// Valores: 1 = Baja, 1.5 = Media, 2 = Alta
-// --- [DICCIONARIO MAESTRO ACTUALIZADO] ---
-// Escribí los estilos SIEMPRE en minúsculas aquí para que el buscador los encuentre.
-const mapaDificultad = {
-    "linea fina": 1,
-    "minimalista": 1,
-    "blackwork": 1.5,
-    "tradicional": 1.5,
-    "puntillismo": 1.5,
-    "realismo": 2.5,
-    "neo tradicional": 2, // Ahora con n y t minúsculas
-    "full color": 2
-};
-        
-        // --- VARIABLES DE ESTADO ---
-        let datosCargados = { precios: {}, inventario: [], turnos: [], galeria: [] };
-        let totalCalculado = 0;
-        let estiloNombre = ""; 
-        let cargando = false; 
-        const MI_PIN = "1234"; 
-        
-        // --- TU URL REAL ---
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
+        const MI_PIN = "1234";
 
-        // 1. CARGAR DATOS DESDE EL EXCEL
-        async function cargarDatos() {
-    if (cargando) return;
-    cargando = true;
-    
-    // 1. PRENDEMOS EL LOADER (Se ve apenas entra el cliente)
-    document.getElementById('loader').style.display = 'block';
-    
-    try {
-        const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
-        const data = await res.json();
-        
-        datosCargados = {
-            precios: data.precios || {},
-            inventario: data.inventario || [],
-            turnos: data.turnos || [],
-            galeria: data.galeria || []
+        const mapaDificultad = {
+            "linea fina": 1, "minimalista": 1,
+            "blackwork": 1.5, "tradicional": 1.5, "puntillismo": 1.5,
+            "realismo": 2.5, "neo tradicional": 2, "full color": 2
         };
 
-        dibujarGaleria(datosCargados.galeria);
+        let datosCargados = { precios: {}, inventario: [], turnos: [], galeria: [] };
+        let fotosPorEstilo = {};
 
-    } catch (e) {
-        console.error("Error sincronizando:", e);
-        document.getElementById('galeria-dinamica').innerHTML = "<p style='color:red;'>Error de conexión.</p>";
-    } finally {
-        cargando = false;
-        // 2. APAGAMOS EL LOADER (Cuando ya tenemos los datos listos)
-        document.getElementById('loader').style.display = 'none';
-    }
-}
-
-        // 2. DIBUJAR LA GALERÍA DINÁMICAMENTE
-        // 1. MEJORA: Galería Interactiva
-// Variable global para guardar las fotos agrupadas
-// Variable global para guardar las fotos agrupadas
-let fotosPorEstilo = {};
-
-function dibujarGaleria(datos) {
-    // ESTO ES CLAVE: Si estás en el celu, te va a tirar un cartelito
-    // Solo para probar. Si aparece el cartel, es que los datos LLEGARON.
-    if (!datos || datos.length === 0) {
-        console.error("No llegaron fotos");
-        return;
-    }
-
-    const contenedor = document.getElementById('galeria-dinamica');
-    if (!contenedor) {
-        alert("Error: No encontré el contenedor 'galeria-dinamica' en el HTML");
-        return;
-    }
-
-    contenedor.innerHTML = "";
-    fotosPorEstilo = {}; // Limpiamos la variable global
-
-    // 1. AGRUPAR: Convertimos la lista plana en "cajas" por estilo
-    datos.forEach(item => {
-        if (!item.estilo) return; // Salta filas vacías
-        const nombreLimpio = item.estilo.trim(); 
-        if (!fotosPorEstilo[nombreLimpio]) {
-            fotosPorEstilo[nombreLimpio] = [];
+        // --- CARGA INICIAL ---
+        async function cargarDatos() {
+            document.getElementById('loader').style.display = 'block';
+            try {
+                const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
+                const data = await res.json();
+                datosCargados = data;
+                dibujarGaleria(data.galeria);
+            } catch (e) {
+                console.error("Error:", e);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
         }
-        fotosPorEstilo[nombreLimpio].push(item);
-    });
 
-    // 2. DIBUJAR PORTADAS EN EL GRID
-    Object.keys(fotosPorEstilo).forEach(nombreEstilo => {
-        const grupo = fotosPorEstilo[nombreEstilo];
-        
-        // Buscamos la portada ("SI"), si no hay, usamos la primera
-        const portada = grupo.find(f => String(f.portada).toUpperCase() === "SI") || grupo[0];
+        // --- GALERÍA Y CARRETE ---
+        function dibujarGaleria(datos) {
+            const contenedor = document.getElementById('galeria-dinamica');
+            contenedor.innerHTML = "";
+            fotosPorEstilo = {};
 
-        // Creamos la ficha (card) que recibirá el CSS
-        const ficha = document.createElement('div');
-        ficha.className = "ficha-galeria";
-        
-        // Aquí armamos el HTML que va ADENTRO de cada tarjeta
-        ficha.innerHTML = `
-    <img src="${portada.imagen}" alt="${nombreEstilo}">
-    <div class="info-estilo">
-        <span>${nombreEstilo}</span>
-        <small class="small-counter">${grupo.length} FOTOS • VIEW</small>
-    </div>
-`;
+            datos.forEach(item => {
+                if (!item.estilo) return;
+                const key = item.estilo.trim();
+                if (!fotosPorEstilo[key]) fotosPorEstilo[key] = [];
+                fotosPorEstilo[key].push(item);
+            });
 
-        // Al tocar, se abre el carrete (esto ya funcionaba)
-        ficha.onclick = () => abrirCarrete(nombreEstilo);
-        
-        contenedor.appendChild(ficha);
-    });
-}
+            Object.keys(fotosPorEstilo).forEach(estilo => {
+                const grupo = fotosPorEstilo[estilo];
+                const portada = grupo.find(f => String(f.portada).toUpperCase() === "SI") || grupo[0];
+                
+                const ficha = document.createElement('div');
+                ficha.className = "ficha-galeria";
+                ficha.innerHTML = `
+                    <img src="${portada.imagen}" alt="${estilo}">
+                    <div class="info-estilo">
+                        <span>${estilo}</span>
+                        <small class="small-counter">${grupo.length} FOTOS • VER</small>
+                    </div>
+                `;
+                ficha.onclick = () => abrirCarrete(estilo);
+                contenedor.appendChild(ficha);
+            });
+        }
 
-        // 3. INICIO AUTOMÁTICO
-        window.addEventListener('DOMContentLoaded', cargarDatos);
+        function abrirCarrete(nombre) {
+            const overlay = document.getElementById('overlay-carrete');
+            const slider = document.getElementById('slider-fotos');
+            const titulo = document.getElementById('titulo-carrete');
+            const btn = document.getElementById('btn-cotizar-carrete');
 
-        // --- FUNCIONES DE CÁLCULO Y RESERVA ---
-        // 1. LA FUNCIÓN DE CÁLCULO (Blindada)
-function calcular() {
-    const inputTam = document.getElementById('tamaño');
-    const inputComp = document.getElementById('complejidad');
-    const inputZona = document.getElementById('zona-cuerpo');
-    const displayResultado = document.getElementById('resultado');
+            const fotos = fotosPorEstilo[nombre].sort((a,b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
+            slider.innerHTML = "";
+            fotos.forEach(f => {
+                const div = document.createElement('div');
+                div.className = "slide-item";
+                div.innerHTML = `<img src="${f.imagen}">`;
+                slider.appendChild(div);
+            });
 
-    const tamano = parseFloat(inputTam.value) || 0;
-    const complejidad = parseFloat(inputComp.value) || 1;
-    const zona = parseFloat(inputZona.value) || 1;
+            titulo.innerText = nombre.toUpperCase();
+            slider.scrollLeft = 0;
+            overlay.style.display = "flex";
+            document.body.style.overflow = "hidden";
 
-    // Actualizamos la barra de progreso siempre
-    actualizarProgreso(tamano, complejidad, zona);
+            btn.onclick = () => {
+                const sel = document.getElementById('complejidad');
+                sel.value = mapaDificultad[nombre.toLowerCase().trim()] || 1.5;
+                cerrarCarrete();
+                
+                // Mostrar Toast
+                const toast = document.getElementById('toast-mensaje');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
 
-    if (tamano > 0) {
-        const precioBase = complejidad >= 2 ? datosCargados.precios.mediaAlta : datosCargados.precios.baja;
-        
-        // TU LÓGICA DE PRECIO
-        let total = (precioBase / 10) * tamano * complejidad * zona;
-        if (total < precioBase) total = precioBase;
-
-        displayResultado.innerText = `Total estimado: $${Math.round(total).toLocaleString()}`;
-        displayResultado.classList.add('glow-efecto'); // Animación de brillo
-    } else {
-        displayResultado.innerText = "Ingresá el tamaño";
-    }
-}
-
-// 2. EL BOTÓN DEL CARRETE (Arregla el salto Neo -> Puntillismo)
-function abrirCarrete(nombreEstilo) {
-    const overlay = document.getElementById('overlay-carrete');
-    const btnCotizar = document.getElementById('btn-cotizar-carrete');
-    // ... (resto de carga de fotos igual) ...
-
-    overlay.style.display = "flex";
-
-    btnCotizar.onclick = () => {
-        const selector = document.getElementById('complejidad');
-        const nombreLimpio = nombreEstilo.toLowerCase().trim();
-
-        // MAPEADO EXACTO: Evita saltos a estilos parecidos
-        const dificultad = mapaDificultad[nombreLimpio] || 1.5;
-        selector.value = dificultad;
-
-        cerrarCarrete();
-
-        // NAVEGACIÓN PC Y CELULAR (Forzada)
-        setTimeout(() => {
-            const seccion = document.getElementById('cotizador-seccion');
-            seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Enfocamos el tamaño para que el teclado se abra en el celu
-            document.getElementById('tamaño').focus();
-            
-            // Ejecutamos un primer cálculo para que la barra se mueva
-            calcular();
-        }, 200);
-    };
-}
-
-// 3. ACTUALIZAR PROGRESO (Sin errores)
-function actualizarProgreso(tam, comp, zona) {
-    let puntos = 0;
-    if (tam > 0) puntos++;
-    if (comp > 0) puntos++;
-    if (zona > 0) puntos++;
-
-    const porcentaje = Math.round((puntos / 3) * 100);
-    const barra = document.getElementById('barra-tinta');
-    const texto = document.getElementById('porcentaje-texto');
-
-    if (barra) barra.style.width = porcentaje + "%";
-    if (texto) texto.innerText = porcentaje + "%";
-}
-
-        function prepararCaptura() {
-            document.getElementById('btn-foto').style.display = 'none';
-            document.getElementById('seccion-reserva').style.display = 'none';
-            alert("¡Lista para captura! Tocá cualquier lado para volver.");
-            window.onclick = function() {
-                document.getElementById('btn-foto').style.display = 'inline-block';
-                document.getElementById('seccion-reserva').style.display = 'block';
-                window.onclick = null;
+                setTimeout(() => {
+                    document.getElementById('cotizador-seccion').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('tamaño').focus();
+                    calcular();
+                }, 300);
             };
         }
 
-        async function guardarTurno() {
-    const nombre = document.getElementById('nombre-cliente').value.trim();
-    const whatsapp = document.getElementById('tel-cliente').value.trim();
-    const tam = document.getElementById('tamaño').value;
-    const hora = document.getElementById('hora-turno').value;
-
-    // --- EL GUARDIA INTERNACIONAL (Ponerlo aquí) ---
-    if (!nombre) return alert("⚠️ Por favor, ingresá tu nombre.");
-
-    // Acepta de 7 a 15 números (estándar mundial)
-    const moldeInternacional = /^\d{7,15}$/; 
-    if (!moldeInternacional.test(whatsapp)) {
-        return alert("⚠️ WhatsApp inválido. Poné solo números con código de país (ej: 54911...)");
-    }
-
-    // --- EL ENVÍO (Sigue igual) ---
-    try {
-        await fetch(URL_SCRIPT, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                accion: "reservar", nombre, whatsapp, tam, hora, 
-                comp: estiloNombre, total: totalCalculado 
-            })
-        });
-
-        alert("✅ ¡Turno agendado!");
-        
-        // --- EL LINK CORREGIDO (Asegurate que tenga el 5491157734552) ---
-        const mensaje = `Hola! Soy ${nombre}, coticé un ${estiloNombre} de ${tam}cm ($${totalCalculado.toLocaleString()}). Quiero agendar para las ${hora}!`;
-        window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(mensaje)}`;
-        
-    } catch (e) { 
-        alert("❌ Error de conexión."); 
-    }
-}
-
-        // --- PANEL DE ARTISTA ---
-        function abrirPanelArtista() {
-            if (prompt("PIN de Artista:") !== MI_PIN) return alert("PIN Incorrecto");
-            document.getElementById('panel-artista').style.display = "block";
-            renderizarPanel();
+        function cerrarCarrete() {
+            document.getElementById('overlay-carrete').style.display = "none";
+            document.body.style.overflow = "auto";
         }
 
-        function renderizarPanel() {
-            let htmlTurnos = "<h4>Turno terminado:</h4>";
-            htmlTurnos += "<select id='select-turno' style='width:100%; padding:10px; background:#222; color:white; border-radius:10px;'>";
-            datosCargados.turnos.forEach(t => {
-                htmlTurnos += `<option value="${t.fila}">${t.cliente.toUpperCase()} (${t.detalle})</option>`;
-            });
-            htmlTurnos += "</select>";
-
-            let htmlInv = "<h4>Insumos usados:</h4>";
-            datosCargados.inventario.forEach((item, i) => {
-                htmlInv += `
-                <div class="inv-item">
-                    <span>${item.nombre} (Stock: ${item.stock})</span>
-                    <input type="number" id="inv-${i}" value="0" style="width:50px; background:#000; color:#0ff; border:1px solid #333; text-align:center;">
-                </div>`;
-            });
-            document.getElementById('lista-inventario').innerHTML = htmlTurnos + htmlInv;
+        function moverSlider(dir) {
+            const s = document.getElementById('slider-fotos');
+            s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' });
         }
 
-        // 2. MEJORA: Validación de Seguridad (Capa de Protección)
-async function enviarDescuentoStock() {
-    const filaTurno = document.getElementById('select-turno').value;
-    
-    // --- EL CANDADO ---
-    if (!filaTurno) {
-        return alert("⚠️ ERROR: Tenés que seleccionar qué cliente terminó para poder descontar el stock.");
-    }
+        // --- CÁLCULO Y PROGRESO ---
+        function calcular() {
+            const tam = parseFloat(document.getElementById('tamaño').value) || 0;
+            const comp = parseFloat(document.getElementById('complejidad').value) || 1;
+            const zona = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
+            const resDiv = document.getElementById('resultado');
 
-    const btn = event.target;
-    btn.innerText = "Sincronizando...";
-    btn.disabled = true;
+            // Barra de progreso
+            let puntos = 0;
+            if (tam > 0) puntos++;
+            if (comp > 0) puntos++;
+            if (zona > 1) puntos++;
+            const pct = Math.round((puntos/3)*100);
+            document.getElementById('barra-tinta').style.width = pct + "%";
+            document.getElementById('porcentaje-texto').innerText = pct + "%";
 
-    let items = [];
-    datosCargados.inventario.forEach((item, i) => {
-        let cant = parseInt(document.getElementById(`inv-${i}`).value);
-        if(cant > 0) items.push({ fila: item.fila, cantidad: cant });
-    });
+            if (tam > 0) {
+                const base = comp >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 60000);
+                let total = (base / 10) * tam * comp * zona;
+                if (total < base) total = base;
 
-    // Si no usaste ningún insumo, avisamos (opcional)
-    if (items.length === 0) {
-        btn.disabled = false;
-        btn.innerText = "DESCONTAR DEL EXCEL";
-        return alert("No pusiste ninguna cantidad de insumos.");
-    }
-
-    await fetch(URL_SCRIPT, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ accion: "descontar", itemsADescontar: items, filaTurno: filaTurno })
-    });
-    alert("¡Stock y Turno actualizados!");
-    location.reload();
-}
-
-        function reinicio() {
-            document.getElementById('tamaño').value = "";
-            document.getElementById('resultado').style.display = "none";
-            document.getElementById('seccion-reserva').style.display = "none";
-        }
-
-// --- FUNCIÓN MÁGICA DE DESCARGA (html2canvas) ---
-function descargarCotizacion() {
-    const ticket = document.getElementById('tarjeta-downloadable');
-    const btnDescarga = event.target;
-
-    btnDescarga.innerText = "📸 Procesando...";
-    btnDescarga.disabled = true;
-
-    // Pequeño truco: Esperamos 100ms para que el navegador "dibuje" bien el ticket antes de la foto
-    setTimeout(() => {
-        html2canvas(ticket, {
-            backgroundColor: "#000000",
-            scale: 2, 
-            useCORS: true, // Permite capturar imágenes de otros servidores
-            allowTaint: true, // Ignora bloqueos de seguridad de píxeles si es necesario
-            logging: false
-        }).then(canvas => {
-            const image = canvas.toDataURL("image/png");
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = `Cotizacion_Tattoo.png`;
-            link.click();
-
-            btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
-            btnDescarga.disabled = false;
-        }).catch(err => {
-            console.error("Error:", err);
-            alert("No se pudo generar la imagen. ¡Saca una captura de pantalla!");
-            btnDescarga.innerText = "⬇️ DESCARGAR IMAGEN";
-            btnDescarga.disabled = false;
-        });
-    }, 100); 
-}
-
-function abrirCarrete(nombreEstilo) {
-    const overlay = document.getElementById('overlay-carrete');
-    const slider = document.getElementById('slider-fotos');
-    const titulo = document.getElementById('titulo-carrete');
-    const btnCotizar = document.getElementById('btn-cotizar-carrete');
-
-    const fotos = fotosPorEstilo[nombreEstilo];
-    
-    // 1. Ordenamos fotos
-    fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
-
-    // 2. Limpiamos y cargamos
-    slider.innerHTML = "";
-    fotos.forEach(f => {
-        const item = document.createElement('div');
-        item.className = "slide-item";
-        item.innerHTML = `<img src="${f.imagen}" style="max-height:80vh; max-width:90%;">`;
-        slider.appendChild(item);
-    });
-
-    titulo.innerText = nombreEstilo.toUpperCase();
-    slider.scrollLeft = 0; 
-    overlay.style.display = "flex";
-    document.body.style.overflow = "hidden";
-
-    // --- AQUÍ ESTÁ LA MAGIA: EL BOTÓN DE ACCIÓN ---
-    // --- Lógica del Botón Cotizar dentro del Carrete ---
-    btnCotizar.onclick = () => {
-        const selectorComplejidad = document.getElementById('complejidad');
-        
-        // 1. NORMALIZACIÓN: Pasamos el nombre a minúsculas y quitamos espacios extra
-        const estiloNormalizado = nombreEstilo.toLowerCase().trim();
-        
-        // 2. BUSQUEDA: Obtenemos la dificultad del mapa
-        const dificultadAutomatica = mapaDificultad[estiloNormalizado] || 1.5;
-
-        // 3. ASIGNACIÓN: Seteamos el valor en el menú
-        selectorComplejidad.value = dificultadAutomatica;
-
-        // 4. CIERRE Y NAVEGACIÓN (Corregido para PC)
-        cerrarCarrete();
-
-        // Pequeño delay para dejar que el DOM se acomode tras cerrar el carrete
-        setTimeout(() => {
-            // Intentamos ir al cotizador usando el ID del contenedor principal
-            const seccionDestino = document.getElementById('cotizador-seccion') || document.body;
-            
-            seccionDestino.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-
-            // Foco en el tamaño para UX pro
-            const inputTam = document.getElementById('tamaño');
-            if(inputTam) inputTam.focus();
-
-            // Toast de confirmación (si lo tenés implementado)
-            if(typeof mostrarToast === 'function') {
-                mostrarToast(`Estilo: ${nombreEstilo} • Dificultad: ${dificultadAutomatica === 2 ? 'Alta' : 'Media'}`);
+                resDiv.innerHTML = `Presupuesto estimado: <span style="color:var(--rojo-tinta);">$${Math.round(total).toLocaleString()}</span>`;
+                document.getElementById('aviso-sesiones').style.display = (tam >= 20) ? "block" : "none";
+                document.getElementById('seccion-reserva').style.display = "block";
+                resDiv.classList.add('glow-efecto');
+                setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
+            } else {
+                resDiv.innerText = "Esperando tamaño...";
+                document.getElementById('seccion-reserva').style.display = "none";
             }
-        }, 150); // 150ms es el tiempo ideal para que no se "trabe" el scroll
-    };
-}
+        }
 
-// NUEVA FUNCIÓN PARA LAS FLECHAS PC
-function moverSlider(direccion) {
-    const slider = document.getElementById('slider-fotos');
-    const anchoFoto = slider.clientWidth;
-    slider.scrollBy({ left: direccion * anchoFoto, behavior: 'smooth' });
-}
+        // --- RESERVA Y WHATSAPP ---
+        async function guardarTurno() {
+            const n = document.getElementById('nombre-cliente').value;
+            const w = document.getElementById('tel-cliente').value;
+            if(!n || !w) return alert("Completá tus datos de contacto.");
 
-function cerrarCarrete() {
-    document.getElementById('overlay-carrete').style.display = "none";
-    document.body.style.overflow = "auto";
-}
-        
+            const msg = `Hola! Soy ${n}. Coticé un tattoo de ${document.getElementById('tamaño').value}cm. Mi presupuesto es ${document.getElementById('resultado').innerText}. Quiero agendar!`;
+            window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
+        }
+
+        // --- ARTISTA ---
+        function abrirPanelArtista() {
+            if (prompt("PIN:") === MI_PIN) document.getElementById('panel-artista').style.display = "block";
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarDatos);
     </script>
-
-<div id="overlay-carrete" class="overlay-carrete" style="display:none;">
-    <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
-    
-    <button class="nav-arrow arrow-left" onclick="moverSlider(-1)">&#10094;</button>
-    <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
-
-    <div class="contenedor-slider" id="slider-fotos"></div>
-
-    <div class="footer-carrete">
-        <h3 id="titulo-carrete"></h3>
-        <button id="btn-cotizar-carrete" class="btn-cotizar-pro">COTIZAR ESTE ESTILO</button>
-    </div>
-</div>
-    
 </body>
 </html>
