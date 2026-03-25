@@ -433,6 +433,17 @@
 @media (min-width: 768px) { .nav-arrow { display: block; } }
 .arrow-left { left: 10px; }
 .arrow-right { right: 10px; }
+
+.btn-cotizar-pro:active {
+    transform: scale(0.95); /* Se achica un poquito al tocarlo */
+    background-color: #b51d28; /* Se oscurece el rojo */
+}
+
+/* Animación para que el formulario "brille" al ser seleccionado */
+.card-cotizador {
+    transition: box-shadow 0.5s ease;
+}
+        
         
         
     </style>
@@ -813,12 +824,14 @@ function abrirCarrete(nombreEstilo) {
     const overlay = document.getElementById('overlay-carrete');
     const slider = document.getElementById('slider-fotos');
     const titulo = document.getElementById('titulo-carrete');
+    const btnCotizar = document.getElementById('btn-cotizar-carrete');
 
     const fotos = fotosPorEstilo[nombreEstilo];
     
-    // 1. ORDENAR estrictamente por la columna 'orden' del Excel
+    // 1. Ordenamos fotos
     fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
 
+    // 2. Limpiamos y cargamos
     slider.innerHTML = "";
     fotos.forEach(f => {
         const item = document.createElement('div');
@@ -828,12 +841,41 @@ function abrirCarrete(nombreEstilo) {
     });
 
     titulo.innerText = nombreEstilo.toUpperCase();
-    
-    // 2. RESETEAR EL SCROLL (Muy importante para que empiece en la foto 1)
     slider.scrollLeft = 0; 
-    
     overlay.style.display = "flex";
-    document.body.style.overflow = "hidden"; // Bloquea el scroll del fondo
+    document.body.style.overflow = "hidden";
+
+    // --- AQUÍ ESTÁ LA MAGIA: EL BOTÓN DE ACCIÓN ---
+    btnCotizar.onclick = () => {
+        const selector = document.getElementById('complejidad');
+        
+        // Mapeo inteligente: Buscamos qué opción del select contiene el nombre del estilo
+        let opcionEncontrada = false;
+        for (let i = 0; i < selector.options.length; i++) {
+            if (selector.options[i].text.toLowerCase().includes(nombreEstilo.toLowerCase())) {
+                selector.selectedIndex = i;
+                opcionEncontrada = true;
+                break;
+            }
+        }
+
+        // Si no lo encuentra por nombre, ponemos uno por defecto (ej: Blackwork/Media)
+        if (!opcionEncontrada) selector.value = "1.5";
+
+        // Cerramos el carrete
+        cerrarCarrete();
+
+        // Feedback Visual: Un pequeño resplandor en el cotizador para avisar que cambió
+        const form = document.querySelector('.card-cotizador');
+        form.style.boxShadow = "0 0 20px var(--rojo-tinta)";
+        setTimeout(() => form.style.boxShadow = "none", 1000);
+
+        // Volamos al cotizador y enfocamos el tamaño
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => {
+            document.getElementById('tamaño').focus();
+        }, 600);
+    };
 }
 
 // NUEVA FUNCIÓN PARA LAS FLECHAS PC
