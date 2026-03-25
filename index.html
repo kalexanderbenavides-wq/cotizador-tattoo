@@ -349,18 +349,18 @@
         
 /* La ficha (tarjeta) de cada estilo */
 .ficha-galeria {
-    position: relative;
-    aspect-ratio: 1 / 1; /* FORZAMOS CUADRADO PERFECTO */
-    border-radius: 8px;
-    overflow: hidden;
-    background: #111;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Movimiento más elástico */
     border: 1px solid #222;
 }
 
 /* --- ANIMACIÓN AL PASAR EL CURSOR (HOVER) --- */
 .ficha-galeria:hover {
-    transform: translateY(-5px); /* Sube la tarjeta un poco */
-    border-color: var(--rojo-tinta); /* Cambia el borde a rojo */
+    transform: translateY(-8px) scale(1.02); /* Sube un poco más y se agranda */
+    border-color: var(--rojo-tinta);
+    /* Brillo Neón: Sombra externa roja + Sombra interna sutil */
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.6), 
+                inset 0 0 10px rgba(230, 57, 70, 0.4);
+    z-index: 10;
 }
 
 /* La foto de portada dentro de la ficha */
@@ -444,6 +444,27 @@
     transition: box-shadow 0.5s ease;
 }
         
+.toast-aviso {
+    position: fixed;
+    top: -100px; /* Escondido arriba */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: var(--rojo-tinta);
+    padding: 15px 30px;
+    border: 2px solid var(--rojo-tinta);
+    border-radius: 50px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    z-index: 9999;
+    transition: top 0.5s ease;
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.5);
+}
+
+.toast-aviso.show {
+    top: 20px; /* Aparece en pantalla */
+}
+
         
         
     </style>
@@ -453,6 +474,8 @@
 </head>
 <body>
 
+<div id="toast-mensaje" class="toast-aviso">⚡ ESTILO SELECCIONADO</div>
+    
     <div class="card">
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="logo2026.png" alt="Logo Estudio" style="max-width: 120px; height: auto;">
@@ -849,7 +872,7 @@ function abrirCarrete(nombreEstilo) {
     btnCotizar.onclick = () => {
         const selector = document.getElementById('complejidad');
         
-        // Mapeo inteligente: Buscamos qué opción del select contiene el nombre del estilo
+        // 1. Buscamos el estilo en el menú
         let opcionEncontrada = false;
         for (let i = 0; i < selector.options.length; i++) {
             if (selector.options[i].text.toLowerCase().includes(nombreEstilo.toLowerCase())) {
@@ -858,23 +881,31 @@ function abrirCarrete(nombreEstilo) {
                 break;
             }
         }
-
-        // Si no lo encuentra por nombre, ponemos uno por defecto (ej: Blackwork/Media)
         if (!opcionEncontrada) selector.value = "1.5";
 
-        // Cerramos el carrete
+        // 2. Cerramos el carrete
         cerrarCarrete();
 
-        // Feedback Visual: Un pequeño resplandor en el cotizador para avisar que cambió
-        const form = document.querySelector('.card-cotizador');
-        form.style.boxShadow = "0 0 20px var(--rojo-tinta)";
-        setTimeout(() => form.style.boxShadow = "none", 1000);
+        // 3. MOSTRAR EL MENSAJE FLOTANTE
+        const toast = document.getElementById('toast-mensaje');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
 
-        // Volamos al cotizador y enfocamos el tamaño
+        // 4. EL VUELO (SCROLL) FORZADO
+        // Intentamos ir al principio de la página
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Backup por si el 'smooth' falla en algún celular:
         setTimeout(() => {
-            document.getElementById('tamaño').focus();
-        }, 600);
+            // Hacemos foco en el tamaño para que el teclado se abra (UX Pro)
+            const inputTam = document.getElementById('tamaño');
+            inputTam.focus();
+            
+            // Si después de medio segundo no llegó arriba, lo forzamos
+            if (window.scrollY > 200) {
+                window.scrollTo(0, 0);
+            }
+        }, 700);
     };
 }
 
