@@ -40,16 +40,30 @@
             animation: fadeInUp 0.8s ease-out;
         }
 
-        /* --- LOGO --- */
-        .header-logo {
+        /* --- HEADER CON LOGO Y TÍTULO --- */
+        .header-estudio {
             text-align: center;
-            margin-bottom: 25px;
-        }
-        .header-logo img {
-            max-width: 180px; /* Ajustá el tamaño de tu logo aquí */
-            height: auto;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
+        .header-estudio img {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .header-estudio h1 {
+            font-family: 'Bungee Hairline', sans-serif;
+            font-size: 2.8rem;
+            color: #fff;
+            letter-spacing: 5px;
+            line-height: 1;
+        }
+
+        /* --- TARJETA COTIZADOR --- */
         .card-cotizador {
             background: var(--gris-oscuro);
             padding: 30px;
@@ -65,7 +79,7 @@
             letter-spacing: 2px;
             text-align: center;
             margin-bottom: 25px;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         /* --- BARRA DE PROGRESO --- */
@@ -91,12 +105,12 @@
         }
         .input-pro:focus { border-color: var(--rojo-tinta); box-shadow: 0 0 15px rgba(230, 57, 70, 0.1); }
 
-        /* --- EL BOTÓN "ANTIGUO" CON LOOK NUEVO --- */
+        /* --- BOTÓN PRO --- */
         .btn-calc {
             background: var(--rojo-tinta);
             color: white;
             width: 100%;
-            padding: 20px; /* Más robusto como el anterior */
+            padding: 20px;
             border-radius: 15px;
             border: none;
             font-weight: 800;
@@ -186,11 +200,10 @@
 
     <div class="main-container">
         
-        <div class="header-logo">
-            <img src="logo2026.png" alt="Logo Estudio" style="max-width: 120px; height: auto;">
-    </div>
-            <h1 style="font-family:'Bungee Hairline'; font-size: 2.5rem; color: #fff; margin-top: 10px;">ALX.TAT</h1>
-        </div>
+        <header class="header-estudio">
+            <img src="logo2026.png" alt="Logo Estudio">
+            <h1>ALX.TAT</h1>
+        </header>
 
         <div id="cotizador-seccion" class="card-cotizador">
             <div class="progreso-container">
@@ -198,14 +211,14 @@
                 <div class="barra-fondo"><div id="barra-tinta" class="barra-tinta"></div></div>
             </div>
 
-            <h2>Cotizador de Turnos</h2>
+            <h2>Cotizá tu Próximo Tattoo</h2>
             
             <div id="loader" style="display:none; text-align:center; margin-bottom: 20px;">
-                <div style="font-size:0.7rem; color:var(--rojo-tinta); letter-spacing:2px;">SINCRONIZANDO PORTFOLIO...</div>
+                <div style="font-size:0.7rem; color:var(--rojo-tinta); letter-spacing:2px;">CONECTANDO CON EL PORTFOLIO...</div>
             </div>
 
             <div class="grupo-input">
-                <label>Estilo Deseado</label>
+                <label>Elegí un Estilo</label>
                 <select id="complejidad" class="input-pro" onchange="calcular()">
                     <option value="1">Línea Fina / Minimalista</option>
                     <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
@@ -238,19 +251,19 @@
                 <label>Tu Nombre</label>
                 <input type="text" id="nombre-cliente" class="input-pro" placeholder="Nombre completo">
                 <label>WhatsApp</label>
-                <input type="tel" id="tel-cliente" class="input-pro" placeholder="Código de área + número">
-                <label>Preferencia Horaria</label>
+                <input type="tel" id="tel-cliente" class="input-pro" placeholder="Número con código de área">
+                <label>Horario de Preferencia</label>
                 <select id="hora-turno" class="input-pro">
                     <option value="11:00">Mañana (11:00 AM)</option>
                     <option value="14:00">Tarde (02:00 PM)</option>
                     <option value="17:00">Tarde (05:00 PM)</option>
                 </select>
-                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);">RESERVAR VÍA WHATSAPP</button>
+                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);">AGENDAR POR WHATSAPP</button>
             </div>
         </div>
 
         <div class="galeria-container">
-            <h2 style="text-align: left; font-size: 0.9rem; margin-left: 10px;">Explorá mis trabajos</h2>
+            <h2 style="text-align: left; font-size: 0.9rem; margin-left: 10px;">Portfolio</h2>
             <div id="galeria-dinamica" class="galeria-dinamica"></div>
         </div>
         
@@ -359,7 +372,6 @@
             const comp = parseFloat(document.getElementById('complejidad').value) || 1;
             const zona = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
             
-            // Progreso
             let puntos = 0; if (tam > 0) puntos++; if (comp > 0) puntos++; if (zona > 1) puntos++;
             const pct = Math.round((puntos/3)*100);
             document.getElementById('barra-tinta').style.width = pct + "%";
@@ -388,7 +400,7 @@
             window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
         }
 
-        function abrirPanelArtista() { if (prompt("PIN:") === MI_PIN) alert("Acceso concedido al Excel de gestión."); }
+        function abrirPanelArtista() { if (prompt("PIN:") === MI_PIN) alert("Acceso concedido."); }
 
         window.addEventListener('DOMContentLoaded', cargarDatos);
     </script>
