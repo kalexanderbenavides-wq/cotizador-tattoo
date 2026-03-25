@@ -329,69 +329,75 @@
 
 /* --- LÓGICA DE IMPRESIÓN (PDF) --- */
 /* --- CONFIGURACIÓN DE PDF ESTÉTICO --- */
-@media print {
-    /* Forzamos al navegador a imprimir fondos y colores */
-    * { 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
-    }
+/* --- ARREGLO PARA EL MAPA EN CELULARES --- */
+.mapa-svg-wrapper {
+    -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul feo al tocar */
+    touch-action: manipulation; /* Optimiza para toques rápidos */
+}
 
-    /* Escondemos todo lo que no sea el PDF */
-    body * { display: none !important; }
-    
-    /* Mostramos y formateamos la sección de cuidados */
-    #seccion-cuidados-print, #seccion-cuidados-print * { 
-        display: block !important; 
-        visibility: visible !important; 
-    }
+.zona-touch {
+    fill: #222; /* Un poco más claro para que se vea en el celu */
+    stroke: #444;
+    stroke-width: 1.5;
+    transition: fill 0.2s, filter 0.2s;
+}
+
+/* --- REFORMA TOTAL DEL PDF (IMPRESIÓN) --- */
+@media print {
+    /* Forzamos que se vea el color en el PDF */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    /* Escondemos TODO lo que no sea la guía */
+    body > *:not(#seccion-cuidados-print) { display: none !important; }
 
     #seccion-cuidados-print {
+        display: block !important;
         position: absolute;
         top: 0; left: 0; width: 100%;
-        background-color: #0d0d0d !important;
-        color: #f1f1f1 !important;
-        padding: 40px;
-        min-height: 100vh;
-        font-family: 'Inter', sans-serif;
-    }
-
-    /* Estética del Encabezado en el PDF */
-    .print-header { text-align: center; margin-bottom: 40px; }
-    .print-header img { max-width: 100px; margin-bottom: 10px; }
-    .print-header h1 { 
-        font-family: 'Bungee Hairline', sans-serif; 
-        font-size: 3rem; 
-        color: #e63946 !important; 
+        background-color: #ffffff !important; /* Fondo blanco para que no salga negro */
+        color: #000000 !important; /* Texto negro para máxima nitidez */
+        padding: 0;
         margin: 0;
     }
-    .print-divider { 
-        height: 2px; 
-        background: #e63946 !important; 
-        width: 100px; 
-        margin: 15px auto; 
+
+    .print-header { 
+        display: block !important; 
+        text-align: center; 
+        border-bottom: 3px solid #e63946 !important; 
+        padding-bottom: 20px;
+        margin-bottom: 30px;
     }
 
-    .cuidados-seccion { margin-bottom: 30px; }
+    .print-header h1 { 
+        color: #e63946 !important; 
+        font-family: 'Bungee Hairline', sans-serif; 
+        font-size: 3.5rem !important;
+        margin: 0;
+    }
+
     .cuidados-seccion h4 { 
         color: #e63946 !important; 
-        font-size: 1rem; 
-        border-bottom: 1px solid #333;
-        padding-bottom: 5px;
-        margin-bottom: 15px;
-    }
-    .cuidados-seccion li { margin-bottom: 10px; font-size: 0.9rem; }
-
-    .print-footer {
-        margin-top: 50px;
-        text-align: center;
-        font-size: 0.7rem;
-        color: #666 !important;
-        border-top: 1px solid #222;
-        padding-top: 20px;
+        font-size: 1.2rem !important; 
+        margin-top: 25px;
+        text-transform: uppercase;
     }
 
-    /* Escondemos los botones dentro del PDF */
-    .no-print { display: none !important; }
+    .cuidados-seccion li { 
+        color: #333333 !important; 
+        font-size: 1rem !important; 
+        margin-bottom: 10px;
+    }
+
+    /* Escondemos los botones en el papel */
+    .no-print, .btn-download-mini, .btn-cuidados-toggle { display: none !important; }
+
+    /* Forzamos que el contenido se vea aunque esté cerrado en la web */
+    .cuidados-content { 
+        max-height: none !important; 
+        display: block !important; 
+        opacity: 1 !important;
+        padding: 0 !important;
+    }
 }
 
 /* Estilo para que el header de impresión no se vea en la web normal */
@@ -511,6 +517,44 @@
     margin-top: 10px;
     letter-spacing: 1px;
 }
+
+/* --- ANIMACIONES DE ENTRADA (FADE-IN) --- */
+
+/* Definimos el movimiento base */
+@keyframes entradaSuave {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px); /* Empieza 30px abajo */
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); /* Termina en su lugar */
+    }
+}
+
+/* Aplicamos la animación a los contenedores principales */
+.header-estudio, 
+.card-cotizador, 
+.galeria-container, 
+.cuidados-wrapper {
+    opacity: 0; /* Invisibles al inicio */
+    animation: entradaSuave 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* --- ESCALONAMIENTO (DELAYS) --- */
+/* El logo aparece instantáneo */
+.header-estudio { animation-delay: 0.1s; }
+
+/* El cotizador aparece a los 0.4 segundos */
+.card-cotizador { animation-delay: 0.4s; }
+
+/* El mapa y la escala (dentro del cotizador) ya vienen con él */
+
+/* El portfolio aparece a los 0.8 segundos */
+.galeria-container { animation-delay: 0.8s; }
+
+/* Los cuidados aparecen al final, a los 1.1 segundos */
+.cuidados-wrapper { animation-delay: 1.1s; }
         
     </style>
 </head>
@@ -764,6 +808,10 @@
         function moverSlider(dir) { const s = document.getElementById('slider-fotos'); s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' }); }
 
         function calcular() {
+
+            // Dentro de tu función calcular()
+resDiv.classList.add('glow-efecto');
+setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
     const tam = parseFloat(document.getElementById('tamaño').value) || 0;
             const comp = parseFloat(document.getElementById('complejidad').value) || 1;
             const zona = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
@@ -848,27 +896,44 @@ function toggleCuidados() {
 }
 
 function seleccionarZona(elemento) {
-    // 1. Quitamos la clase 'activa' de todas las zonas
-    document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
-    
-    // 2. Marcamos la zona tocada
-    elemento.classList.add('activa');
-    
-    // 3. Obtenemos el valor de dificultad de la zona
-    const valorZona = elemento.getAttribute('data-valor');
-    
-    // 4. Sincronizamos con el select original (que puede estar oculto o visible)
-    const selector = document.getElementById('zona-cuerpo');
-    selector.value = valorZona;
-    
-    // 5. Actualizamos el texto visual para el cliente
-    const nombreDisplay = document.getElementById('zona-nombre-display');
-    const nombres = { "1": "Zona Estándar", "1.2": "Espalda / Muslo", "1.4": "Zona Compleja", "1.1": "Mano / Pie" };
-    nombreDisplay.innerText = "Zona: " + (nombres[valorZona] || "Seleccionada");
+    // 1. Evitamos que el evento se dispare dos veces en celus
+    if (!elemento) return;
 
-    // 6. ¡Recalculamos todo!
+    // 2. Limpiamos todas las zonas
+    const todasLasZonas = document.querySelectorAll('.zona-touch');
+    todasLasZonas.forEach(z => {
+        z.classList.remove('activa');
+        z.style.fill = "#222"; // Color base
+    });
+    
+    // 3. Activamos la elegida
+    elemento.classList.add('activa');
+    elemento.style.fill = "#e63946"; // Rojo ALX.TAT directo
+
+    // 4. Sincronizamos con el selector
+    const valorZona = elemento.getAttribute('data-valor');
+    const selector = document.getElementById('zona-cuerpo');
+    if (selector) selector.value = valorZona;
+    
+    // 5. Actualizamos el texto de la etiqueta
+    const nombresZonas = {
+        "1": "Brazo / Pierna",
+        "1.2": "Espalda / Muslo",
+        "1.4": "Costillas / Cuello / Abdomen",
+        "1.1": "Mano / Pie / Muñeca"
+    };
+    
+    const display = document.getElementById('zona-nombre-display');
+    if (display) {
+        display.innerText = "Zona: " + (nombresZonas[valorZona] || "Seleccionada");
+        // Efecto visual rápido en el texto
+        display.style.color = "#fff";
+        setTimeout(() => display.style.color = "#e63946", 300);
+    }
+
+    // 6. Recalculamos el precio
     calcular();
-}        
+}      
         
         
     </script>
