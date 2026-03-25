@@ -675,12 +675,29 @@
         }
 
         async function guardarTurno() {
-            const n = document.getElementById('nombre-cliente').value;
-            const w = document.getElementById('tel-cliente').value;
-            if(!n || !w) return alert("Por favor, completá tu contacto.");
-            const msg = `Hola Alex! Soy ${n}. Coticé un tattoo de ${document.getElementById('tamaño').value}cm. Mi presupuesto estimado es ${document.getElementById('resultado').innerText}. Me gustaría agendar!`;
-            window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
-        }
+    const n = document.getElementById('nombre-cliente').value.trim();
+    const w = document.getElementById('tel-cliente').value.trim();
+    const tam = document.getElementById('tamaño').value;
+    const precio = document.getElementById('resultado').innerText;
+    
+    // Capturamos el texto de la zona (ej: "Costillas / Cuello / Abdomen")
+    const zonaSelect = document.getElementById('zona-cuerpo');
+    const zonaTexto = zonaSelect.options[zonaSelect.selectedIndex].text;
+
+    // Capturamos el estilo seleccionado
+    const estiloSelect = document.getElementById('complejidad');
+    const estiloTexto = estiloSelect.options[estiloSelect.selectedIndex].text;
+
+    if(!n || !w) {
+        return alert("⚠️ Por favor, completá tu nombre y WhatsApp para agendar.");
+    }
+
+    // Armamos el mensaje Pro
+    const mensaje = `Hola Alex! Soy ${n}. Coticé un tattoo de ${tam}cm (${estiloTexto}) en la zona de ${zonaTexto}. El presupuesto estimado es ${precio}. Me gustaría agendar un turno!`;
+
+    // Abrimos WhatsApp (Asegúrate que el número 5491157734552 sea el correcto)
+    window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(mensaje)}`;
+}
 
         function abrirPanelArtista() { if (prompt("PIN:") === MI_PIN) alert("Acceso concedido."); }
 
