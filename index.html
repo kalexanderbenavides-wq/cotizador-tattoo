@@ -326,6 +326,91 @@
     margin-top: 15px;
     width: 100%;
 }
+
+/* --- LÓGICA DE IMPRESIÓN (PDF) --- */
+@media print {
+    /* Escondemos TODO */
+    body * { visibility: hidden; background: white !important; }
+    
+    /* Mostramos SOLO la sección de cuidados */
+    .cuidados-wrapper, .cuidados-wrapper * { visibility: visible; }
+    
+    /* Posicionamos los cuidados al inicio de la hoja */
+    .cuidados-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    .cuidados-seccion li, .cuidados-seccion h4 { color: black !important; }
+    .btn-cuidados-toggle, .btn-download-mini { display: none !important; } /* Escondemos botones en el PDF */
+    
+    /* Agregamos tu marca al PDF automáticamente */
+    .cuidados-wrapper::before {
+        content: "ALX.TAT - GUÍA DE CUIDADOS";
+        display: block;
+        text-align: center;
+        font-weight: 800;
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+        border-bottom: 2px solid black;
+        padding-bottom: 10px;
+    }
+}
+
+        /* --- MEJORA VISUALIZADOR DE ESCALA --- */
+.escala-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* Menos espacio para que entre todo */
+}
+
+.referencia-label {
+    font-size: 0.6rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.divisor-escala {
+    font-size: 0.6rem;
+    color: var(--rojo-tinta);
+    font-style: italic;
+    margin: 5px 0;
+}
+
+/* El Mockup de la tarjeta ahora parece una tarjeta */
+.card-mockup {
+    width: 85px; 
+    height: 54px;
+    background: linear-gradient(135deg, #222, #000);
+    border: 1px solid #444;
+    border-radius: 6px;
+    position: relative;
+}
+
+.chip-card {
+    width: 12px;
+    height: 10px;
+    background: #444;
+    border-radius: 2px;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+}
+
+.cuadro-tinta {
+    border: 2px solid var(--rojo-tinta);
+    background: rgba(230, 57, 70, 0.15);
+    box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
         
     </style>
 </head>
@@ -384,11 +469,16 @@
         <strong id="cm-display">0 cm</strong>
     </div>
     <div class="escala-stage">
-        <div id="cuadro-referencia" class="cuadro-tinta"></div>
-        <div class="referencia-fija">
-            <span>💳 Tamaño Tarjeta de Credito(Referencia) </span>
-        </div>
+    <div class="referencia-label">TU TATTOO</div>
+    <div id="cuadro-referencia" class="cuadro-tinta"></div>
+    
+    <div class="divisor-escala">vs</div>
+
+    <div class="card-mockup">
+        <div class="chip-card"></div>
     </div>
+    <div class="referencia-label">Referencia: Tarjeta de Crédito (8.5cm)</div>
+</div>
 </div>
             <div id="resultado">Esperando datos...</div>
 
