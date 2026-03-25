@@ -330,12 +330,14 @@
 }
 
 /* --- ESTILOS DE LA CUADRÍCULA PRINCIPAL (GRID) --- */
-.galeria-dinamica {
-    display: grid;
-    /* En celular: 2 columnas fijas. En PC: las que entren de min 200px */
-    grid-template-columns: repeat(2, 1fr); 
+#galeria-dinamica {
+    display: grid !important; /* Forzamos el modo grilla */
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 columnas fijas en celu */
     gap: 10px;
-    padding: 10px;
+    padding: 15px;
+    min-height: 300px; /* Le damos altura mínima para que no sea 'invisible' */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
@@ -384,15 +386,11 @@
     align-items: flex-start;
 }
 
+./* Ajuste para que los textos no se pisen en pantallas chicas */
 .info-estilo span {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: white;
-    text-transform: uppercase;
-    white-space: nowrap; /* No salta de línea */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Pone "..." si es muy largo */
-    width: 100%;
+    font-size: 0.7rem !important;
+    white-space: normal !important; /* Que pueda usar dos renglones si es necesario */
+    line-height: 1.1;
 }
 
 /* --- INDICADOR DE 'MÁS FOTOS' (El cue visual) --- */
@@ -552,12 +550,16 @@
 let fotosPorEstilo = {};
 
 function dibujarGaleria(datos) {
-    console.log("Datos recibidos para galería:", datos); // Útil para verificar
-    const contenedor = document.getElementById('galeria-dinamica');
-    
-    // Si no hay datos, mostramos mensaje y salimos
+    // ESTO ES CLAVE: Si estás en el celu, te va a tirar un cartelito
+    // Solo para probar. Si aparece el cartel, es que los datos LLEGARON.
     if (!datos || datos.length === 0) {
-        contenedor.innerHTML = "<p style='color:#666; text-align:center;'>No se encontraron fotos en la galería.</p>";
+        console.error("No llegaron fotos");
+        return;
+    }
+
+    const contenedor = document.getElementById('galeria-dinamica');
+    if (!contenedor) {
+        alert("Error: No encontré el contenedor 'galeria-dinamica' en el HTML");
         return;
     }
 
