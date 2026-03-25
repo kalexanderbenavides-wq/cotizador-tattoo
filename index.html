@@ -244,6 +244,89 @@
     font-size: 0.55rem;
     color: #444;
 }
+
+/* --- ESTILOS SECCIÓN CUIDADOS --- */
+.cuidados-wrapper {
+    margin-top: 30px;
+    background: #111;
+    border-radius: 15px;
+    border: 1px solid #222;
+    overflow: hidden;
+}
+
+.btn-cuidados-toggle {
+    width: 100%;
+    padding: 20px;
+    background: transparent;
+    border: none;
+    color: var(--texto);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cuidados-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    padding: 0 20px;
+}
+
+.cuidados-content.open {
+    max-height: 500px; /* Suficiente para el texto */
+    padding-bottom: 25px;
+}
+
+.cuidados-seccion h4 {
+    color: var(--rojo-tinta);
+    font-size: 0.7rem;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.cuidados-seccion ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.cuidados-seccion li {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-bottom: 8px;
+    position: relative;
+    padding-left: 15px;
+}
+
+.cuidados-seccion li::before {
+    content: "•";
+    color: var(--rojo-tinta);
+    position: absolute;
+    left: 0;
+}
+
+.cuidados-divider {
+    border: none;
+    border-top: 1px solid #222;
+    margin: 15px 0;
+}
+
+.btn-download-mini {
+    background: transparent;
+    border: 1px solid #444;
+    color: #666;
+    font-size: 0.6rem;
+    padding: 8px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 15px;
+    width: 100%;
+}
+        
     </style>
 </head>
 <body>
@@ -303,7 +386,7 @@
     <div class="escala-stage">
         <div id="cuadro-referencia" class="cuadro-tinta"></div>
         <div class="referencia-fija">
-            <span>💳 Tamaño Tarjeta</span>
+            <span>💳 Tamaño Tarjeta de Credito(Referencia) </span>
         </div>
     </div>
 </div>
@@ -332,6 +415,35 @@
             <h2 style="text-align: left; font-size: 0.9rem; margin-left: 10px;">Portfolio</h2>
             <div id="galeria-dinamica" class="galeria-dinamica"></div>
         </div>
+
+<div class="cuidados-wrapper">
+    <button class="btn-cuidados-toggle" onclick="toggleCuidados()">
+        <span>🛠️ Preparación y Cuidados</span>
+        <i id="icono-cuidados">+</i>
+    </button>
+    
+    <div id="contenido-cuidados" class="cuidados-content">
+        <div class="cuidados-seccion">
+            <h4>ANTES DEL TURNO:</h4>
+            <ul>
+                <li>Dormí bien y vení desayunado/a.</li>
+                <li>No consumas alcohol ni drogas 24hs antes.</li>
+                <li>Hidratá la zona los días previos.</li>
+            </ul>
+        </div>
+        <hr class="cuidados-divider">
+        <div class="cuidados-seccion">
+            <h4>DESPUÉS DEL TATTOO:</h4>
+            <ul>
+                <li>Mantené el film/parche por el tiempo indicado.</li>
+                <li>Lavá con jabón neutro y agua tibia.</li>
+                <li>Aplicá la crema recomendada (capa fina).</li>
+                <li>No sol, no pileta, no rascar la zona.</li>
+            </ul>
+        </div>
+        <button class="btn-download-mini" onclick="window.print()">📥 Guardar como PDF</button>
+    </div>
+</div>
         
         <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#222; width:100%; margin-top:50px; cursor:pointer; font-size: 0.6rem;">⚙ ACCESO PRIVADO</button>
     </div>
@@ -483,6 +595,24 @@
         function abrirPanelArtista() { if (prompt("PIN:") === MI_PIN) alert("Acceso concedido."); }
 
         window.addEventListener('DOMContentLoaded', cargarDatos);
+function toggleCuidados() {
+    const contenido = document.getElementById('contenido-cuidados');
+    const icono = document.getElementById('icono-cuidados');
+    
+    contenido.classList.toggle('open');
+    
+    if (contenido.classList.contains('open')) {
+        icono.innerText = "−"; // Signo menos
+        // Pequeño scroll para que se vea el contenido al abrir
+        setTimeout(() => {
+            contenido.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+    } else {
+        icono.innerText = "+"; // Signo más
+    }
+}
+        
+        
     </script>
 </body>
 </html>
