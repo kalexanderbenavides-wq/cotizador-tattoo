@@ -192,6 +192,58 @@
             font-weight: 800; font-size: 0.8rem; text-transform: uppercase;
         }
         .toast-aviso.show { top: 30px; }
+        /* --- ESTILOS VISUALIZADOR DE ESCALA --- */
+.escala-wrapper {
+    background: #000;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.4s ease;
+}
+
+.escala-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+#cm-display { color: var(--rojo-tinta); letter-spacing: 1px; }
+
+.escala-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    overflow: hidden;
+    padding: 10px 0;
+}
+
+.cuadro-tinta {
+    width: 0px; 
+    height: 0px;
+    border: 2px solid var(--rojo-tinta);
+    background: rgba(230, 57, 70, 0.1);
+    box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+/* El "fantasma" de la tarjeta para comparar */
+.referencia-fija {
+    width: 85px; /* Proporción estándar de 8.5cm en pixeles aproximados */
+    height: 54px;
+    border: 1px dashed #444;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: #444;
+}
     </style>
 </head>
 <body>
@@ -241,6 +293,20 @@
                 <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
             </div>
 
+
+
+            <div id="visualizador-escala" class="escala-wrapper" style="display:none;">
+    <div class="escala-header">
+        <span>Referencia de tamaño real:</span>
+        <strong id="cm-display">0 cm</strong>
+    </div>
+    <div class="escala-stage">
+        <div id="cuadro-referencia" class="cuadro-tinta"></div>
+        <div class="referencia-fija">
+            <span>💳 Tamaño Tarjeta</span>
+        </div>
+    </div>
+</div>
             <div id="resultado">Esperando datos...</div>
 
             <div id="aviso-sesiones" class="aviso-info" style="display:none;">
@@ -368,9 +434,12 @@
         function moverSlider(dir) { const s = document.getElementById('slider-fotos'); s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' }); }
 
         function calcular() {
-            const tam = parseFloat(document.getElementById('tamaño').value) || 0;
+    const tam = parseFloat(document.getElementById('tamaño').value) || 0;
             const comp = parseFloat(document.getElementById('complejidad').value) || 1;
             const zona = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
+            const resEscala = document.getElementById('visualizador-escala');
+    const cuadro = document.getElementById('cuadro-referencia');
+    const textCm = document.getElementById('cm-display');
             
             let puntos = 0; if (tam > 0) puntos++; if (comp > 0) puntos++; if (zona > 1) puntos++;
             const pct = Math.round((puntos/3)*100);
@@ -379,6 +448,17 @@
 
             const resDiv = document.getElementById('resultado');
             if (tam > 0) {
+                // --- LÓGICA DE ESCALA ---
+        resEscala.style.display = "block";
+        textCm.innerText = tam + " CM";
+        
+        // Factor de conversión aproximado: 1cm = 10px en pantalla móvil estándar
+        // Usamos un factor que se vea bien pero no rompa la pantalla
+        let pxSize = tam * 10; 
+        
+        cuadro.style.width = pxSize + "px";
+        cuadro.style.height = pxSize + "px";
+                
                 const base = comp >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
                 let total = (base / 10) * tam * comp * zona;
                 if (total < base) total = base;
