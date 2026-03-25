@@ -267,6 +267,67 @@
     50% { opacity: 1; text-shadow: 0 0 15px rgba(230, 57, 70, 0.8); }
     100% { opacity: 0.4; text-shadow: 0 0 5px rgba(230, 57, 70, 0); }
 }        
+
+
+/* --- ESTILOS CARRETE INSTAGRAM --- */
+.overlay-carrete {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenedor-slider {
+    flex-grow: 1;
+    display: flex;
+    overflow-x: auto; /* Habilita el scroll horizontal */
+    scroll-snap-type: x mandatory; /* Efecto imán de Instagram */
+    scrollbar-width: none; /* Esconde barra en Firefox */
+}
+.contenedor-slider::-webkit-scrollbar { display: none; } /* Esconde barra en Chrome */
+
+.slide-item {
+    min-width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-item img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+.footer-carrete {
+    padding: 20px;
+    background: linear-gradient(transparent, #000);
+    text-align: center;
+    color: white;
+}
+
+.btn-cotizar-pro {
+    background: var(--rojo-tinta);
+    color: white;
+    padding: 15px 40px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-cerrar {
+    position: absolute;
+    top: 20px; right: 20px;
+    color: white; font-size: 40px; z-index: 3001;
+}
         
     </style>
 
@@ -378,56 +439,39 @@
 
         // 2. DIBUJAR LA GALERÍA DINÁMICAMENTE
         // 1. MEJORA: Galería Interactiva
-function dibujarGaleria(lista) {
+// Variable global para guardar las fotos agrupadas
+let fotosPorEstilo = {};
+
+function dibujarGaleria(datos) {
     const contenedor = document.getElementById('galeria-dinamica');
-    contenedor.innerHTML = ""; 
+    contenedor.innerHTML = "";
+    fotosPorEstilo = {}; // Limpiamos
 
-    if (!lista || lista.length === 0) {
-        contenedor.innerHTML = "<p style='color:#666;'>No hay trabajos cargados.</p>";
-        return;
-    }
+    // 1. AGRUPAR: Convertimos la lista plana en "cajas" por estilo
+    datos.forEach(item => {
+        if (!fotosPorEstilo[item.estilo]) {
+            fotosPorEstilo[item.estilo] = [];
+        }
+        fotosPorEstilo[item.estilo].push(item);
+    });
 
-    lista.forEach(trabajo => {
+    // 2. DIBUJAR PORTADAS: Solo mostramos la que dice "SI" en Portada
+    Object.keys(fotosPorEstilo).forEach(nombreEstilo => {
+        const grupo = fotosPorEstilo[nombreEstilo];
+        // Buscamos la portada, si no hay, usamos la primera del grupo
+        const portada = grupo.find(f => f.portada === "SI") || grupo[0];
+
         const ficha = document.createElement('div');
-        ficha.className = 'foto-placeholder';
-        
-        // --- NUEVA LÓGICA DE CLIC ---
-        // Dentro de dibujarGaleria, en la parte de ficha.onclick:
-        
-ficha.onclick = () => {
-    const selector = document.getElementById('complejidad');
-    const inputTam = document.getElementById('tamaño');
-    
-    // Convertimos el estilo a minúsculas para que no haya errores de dedo
-    const estiloTxt = trabajo.estilo.toLowerCase();
+        ficha.className = "ficha-galeria";
+        ficha.innerHTML = `
+            <img src="${portada.imagen}" alt="${nombreEstilo}" loading="lazy">
+            <div class="info-estilo">
+                <span>${nombreEstilo}</span>
+                <small>${grupo.length} fotos</small>
+            </div>
+        `;
 
-    // --- NUESTRO TRADUCTOR DE ESTILOS ---
-    const mapaComplejidad = {
-        "realismo": "2",
-        "full color": "2",
-        "neo tradicional": "2",
-        "blackwork": "1.5",
-        "puntillismo": "1.5",
-        "linea fina": "1",
-        "tradicional": "2"
-    };
-
-    // Buscamos el valor en el traductor. Si no existe, por defecto ponemos "1" (Baja)
-    selector.value = mapaComplejidad[estiloTxt] || "1";
-    
-    // Efectos de UX
-    inputTam.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-        const imagen = document.createElement('img');
-        imagen.src = trabajo.url || "https://via.placeholder.com/150"; 
-        
-        const texto = document.createElement('span');
-        texto.innerText = `${trabajo.estilo} (${trabajo.tamano || '?'})`;
-        
-        ficha.appendChild(imagen);
-        ficha.appendChild(texto);
+        ficha.onclick = () => abrirCarrete(nombreEstilo);
         contenedor.appendChild(ficha);
     });
 }
@@ -637,7 +681,62 @@ function descargarCotizacion() {
         });
     }, 100); 
 }
+
+function abrirCarrete(nombreEstilo) {
+    const overlay = document.getElementById('overlay-carrete');
+    const slider = document.getElementById('slider-fotos');
+    const titulo = document.getElementById('titulo-carrete');
+    const btnCotizar = document.getElementById('btn-cotizar-carrete');
+
+    const fotos = fotosPorEstilo[nombreEstilo];
+    
+    // 1. Limpiamos y cargamos las fotos del grupo
+    slider.innerHTML = "";
+    fotos.sort((a, b) => a.orden - b.orden); // Ordenamos según el Excel
+    
+    fotos.forEach(f => {
+        const item = document.createElement('div');
+        item.className = "slide-item";
+        item.innerHTML = `<img src="${f.imagen}">`;
+        slider.appendChild(item);
+    });
+
+    // 2. Configuramos info y botones
+    titulo.innerText = nombreEstilo.toUpperCase();
+    overlay.style.display = "flex";
+
+    // 3. Al tocar COTIZAR, aplicamos el estilo y cerramos
+    btnCotizar.onclick = () => {
+        const selector = document.getElementById('complejidad');
+        const mapaComplejidad = {
+            "realismo": "2", "full color": "2", "neo tradicional": "2",
+            "blackwork": "2", "puntillismo": "2", "tradicional": "2", "linea fina": "1"
+        };
+        selector.value = mapaComplejidad[nombreEstilo.toLowerCase()] || "1.5";
+        
+        cerrarCarrete();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('tamaño').focus();
+    };
+}
+
+function cerrarCarrete() {
+    document.getElementById('overlay-carrete').style.display = "none";
+}
         
     </script>
+
+<div id="overlay-carrete" class="overlay-carrete" style="display:none;">
+    <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
+    
+    <div class="contenedor-slider" id="slider-fotos">
+        </div>
+
+    <div class="footer-carrete">
+        <h3 id="titulo-carrete">ESTILO</h3>
+        <button id="btn-cotizar-carrete" class="btn-cotizar-pro">COTIZAR ESTE ESTILO</button>
+    </div>
+</div>
+    
 </body>
 </html>
