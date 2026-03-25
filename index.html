@@ -124,14 +124,14 @@
 
         /* ⚠️ CORRECCIÓN: Estilo de resultado para que siempre sea rojo y brille */
         #resultado {
-            margin-top: 25px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--rojo-tinta) !important;
-            transition: all 0.3s ease;
-            min-height: 40px;
-        }
+    margin-top: 25px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: #e63946 !important; /* <--- ASEGURATE QUE ESTE COLOR SEA EL ROJO */
+    transition: all 0.3s ease;
+    min-height: 40px;
+}
 
         .glow-efecto {
             animation: brilloRojo 0.5s ease;
@@ -181,19 +181,83 @@
         .print-header { display: none; }
 
         /* ⚠️ CORRECCIÓN: Nueva lógica de impresión blindada para evitar el bloque negro */
-        @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-scheme: light; }
-            body { background: white !important; padding: 0 !important; }
-            body > *:not(.cuidados-wrapper) { display: none !important; }
-            .main-container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            .cuidados-wrapper { background: white !important; border: none !important; margin: 0 !important; display: block !important; }
-            .print-header { display: flex !important; flex-direction: column; align-items: center; border-bottom: 2px solid #e63946 !important; margin-bottom: 30px; padding-bottom: 20px; }
-            .print-header h1 { font-family: 'Bungee Hairline', sans-serif !important; color: #e63946 !important; font-size: 3.5rem !important; margin: 10px 0; }
-            .cuidados-content { max-height: none !important; display: block !important; opacity: 1 !important; padding: 0 !important; }
-            .cuidados-seccion h4 { color: #e63946 !important; font-size: 1.2rem !important; }
-            .cuidados-seccion li { color: black !important; font-size: 1rem !important; }
-            .no-print, .btn-cuidados-toggle, .btn-download-mini { display: none !important; }
-        }
+        /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
+@media print {
+    /* Forzamos colores y quitamos el modo oscuro solo para el PDF */
+    * { 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+        color-scheme: light !important;
+    }
+
+    /* 1. Fondo blanco para la hoja */
+    body { 
+        background: white !important; 
+        color: black !important; 
+        margin: 0; 
+        padding: 0; 
+    }
+
+    /* 2. ESCONDEMOS lo que NO queremos que salga en el PDF */
+    .header-estudio, 
+    .card-cotizador, 
+    .galeria-container, 
+    .no-print, 
+    .btn-cuidados-toggle, 
+    .btn-download-mini,
+    button { 
+        display: none !important; 
+    }
+
+    /* 3. Ajustamos el contenedor para que ocupe toda la hoja */
+    .main-container { 
+        max-width: 100% !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+    }
+
+    /* 4. Mostramos los cuidados en negro y rojo sobre blanco */
+    .cuidados-wrapper { 
+        display: block !important; 
+        background: white !important; 
+        border: none !important;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+
+    /* 5. FORZAMOS que el contenido se abra (aunque esté cerrado en la web) */
+    .cuidados-content { 
+        max-height: none !important; 
+        display: block !important; 
+        opacity: 1 !important; 
+        overflow: visible !important;
+    }
+
+    /* Estética del Título en el PDF */
+    .print-header { 
+        display: flex !important; 
+        flex-direction: column; 
+        align-items: center; 
+        margin-bottom: 30px; 
+    }
+
+    .print-header h1 { 
+        font-family: 'Bungee Hairline', sans-serif !important; 
+        color: #e63946 !important; 
+        font-size: 3.5rem !important; 
+    }
+
+    .cuidados-seccion h4 { 
+        color: #e63946 !important; 
+        font-size: 1.2rem !important; 
+        margin-top: 20px;
+    }
+
+    .cuidados-seccion li { 
+        color: black !important; 
+        font-size: 1rem !important; 
+    }
+}
 
         /* ... Estilos del mapa corporal ... */
         .mapa-container { text-align: center; margin-bottom: 25px; }
