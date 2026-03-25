@@ -125,14 +125,27 @@
         .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(230, 57, 70, 0.4); }
         .btn-calc:active { transform: scale(0.97); }
 
-        #resultado {
-            margin-top: 25px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: #fff;
-        }
+        /* --- ESTILO DEL RESULTADO (SIEMPRE ROJO TINTA) --- */
+#resultado {
+    margin-top: 25px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.4rem; /* Un poco más grande para que destaque */
+    color: var(--rojo-tinta) !important; /* FORZAMOS EL ROJO AQUÍ */
+    transition: all 0.3s ease;
+    min-height: 40px;
+}
 
+/* LA ANIMACIÓN DEL BRILLO (GLOW) */
+.glow-efecto {
+    animation: brilloRojo 0.5s ease;
+}
+
+@keyframes brilloRojo {
+    0% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
+    50% { transform: scale(1.1); text-shadow: 0 0 20px var(--rojo-tinta); }
+    100% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
+}
         .aviso-info {
             background: rgba(230, 57, 70, 0.1);
             border-left: 4px solid var(--rojo-tinta);
@@ -343,78 +356,66 @@
 }
 
 /* --- NUEVA REGLA DE IMPRESIÓN PRO (PDF BLANCO Y NEGRO) --- */
+/* --- CONFIGURACIÓN FINAL DE PDF ALX.TAT --- */
 @media print {
-    /* Forzamos al navegador a imprimir fondos y colores tal cual */
+    /* Forzamos que el navegador use los colores que le decimos */
     * { 
         -webkit-print-color-adjust: exact !important; 
         print-color-adjust: exact !important; 
     }
 
-    /* ESCONDEMOS TODO menos la sección de cuidados */
-    body > *:not(#seccion-cuidados-print) { 
-        display: none !important; 
-    }
-    
-    /* Configuración para que la guía de cuidados se vea profesional en papel */
-    #seccion-cuidados-print, #seccion-cuidados-print * { 
-        display: block !important; 
-        visibility: visible !important; 
-    }
+    /* Escondemos la web entera menos los cuidados */
+    body > *:not(#seccion-cuidados-print) { display: none !important; }
 
     #seccion-cuidados-print {
-        position: absolute;
-        top: 0; left: 0; width: 100%;
-        background-color: #ffffff !important; /* Fondo blanco forzado */
-        color: #000000 !important; /* Texto negro forzado */
-        padding: 0;
-        margin: 0;
-        font-family: 'Inter', sans-serif;
+        display: block !important;
+        background: white !important; /* FONDO BLANCO */
+        color: black !important; /* TEXTO NEGRO */
+        width: 100%;
+        padding: 20px;
     }
 
-    /* El encabezado de la guía impreso (Solo visible en el PDF) */
-    .print-header { 
-        display: block !important; 
-        text-align: center; 
-        border-bottom: 2px solid #e63946 !important; /* Borde rojo */
-        padding-bottom: 20px;
+    /* EL ENCABEZADO DEL PDF: Logo y Nombre */
+    .print-header {
+        display: flex !important; /* Lo mostramos solo en el PDF */
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 2px solid #e63946 !important;
         margin-bottom: 30px;
+        padding-bottom: 20px;
     }
 
-    .print-header h1 { 
-        color: #e63946 !important; /* Título rojo neón */
-        font-family: 'Bungee Hairline', sans-serif; 
-        font-size: 3rem !important;
-        margin: 0;
-        letter-spacing: 3px;
+    .print-header h1 {
+        font-family: 'Bungee Hairline', sans-serif !important; /* TU FUENTE */
+        color: #e63946 !important; /* TU ROJO */
+        font-size: 3.5rem !important;
+        margin: 10px 0;
     }
 
-    .cuidados-seccion { margin-bottom: 20px; }
-    .cuidados-seccion h4 { 
-        color: #e63946 !important; /* Subtítulos rojos */
-        font-size: 1.1rem !important; 
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 5px;
-        margin-bottom: 15px;
+    /* LOS TÍTULOS DE CADA SECCIÓN EN EL PDF */
+    .cuidados-seccion h4 {
+        color: #e63946 !important; /* ROJO PARA LOS TÍTULOS */
+        font-size: 1.2rem !important;
+        margin-top: 20px;
         text-transform: uppercase;
     }
-    .cuidados-seccion li { 
-        color: #333333 !important; /* Texto gris muy oscuro */
-        font-size: 0.95rem !important; 
-        margin-bottom: 8px; 
+
+    /* LAS LISTAS Y EMOJIS */
+    .cuidados-seccion li {
+        font-size: 1rem !important;
+        color: black !important;
+        margin-bottom: 10px;
+        list-style: none; /* Quitamos los puntos de lista feos */
     }
 
-    /* Escondemos los botones y elementos interactivos que no sirven en papel */
-    .no-print, .btn-download-mini, .btn-cuidados-toggle { 
-        display: none !important; 
-    }
-
-    /* Forzamos que el contenido esté visible aunque esté cerrado en la web */
-    .cuidados-content { 
-        max-height: none !important; 
-        display: block !important; 
+    /* Aseguramos que se vean los emojis y colores del texto */
+    .cuidados-content {
+        max-height: none !important;
+        display: block !important;
         opacity: 1 !important;
-        padding: 0 !important;
     }
+
+    .no-print { display: none !important; } /* Escondemos botones */
 }
 
 /* Estilo para que el header de impresión no se vea en la web normal */
@@ -684,10 +685,9 @@
 
 <div class="cuidados-wrapper" id="seccion-cuidados-print">
     <div class="print-header">
-        <img src="logo2026.png" alt="Logo">
+        <img src="logo2026.png" alt="Logo ALX.TAT" style="max-width: 100px;">
         <h1>ALX.TAT</h1>
-        <div class="print-divider"></div>
-        <p>GUÍA PROFESIONAL DE PREPARACIÓN Y CUIDADOS</p>
+        <p style="color: #666; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Guía de Cuidados Profesionales</p>
     </div>
 
     <button class="btn-cuidados-toggle no-print" onclick="toggleCuidados()">
