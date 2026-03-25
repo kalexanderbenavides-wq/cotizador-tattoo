@@ -387,6 +387,20 @@
         <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#222; width:100%; margin-top:50px; cursor:pointer; font-size: 0.6rem;">⚙ ACCESO PRIVADO</button>
     </div>
 
+    <div id="overlay-carrete" class="overlay-carrete" style="display:none;">
+    <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
+    
+    <button class="nav-arrow arrow-left" onclick="moverSlider(-1)">&#10094;</button>
+    <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
+
+    <div class="contenedor-slider" id="slider-fotos"></div>
+
+    <div class="footer-carrete">
+        <h3 id="titulo-carrete" style="color:white; margin-bottom:15px; font-size: 1rem; letter-spacing: 2px;">ESTILO</h3>
+        <button id="btn-cotizar-carrete" class="btn-calc">COTIZAR ESTE ESTILO</button>
+    </div>
+</div>
+
     <script>
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
         const MI_PIN = "1234";
@@ -490,8 +504,75 @@
             const msg = `Hola Alex! Soy ${n}. Coticé un tattoo de ${t}cm. Presupuesto: ${r}. Quiero agendar!`;
             window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
         }
+function abrirCarrete(nombreEstilo) {
+    const overlay = document.getElementById('overlay-carrete');
+    const slider = document.getElementById('slider-fotos');
+    const titulo = document.getElementById('titulo-carrete');
+    const btnCotizar = document.getElementById('btn-cotizar-carrete');
 
-        function cerrarCarrete() { document.getElementById('overlay-carrete').style.display = "none"; document.body.style.overflow = "auto"; }
+    // 1. Buscamos las fotos de ese estilo en la base de datos
+    const fotos = fotosPorEstilo[nombreEstilo];
+    
+    if (!fotos) {
+        console.error("No hay fotos para el estilo:", nombreEstilo);
+        return;
+    }
+
+    // 2. Ordenamos las fotos según lo que pusiste en el Excel
+    fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
+
+    // 3. Limpiamos el slider y cargamos las nuevas fotos
+    slider.innerHTML = "";
+    fotos.forEach(f => {
+        const div = document.createElement('div');
+        div.className = "slide-item";
+        div.innerHTML = `<img src="${f.imagen}" style="max-height:75vh; max-width:90%;">`;
+        slider.appendChild(div);
+    });
+
+    // 4. Ponemos el nombre del estilo y abrimos el cartel
+    titulo.innerText = nombreEstilo.toUpperCase();
+    slider.scrollLeft = 0; 
+    overlay.style.display = "flex";
+    document.body.style.overflow = "hidden"; // Evita que la página se mueva atrás
+
+    // 5. CONFIGURAMOS EL BOTÓN "COTIZAR ESTE ESTILO"
+    btnCotizar.onclick = () => {
+        // Seteamos la dificultad en el selector
+        const selector = document.getElementById('complejidad');
+        const dificultad = mapaDificultad[nombreEstilo.toLowerCase().trim()] || 1.5;
+        selector.value = dificultad;
+
+        // Cerramos el carrete
+        cerrarCarrete();
+
+        // Mostramos el aviso de "Estilo Seleccionado"
+        const toast = document.getElementById('toast-mensaje');
+        if (toast) {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Volamos al cotizador y ponemos el foco en el tamaño
+        setTimeout(() => {
+            document.getElementById('cotizador-seccion').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('tamaño').focus();
+            calcular(); // Recalculamos el precio al toque
+        }, 400);
+    };
+}
+
+// Función para cerrar (Asegurate de tenerla)
+function cerrarCarrete() {
+    document.getElementById('overlay-carrete').style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+// Función para mover las flechas en PC
+function moverSlider(dir) {
+    const s = document.getElementById('slider-fotos');
+    s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' });
+}
         window.addEventListener('DOMContentLoaded', cargarDatos);
     </script>
 </body>
