@@ -428,6 +428,54 @@
 .header-estudio { animation: fadeIn 1s ease-out forwards; }
 .card-cotizador { animation: fadeInUp 1s ease-out 0.3s forwards; opacity: 0; }
 .galeria-container { animation: fadeInUp 1s ease-out 0.6s forwards; opacity: 0; }
+
+/* --- ESTILOS MAPA CORPORAL --- */
+.mapa-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.mapa-svg-wrapper {
+    background: #000;
+    border-radius: 15px;
+    padding: 10px;
+    border: 1px solid #222;
+    max-width: 250px;
+    margin: 10px auto;
+}
+
+.cuerpo-svg {
+    width: 100%;
+    height: auto;
+}
+
+.zona-touch {
+    fill: #1a1a1a;
+    stroke: #333;
+    stroke-width: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.zona-touch:hover {
+    fill: rgba(230, 57, 70, 0.2);
+    stroke: var(--rojo-tinta);
+}
+
+.zona-touch.activa {
+    fill: var(--rojo-tinta);
+    stroke: #fff;
+    filter: drop-shadow(0 0 8px var(--rojo-tinta));
+}
+
+.zona-tag {
+    font-size: 0.7rem;
+    color: var(--rojo-tinta);
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
         
     </style>
 </head>
@@ -465,6 +513,21 @@
 
             <div class="grupo-input">
                 <label>Zona del Cuerpo</label>
+<div class="mapa-container">
+    <label>Tocá la zona a tatuar:</label>
+    <div class="mapa-svg-wrapper">
+        <svg viewBox="0 0 200 200" class="cuerpo-svg">
+            <circle cx="100" cy="25" r="15" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
+            <path d="M75 45 h50 v60 h-50 z" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
+            <path d="M55 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
+            <path d="M130 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
+            <path d="M75 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
+            <path d="M105 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
+        </svg>
+    </div>
+    <div id="zona-nombre-display" class="zona-tag">Zona: Brazo / Pierna</div>
+</div>
+                
                 <select id="zona-cuerpo" class="input-pro" onchange="calcular()">
                     <option value="1">Brazo / Pierna</option>
                     <option value="1.2">Espalda / Muslo</option>
@@ -735,6 +798,29 @@ function toggleCuidados() {
         icono.innerText = "+"; // Signo más
     }
 }
+
+function seleccionarZona(elemento) {
+    // 1. Quitamos la clase 'activa' de todas las zonas
+    document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
+    
+    // 2. Marcamos la zona tocada
+    elemento.classList.add('activa');
+    
+    // 3. Obtenemos el valor de dificultad de la zona
+    const valorZona = elemento.getAttribute('data-valor');
+    
+    // 4. Sincronizamos con el select original (que puede estar oculto o visible)
+    const selector = document.getElementById('zona-cuerpo');
+    selector.value = valorZona;
+    
+    // 5. Actualizamos el texto visual para el cliente
+    const nombreDisplay = document.getElementById('zona-nombre-display');
+    const nombres = { "1": "Zona Estándar", "1.2": "Espalda / Muslo", "1.4": "Zona Compleja", "1.1": "Mano / Pie" };
+    nombreDisplay.innerText = "Zona: " + (nombres[valorZona] || "Seleccionada");
+
+    // 6. ¡Recalculamos todo!
+    calcular();
+}        
         
         
     </script>
