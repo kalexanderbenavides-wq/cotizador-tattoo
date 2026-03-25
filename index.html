@@ -546,6 +546,23 @@
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Movimiento fluido */
     border-radius: 10px;
 }
+
+/* Brillo neón solo en PC o cuando se hace click */
+.ficha-galeria:active, .ficha-galeria:hover {
+    border-color: var(--rojo-tinta);
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.6);
+}
+
+/* Animación para el resultado al calcular */
+.glow-efecto {
+    animation: flash 0.5s ease;
+}
+
+@keyframes flash {
+    0% { color: #fff; text-shadow: 0 0 0px #fff; }
+    50% { color: var(--rojo-tinta); text-shadow: 0 0 15px var(--rojo-tinta); }
+    100% { color: #fff; text-shadow: 0 0 0px #fff; }
+}
     
         
     </style>
@@ -556,29 +573,49 @@
 <body>
 
 <div id="toast-mensaje" class="toast-aviso">⚡ ESTILO SELECCIONADO</div>
-    <div id="cotizador-seccion" class="card-cotizador">
-    </div>
-    <div class="card">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="logo2026.png" alt="Logo Estudio" style="max-width: 120px; height: auto;">
+    
+   <div id="cotizador-seccion" class="card-cotizador">
+    
+    <div class="progreso-container">
+        <div class="progreso-texto">Progreso: <span id="porcentaje-texto">0%</span></div>
+        <div class="barra-fondo">
+            <div id="barra-tinta" class="barra-tinta"></div>
         </div>
-        <h1>Cotizador Estudio</h1>
-        
-        <label>Tamaño (5cm - 50cm):</label>
-        <input type="number" id="tamaño" placeholder="Ej: 15" min="5" max="50">
+    </div>
 
-<div class="grupo-input">
-    <label for="zona-cuerpo">¿En qué parte del cuerpo?</label>
-    <select id="zona-cuerpo" class="input-pro">
-        <option value="1">Brazo / Pierna (Zona fácil)</option>
-        <option value="1.2">Espalda / Muslo (Zona media)</option>
-        <option value="1.6">Costillas / Cuello / Abdomen (Zona compleja)</option>
-        <option value="1.4">Mano / Pie / Muñeca</option>
-    </select>
-</div>
+    <h2 class="titulo-seccion">Cotizá tu Tattoo</h2>
 
-<div id="aviso-sesiones" class="aviso-info" style="display:none;">
-    ⚠️ Este proyecto podría requerir más de una sesión.
+    <div class="grupo-input">
+        <label>Estilo / Complejidad</label>
+        <select id="complejidad" class="input-pro" onchange="calcular()">
+            <option value="1">Línea Fina / Minimalista</option>
+            <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
+            <option value="2">Realismo / Neo tradicional / Full Color</option>
+        </select>
+    </div>
+
+    <div class="grupo-input">
+        <label>¿En qué parte del cuerpo?</label>
+        <select id="zona-cuerpo" class="input-pro" onchange="calcular()">
+            <option value="1">Brazo / Pierna (Zona estándar)</option>
+            <option value="1.2">Espalda / Muslo (+20%)</option>
+            <option value="1.4">Costillas / Cuello / Abdomen (+40%)</option>
+            <option value="1.1">Mano / Pie / Muñeca (+10%)</option>
+        </select>
+    </div>
+
+    <div class="grupo-input">
+        <label>Tamaño aproximado (cm)</label>
+        <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
+    </div>
+
+    <button class="btn-cotizar-pro" onclick="calcular()">CALCULAR PRECIO</button>
+    
+    <div id="resultado" class="resultado-estilo">Esperando datos...</div>
+
+    <div id="aviso-sesiones" class="aviso-info" style="display:none;">
+        ⚠️ Este proyecto podría requerir más de una sesión.
+    </div>
 </div>
         
         <label>Complejidad / Estilo:</label>
@@ -754,78 +791,79 @@ function dibujarGaleria(datos) {
         window.addEventListener('DOMContentLoaded', cargarDatos);
 
         // --- FUNCIONES DE CÁLCULO Y RESERVA ---
-        async function calcular() {
-    // 1. CAPTURA DE DATOS
-    const tamano = parseFloat(document.getElementById('tamaño').value) || 0;
-    const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
-    const zonaCuerpo = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
-    
-    // 2. PRECIOS BASE (Vienen de tu Excel)
-    // 'baja' suele ser el mínimo por abrir materiales.
-    // 'mediaAlta' es tu tarifa para trabajos que requieren más técnica.
-    const baseSegunEstilo = complejidad >= 2 ? datosCargados.precios.mediaAlta : datosCargados.precios.baja;
+        // 1. LA FUNCIÓN DE CÁLCULO (Blindada)
+function calcular() {
+    const inputTam = document.getElementById('tamaño');
+    const inputComp = document.getElementById('complejidad');
+    const inputZona = document.getElementById('zona-cuerpo');
+    const displayResultado = document.getElementById('resultado');
+
+    const tamano = parseFloat(inputTam.value) || 0;
+    const complejidad = parseFloat(inputComp.value) || 1;
+    const zona = parseFloat(inputZona.value) || 1;
+
+    // Actualizamos la barra de progreso siempre
+    actualizarProgreso(tamano, complejidad, zona);
 
     if (tamano > 0) {
+        const precioBase = complejidad >= 2 ? datosCargados.precios.mediaAlta : datosCargados.precios.baja;
         
-        // --- AQUÍ MODIFICÁS TU LÓGICA DE AUMENTO ---
-        
-        // A. COSTO POR CM: ¿Cuánto cobrás cada centímetro extra?
-        // Ejemplo: Si el base es 60.000, dividimos por 10 para que cada cm cueste 6.000
-        const factorCentimetro = baseSegunEstilo / 10; 
+        // TU LÓGICA DE PRECIO
+        let total = (precioBase / 10) * tamano * complejidad * zona;
+        if (total < precioBase) total = precioBase;
 
-        // B. CÁLCULO MATEMÁTICO:
-        // Multiplicamos (Costo x Cm) * (Tamaño) * (Dificultad del Estilo) * (Dificultad de la Zona)
-        let total = factorCentimetro * tamano * complejidad * zonaCuerpo;
-
-        // C. EL "PISO" (Precio Mínimo): 
-        // Pase lo que pase, si el resultado es menor a tu base, se cobra el base.
-        // Esto te asegura cubrir siempre los materiales descartables.
-        if (total < baseSegunEstilo) {
-            total = baseSegunEstilo;
-        }
-
-        // --- FIN DE LA LÓGICA ---
-
-        // 3. AVISO DE SESIONES (Lógica de aviso)
-        const avisoSesiones = document.getElementById('aviso-sesiones');
-        // Podés cambiar el '20' por el tamaño que vos consideres que ya es otra sesión.
-        if (tamano >= 22 || (complejidad >= 2 && tamano >= 18)) {
-            avisoSesiones.style.display = "block";
-        } else {
-            avisoSesiones.style.display = "none";
-        }
-
-        // 4. RENDERIZADO EN PANTALLA
-        document.getElementById('resultado').innerText = `Estimado: $${Math.round(total).toLocaleString()}`;
+        displayResultado.innerText = `Total estimado: $${Math.round(total).toLocaleString()}`;
+        displayResultado.classList.add('glow-efecto'); // Animación de brillo
+    } else {
+        displayResultado.innerText = "Ingresá el tamaño";
     }
-            function actualizarProgreso() {
-    const inputs = {
-        tamano: document.getElementById('tamaño').value,
-        complejidad: document.getElementById('complejidad').value,
-        zona: document.getElementById('zona-cuerpo').value,
-        cliente: document.getElementById('nombre')?.value || "" // Opcional si tenés el nombre
-    };
-
-    let completados = 0;
-    let totalCampos = 3; // Tamaño, Complejidad, Zona
-
-    if (parseFloat(inputs.tamano) > 0) completados++;
-    if (inputs.complejidad !== "") completados++;
-    if (inputs.zona !== "") completados++;
-
-    // Calculamos el porcentaje
-    const porcentaje = Math.round((completados / totalCampos) * 100);
-    
-    // Actualizamos visualmente
-    const barra = document.getElementById('barra-tinta');
-    const texto = document.getElementById('porcentaje-texto');
-    
-    if(barra) barra.style.width = porcentaje + "%";
-    if(texto) texto.innerText = porcentaje + "%";
 }
 
-// IMPORTANTE: Agregá esta línea al final de tu función calcular()
-// actualizarProgreso();
+// 2. EL BOTÓN DEL CARRETE (Arregla el salto Neo -> Puntillismo)
+function abrirCarrete(nombreEstilo) {
+    const overlay = document.getElementById('overlay-carrete');
+    const btnCotizar = document.getElementById('btn-cotizar-carrete');
+    // ... (resto de carga de fotos igual) ...
+
+    overlay.style.display = "flex";
+
+    btnCotizar.onclick = () => {
+        const selector = document.getElementById('complejidad');
+        const nombreLimpio = nombreEstilo.toLowerCase().trim();
+
+        // MAPEADO EXACTO: Evita saltos a estilos parecidos
+        const dificultad = mapaDificultad[nombreLimpio] || 1.5;
+        selector.value = dificultad;
+
+        cerrarCarrete();
+
+        // NAVEGACIÓN PC Y CELULAR (Forzada)
+        setTimeout(() => {
+            const seccion = document.getElementById('cotizador-seccion');
+            seccion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Enfocamos el tamaño para que el teclado se abra en el celu
+            document.getElementById('tamaño').focus();
+            
+            // Ejecutamos un primer cálculo para que la barra se mueva
+            calcular();
+        }, 200);
+    };
+}
+
+// 3. ACTUALIZAR PROGRESO (Sin errores)
+function actualizarProgreso(tam, comp, zona) {
+    let puntos = 0;
+    if (tam > 0) puntos++;
+    if (comp > 0) puntos++;
+    if (zona > 0) puntos++;
+
+    const porcentaje = Math.round((puntos / 3) * 100);
+    const barra = document.getElementById('barra-tinta');
+    const texto = document.getElementById('porcentaje-texto');
+
+    if (barra) barra.style.width = porcentaje + "%";
+    if (texto) texto.innerText = porcentaje + "%";
 }
 
         function prepararCaptura() {
