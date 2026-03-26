@@ -698,6 +698,29 @@
         .toast.visible { bottom: 30px; }
 
         /* =============================================
+           LOADING GALERÍA
+        ============================================= */
+        .galeria-loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 0;
+            font-size: 0.65rem;
+            color: var(--acento);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+        }
+
+        @keyframes parpadeo {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+
+        .galeria-loading span {
+            animation: parpadeo 1.2s ease-in-out infinite;
+        }
+
+        /* =============================================
            GALERÍA EN INICIO
         ============================================= */
         .galeria-titulo {
@@ -855,14 +878,58 @@
 
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: white !important; color: black !important; }
-            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, .cuidados-btn-toggle, .btn-principal { display: none !important; }
-            #sec-cuidados { display: block !important; padding: 20px !important; }
-            .print-solo { display: flex !important; flex-direction: column; align-items: center; margin-bottom: 30px; }
-            .print-solo h1 { font-family: 'Bungee Hairline', sans-serif; color: #e63946 !important; font-size: 3rem; letter-spacing: 6px; }
-            .cuidados-body { max-height: none !important; display: block !important; }
-            .cuidado-grupo h4 { color: #e63946 !important; }
-            .cuidado-grupo li { color: black !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+
+            /* Ocultamos todo excepto la sección de cuidados */
+            .navbar,
+            #sec-inicio,
+            #sec-bio,
+            #sec-cotizador,
+            #sec-turno,
+            #carrete,
+            #toast { display: none !important; }
+
+            /* Forzamos que sec-cuidados se muestre aunque esté oculta */
+            #sec-cuidados {
+                display: block !important;
+                padding: 40px 30px !important;
+                min-height: auto !important;
+            }
+
+            /* Mostramos el header del PDF */
+            .print-solo {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 40px;
+                text-align: center;
+            }
+
+            .print-solo h1 {
+                font-family: 'Bungee Hairline', sans-serif !important;
+                color: #e63946 !important;
+                font-size: 3rem !important;
+                letter-spacing: 8px;
+                margin-bottom: 6px;
+            }
+
+            /* Grupos de cuidados en negro sobre blanco */
+            .cuidado-grupo h4 {
+                color: #e63946 !important;
+                font-size: 0.85rem !important;
+                margin-top: 24px;
+                margin-bottom: 12px;
+            }
+
+            .cuidado-grupo li {
+                color: #111 !important;
+                font-size: 0.9rem !important;
+                margin-bottom: 10px;
+            }
+
+            .cuidado-grupo li::before {
+                color: #e63946 !important;
+            }
         }
     </style>
 </head>
@@ -1305,7 +1372,24 @@
     <section id="sec-cuidados" class="seccion">
         <div class="print-solo">
             <h1>ALX.TAT</h1>
-            <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados</p>
+            <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados Profesionales</p>
+        </div>
+        <div class="cuidado-grupo">
+            <h4>I. Preparación (antes del turno)</h4>
+            <ul>
+                <li>Dormí un mínimo de 8hs y vení bien hidratado/a.</li>
+                <li>No consumas alcohol, aspirinas ni sustancias 24hs antes.</li>
+                <li>Traé ropa cómoda que permita acceso fácil a la zona.</li>
+            </ul>
+        </div>
+        <div class="cuidado-grupo">
+            <h4>II. Cuidados post-tattoo</h4>
+            <ul>
+                <li>Mantené el parche el tiempo indicado por el artista.</li>
+                <li>Lavado con jabón neutro y secado a toques con papel.</li>
+                <li>Aplicar crema en capa casi invisible, 2-3 veces al día.</li>
+                <li>Prohibido: sol, piletas, gimnasio por 7 días. No arrancar costras.</li>
+            </ul>
         </div>
     </section>
 
@@ -1339,12 +1423,13 @@
         let fotosPorEstilo = {};
 
         async function cargarGaleria() {
+            const grid = document.getElementById('galeria-grid');
+            grid.innerHTML = '<div class="galeria-loading"><span>Cargando portfolio...</span></div>';
             try {
                 const res  = await fetch(URL_SCRIPT + "?v=" + Date.now());
                 const data = await res.json();
                 dibujarGaleria(data.galeria || []);
             } catch (e) {
-                // Si falla la conexión, mostramos placeholders
                 dibujarPlaceholders();
             }
         }
