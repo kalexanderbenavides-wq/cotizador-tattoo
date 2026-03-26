@@ -97,11 +97,11 @@
     }
 }
 
-        /* SECCIONES */
+        /* SECCIONES: Ahora todas visibles para permitir el scroll */
         .seccion {
-            display: none;
-            min-height: 100vh;
-            padding: 100px 20px 60px;
+            display: block; /* Cambiado de none a block */
+            min-height: auto; /* Para que no haya huecos gigantes entre secciones */
+            padding: 80px 20px 40px; /* Ajuste de aire entre secciones */
             max-width: 480px;
             margin: 0 auto;
             animation: aparecer 0.4s ease-out;
@@ -901,37 +901,59 @@
 
         .print-solo { display: none; }
 
+        /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
         @media print {
-    * { 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
-        color-scheme: light !important; /* <--- CLAVE PARA MODO OSCURO */
-    }
-    body { background: white !important; color: black !important; padding: 0 !important; }
-            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, #carrete, #toast, .btn-principal, .btn-secundario, .cuidados-btn-toggle {
-                display: none !important;
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                color-scheme: light !important; 
             }
+            body { 
+                background: white !important; 
+                color: black !important; 
+                padding: 0 !important; 
+            }
+
+            /* Escondemos TODO excepto la sección de cuidados */
+            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, #carrete, #toast, .btn-principal, .btn-secundario, .cuidados-btn-toggle { 
+                display: none !important; 
+            }
+
+            /* Forzamos que la sección de cuidados se vea aunque no sea la pestaña activa */
             #sec-cuidados {
                 display: block !important;
+                visibility: visible !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
                 padding: 40px !important;
-                min-height: auto !important;
+                background: white !important;
             }
-            .cuidados-body { max-height: none !important; display: block !important; overflow: visible !important; }
+
+            .cuidados-body {
+                max-height: none !important;
+                display: block !important;
+                opacity: 1 !important;
+                overflow: visible !important;
+            }
+
             .print-solo {
                 display: flex !important;
                 flex-direction: column;
                 align-items: center;
-                margin-bottom: 40px;
-                text-align: center;
+                margin-bottom: 30px;
             }
+
             .print-solo h1 {
                 font-family: 'Bungee Hairline', sans-serif !important;
                 color: #e63946 !important;
-                font-size: 3.5rem !important;
-                letter-spacing: 8px;
+                font-size: 3rem !important;
+                margin: 10px 0;
             }
+
             .cuidado-grupo h4 { color: #e63946 !important; font-size: 1.1rem !important; margin-top: 20px; }
-            .cuidado-grupo li { color: #000 !important; font-size: 1rem !important; }
+            .cuidado-grupo li { color: black !important; font-size: 1rem !important; }
         }
     </style>
 </head>
@@ -1241,10 +1263,7 @@
             Agendar con este presupuesto →
         </button>
 
-        
-        <!-- CAMBIO 2: "Portfolio" más grande y blanco -->
-        <p class="galeria-titulo">// Portfolio</p>
-        <div id="galeria-grid" class="galeria-grid"></div>
+       
     </section>
 
     <!-- SECCIÓN 4: FORMULARIO DE TURNO -->
@@ -1347,6 +1366,11 @@
             <br><br>
             <button class="btn-secundario" onclick="siguientePaso(2)">← Editá algo</button>
         </div>
+
+         
+        <!-- CAMBIO 2: "Portfolio" más grande y blanco -->
+        <p class="galeria-titulo">// Portfolio</p>
+        <div id="galeria-grid" class="galeria-grid"></div>
     </section>
 
     <!-- SECCIÓN 5: CUIDADOS (solo para PDF/print) -->
@@ -1517,13 +1541,21 @@
         const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
 
         function mostrarSeccion(id) {
-            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+            // 1. Buscamos la sección a la que queremos ir
+            const destino = document.getElementById('sec-' + id);
+            
+            if (destino) {
+                // 2. Le pedimos al navegador que baje suavemente
+                destino.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+
+            // 3. Actualizamos cuál botón se ve "rojo" en el menú
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
-            document.getElementById('sec-' + id).classList.add('activa');
             const btnIndex = secciones.indexOf(id);
             if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
-            document.documentElement.scrollTop = 0;
-            document.body.scrollTop = 0;
         }
 
         // =============================================
