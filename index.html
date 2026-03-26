@@ -84,16 +84,27 @@
 
         .nav-btn.activo { color: var(--acento); border-color: var(--acento); }
 
-        @media (max-width: 390px) {
-    .navbar { padding: 10px 8px; } /* Menos aire lateral */
-    .navbar-logo { font-size: 1.1rem; letter-spacing: 1px; }
-    .navbar-logo img { height: 22px !important; } /* Logo más chico en móvil */
-    .navbar-links { gap: 1px; } /* Botones casi pegados */
+        @media (max-width: 430px) {
+    .navbar { 
+        padding: 10px 8px; /* Menos aire a los costados */
+    }
+    .navbar-logo { 
+        font-size: 1rem; /* Logo más discreto */
+        letter-spacing: 1px; 
+        gap: 5px !important;
+    }
+    .navbar-logo img { 
+        height: 22px !important; 
+    }
+    .navbar-links { 
+        gap: 2px; /* Botones más pegaditos */
+    }
     .nav-btn { 
         padding: 6px 4px; 
-        font-size: 0.58rem; 
+        font-size: 0.55rem; /* Letra más chica para que entren los 5 botones */
         letter-spacing: 0px; 
-        min-width: 60px; /* Asegura un tamaño mínimo para tocar */
+        min-width: 55px; 
+        text-align: center;
     }
 }
 
@@ -1524,37 +1535,42 @@
         // CARRETE / LIGHTBOX (CORREGIDO)
         // =============================================
         function abrirCarrete(nombreEstilo) {
-            const fotos = fotosPorEstilo[nombreEstilo];
-            if (!fotos) return;
+    const fotos = fotosPorEstilo[nombreEstilo];
+    if (!fotos) return;
 
-            // Ordenamos las fotos según el Excel
-            fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
+    // 1. Ordenamos las fotos según tu Excel
+    fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
 
-            const slider = document.getElementById('carrete-slider');
-            
-            // CORRECCIÓN: Quitamos los "..." y ponemos el código real para cargar fotos
-            slider.innerHTML = fotos.map(f => `
-                <div class="carrete-slide">
-                    <img src="${f.imagen}" alt="${nombreEstilo}">
-                </div>
-            `).join('');
+    const slider = document.getElementById('carrete-slider');
+    
+    // 2. Cargamos las imágenes
+    slider.innerHTML = fotos.map(f => `
+        <div class="carrete-slide">
+            <img src="${f.imagen}" alt="${nombreEstilo}">
+        </div>
+    `).join('');
 
-            document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
-            
-            // Siempre arrancamos de la foto 1
-            slider.scrollTo({ left: 0 });
+    document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
 
-            document.getElementById('btn-cotizar-carrete').onclick = () => {
-                const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
-                document.getElementById('complejidad').value = dif;
-                cerrarCarrete();
-                mostrarSeccion('cotizador');
-                mostrarToast('✦ Estilo seleccionado');
-            };
+    // 3. Mostramos el carrete
+    document.getElementById('carrete').classList.add('abierto');
+    document.body.style.overflow = 'hidden';
 
-            document.getElementById('carrete').classList.add('abierto');
-            document.body.style.overflow = 'hidden';
-        }
+    // 4. EL TRUCO: Forzamos al carrete a volver a la foto 1 al abrirse
+    // Usamos un tiempo mínimo (10 milisegundos) para asegurar que el navegador ya dibujó las fotos
+    setTimeout(() => {
+        slider.scrollLeft = 0;
+    }, 10);
+
+    // Configuración del botón de cotizar dentro del carrete
+    document.getElementById('btn-cotizar-carrete').onclick = () => {
+        const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
+        document.getElementById('complejidad').value = dif;
+        cerrarCarrete();
+        mostrarSeccion('cotizador');
+        mostrarToast('✦ Estilo seleccionado');
+    };
+}
 
         function cerrarCarrete() {
             document.getElementById('carrete').classList.remove('abierto');
