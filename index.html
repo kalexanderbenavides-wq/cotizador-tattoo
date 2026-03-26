@@ -97,21 +97,18 @@
     }
 }
 
-        /* SECCIONES: Ahora todas visibles para permitir el scroll */
+        /* --- SISTEMA DE PESTAÑAS: Solo una visible a la vez --- */
         .seccion {
-            display: block; /* Cambiado de none a block */
-            min-height: auto; /* Para que no haya huecos gigantes entre secciones */
-            padding: 80px 20px 40px; /* Ajuste de aire entre secciones */
+            display: none; /* Esto oculta todo por defecto */
+            min-height: 100vh;
+            padding: 100px 20px 60px;
             max-width: 480px;
             margin: 0 auto;
             animation: aparecer 0.4s ease-out;
         }
 
-        .seccion.activa { display: block; }
-
-        @keyframes aparecer {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+        .seccion.activa { 
+            display: block; /* Solo mostramos la que tiene la clase activa */
         }
 
         /* COMPONENTES */
@@ -1541,21 +1538,20 @@
         const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
 
         function mostrarSeccion(id) {
-            // 1. Buscamos la sección a la que queremos ir
-            const destino = document.getElementById('sec-' + id);
-            
-            if (destino) {
-                // 2. Le pedimos al navegador que baje suavemente
-                destino.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-
-            // 3. Actualizamos cuál botón se ve "rojo" en el menú
+            // 1. Ocultamos todas las secciones y botones
+            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+            
+            // 2. Activamos solo la sección pedida
+            const seccionDestino = document.getElementById('sec-' + id);
+            if (seccionDestino) seccionDestino.classList.add('activa');
+            
+            // 3. Marcamos el botón del menú
             const btnIndex = secciones.indexOf(id);
             if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
+            
+            // 4. RESET DE SCROLL: Volvemos arriba para que la pestaña se vea desde el inicio
+            window.scrollTo(0, 0);
         }
 
         // =============================================
