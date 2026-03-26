@@ -98,6 +98,25 @@
 
         .nav-btn.activo { color: var(--acento); border-color: var(--acento); }
 
+        /* --- AJUSTE PARA NAVEGADOR EN CELULARES CHICOS --- */
+        @media (max-width: 390px) {
+            .navbar {
+                padding: 12px 10px; /* Menos espacio en los bordes */
+            }
+            .navbar-logo {
+                font-size: 1.2rem; /* Logo un poco más chico */
+                letter-spacing: 2px;
+            }
+            .navbar-links {
+                gap: 2px; /* Botones más pegaditos */
+            }
+            .nav-btn {
+                padding: 6px 8px; /* Botones más angostos */
+                font-size: 0.6rem; /* Letra un pelín más chica */
+                letter-spacing: 0.5px;
+            }
+        }
+
         /* =============================================
            SECCIONES
            Cada sección de la página usa esta base.
@@ -748,6 +767,8 @@
             cursor: pointer;
             transition: transform 0.25s ease, border-color 0.25s;
             background: var(--negro-card);
+            content-visibility: auto; /* Solo procesa la imagen cuando el usuario scrollea cerca */
+            contain-intrinsic-size: 200px; /* Reserva el lugar de la foto */
         }
 
         .galeria-card:hover {
