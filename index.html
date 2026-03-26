@@ -10,12 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Bungee+Hairline&family=Bungee&family=DM+Sans:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
 
     <style>
-        /* =============================================
-           VARIABLES Y RESET
-           Definimos la paleta de colores y fuentes
-           en un solo lugar. Si querés cambiar el rojo,
-           solo cambiás --acento acá y se actualiza todo.
-        ============================================= */
         :root {
             --negro: #080808;
             --negro-card: #111111;
@@ -33,9 +27,7 @@
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         html { scroll-behavior: smooth; }
-
         body {
             background: var(--negro);
             color: var(--texto);
@@ -43,10 +35,7 @@
             overflow-x: hidden;
         }
 
-        /* =============================================
-           NAVBAR — Barra de navegación superior
-           position: fixed = siempre visible al scrollear
-        ============================================= */
+        /* NAVBAR */
         .navbar {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -70,10 +59,7 @@
 
         .navbar-logo span { color: var(--acento); }
 
-        .navbar-links {
-            display: flex;
-            gap: 6px;
-        }
+        .navbar-links { display: flex; gap: 6px; }
 
         .nav-btn {
             background: none;
@@ -98,30 +84,20 @@
 
         .nav-btn.activo { color: var(--acento); border-color: var(--acento); }
 
-        /* --- AJUSTE PARA NAVEGADOR EN CELULARES CHICOS --- */
         @media (max-width: 390px) {
-            .navbar {
-                padding: 12px 10px; /* Menos espacio en los bordes */
-            }
-            .navbar-logo {
-                font-size: 1.2rem; /* Logo un poco más chico */
-                letter-spacing: 2px;
-            }
-            .navbar-links {
-                gap: 2px; /* Botones más pegaditos */
-            }
-            .nav-btn {
-                padding: 6px 8px; /* Botones más angostos */
-                font-size: 0.6rem; /* Letra un pelín más chica */
-                letter-spacing: 0.5px;
-            }
-        }
+    .navbar { padding: 10px 8px; } /* Menos aire lateral */
+    .navbar-logo { font-size: 1.1rem; letter-spacing: 1px; }
+    .navbar-logo img { height: 22px !important; } /* Logo más chico en móvil */
+    .navbar-links { gap: 1px; } /* Botones casi pegados */
+    .nav-btn { 
+        padding: 6px 4px; 
+        font-size: 0.58rem; 
+        letter-spacing: 0px; 
+        min-width: 60px; /* Asegura un tamaño mínimo para tocar */
+    }
+}
 
-        /* =============================================
-           SECCIONES
-           Cada sección de la página usa esta base.
-           display: none / block para mostrar/ocultar.
-        ============================================= */
+        /* SECCIONES */
         .seccion {
             display: none;
             min-height: 100vh;
@@ -138,9 +114,7 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* =============================================
-           COMPONENTES REUTILIZABLES
-        ============================================= */
+        /* COMPONENTES */
         .card {
             background: var(--negro-card);
             border: 1px solid var(--borde);
@@ -230,13 +204,21 @@
 
         .btn-secundario:hover { border-color: var(--acento); color: var(--acento); }
 
+        /* =============================================
+           CAMBIO 2: Títulos de sección más grandes y blancos
+        ============================================= */
         .seccion-titulo {
             font-family: var(--fuente-titulo);
-            font-size: 0.75rem;
-            color: var(--acento);
+            font-size: 1rem;          /* era 0.75rem */
+            color: white;             /* era var(--acento) */
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 20px;
+        }
+
+        /* El prefijo // lo dejamos en rojo para mantener la identidad */
+        .seccion-titulo::before {
+            content: '';
         }
 
         .divisor {
@@ -255,9 +237,10 @@
             padding-top: 120px;
         }
 
+        /* CAMBIO 2: hero-tag más grande y blanco */
         .hero-tag {
-            font-size: 0.65rem;
-            color: var(--acento);
+            font-size: 0.85rem;       /* era 0.65rem */
+            color: white;             /* era var(--acento) */
             text-transform: uppercase;
             letter-spacing: 4px;
             font-weight: 700;
@@ -322,6 +305,119 @@
         }
 
         /* =============================================
+           CAMBIO 1: Botón Instagram
+        ============================================= */
+        .btn-instagram {
+            width: 100%;
+            background: transparent;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 14px;
+            padding: 16px;
+            font-family: var(--fuente-cuerpo);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-instagram:hover {
+            border-color: #E1306C;
+            color: #E1306C;
+            background: rgba(225, 48, 108, 0.07);
+        }
+
+        .btn-instagram svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* =============================================
+           CAMBIO 2: Galería — títulos y contadores más grandes
+        ============================================= */
+        /* Título "Portfolio" más grande y blanco */
+        .galeria-titulo {
+            font-size: 1rem;          /* era 0.65rem */
+            color: white;             /* era var(--texto-suave) */
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin: 32px 0 14px;
+        }
+
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .galeria-card {
+            position: relative;
+            aspect-ratio: 1/1;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            cursor: pointer;
+            transition: transform 0.25s ease, border-color 0.25s;
+            background: var(--negro-card);
+            content-visibility: auto;
+            contain-intrinsic-size: 200px;
+        }
+
+        .galeria-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--acento);
+        }
+
+        .galeria-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .galeria-placeholder {
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #111, #0d0d0d);
+            gap: 8px;
+        }
+
+        .placeholder-icon { font-size: 2rem; opacity: 0.3; }
+
+        .galeria-card-info {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 12px 14px;
+            background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%);
+        }
+
+        /* CAMBIO 2: nombre del estilo en la card más grande */
+        .galeria-card-nombre {
+            font-size: 0.9rem;        /* era 0.7rem */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        /* CAMBIO 2: contador de trabajos más grande */
+        .galeria-card-count {
+            font-size: 0.7rem;        /* era 0.55rem */
+            color: var(--acento);
+            font-weight: 700;
+            margin-top: 3px;
+        }
+
+        /* =============================================
            SECCIÓN: BIO
         ============================================= */
         .bio-header {
@@ -332,8 +428,7 @@
         }
 
         .bio-avatar {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             border-radius: 16px;
             background: linear-gradient(135deg, var(--negro-card), #1a1a1a);
             border: 2px solid var(--acento);
@@ -388,11 +483,7 @@
 
         .chip.destacado { border-color: var(--acento); color: var(--acento); background: var(--acento-glow); }
 
-        .redes-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .redes-lista { display: flex; flex-direction: column; gap: 10px; }
 
         .red-item {
             display: flex;
@@ -407,19 +498,8 @@
         }
 
         .red-item:hover { border-color: var(--borde-hover); }
-
-        .red-nombre {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--texto);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .red-handle {
-            font-size: 0.75rem;
-            color: var(--acento);
-        }
+        .red-nombre { font-size: 0.8rem; font-weight: 700; color: var(--texto); text-transform: uppercase; letter-spacing: 1px; }
+        .red-handle { font-size: 0.75rem; color: var(--acento); }
 
         /* =============================================
            SECCIÓN: COTIZADOR
@@ -437,16 +517,9 @@
 
         #progreso-pct { color: var(--acento); }
 
-        .barra-bg {
-            height: 4px;
-            background: var(--borde);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
+        .barra-bg { height: 4px; background: var(--borde); border-radius: 4px; overflow: hidden; }
         .barra-fill {
-            height: 100%;
-            width: 0%;
+            height: 100%; width: 0%;
             background: var(--acento);
             border-radius: 4px;
             box-shadow: 0 0 8px var(--acento);
@@ -468,25 +541,54 @@
         .zona-touch:hover { fill: #2a2a2a; stroke: #555; }
         .zona-touch.activa { fill: var(--acento); stroke: rgba(255,255,255,0.3); filter: drop-shadow(0 0 6px var(--acento)); }
 
+        /* CAMBIO 3: display de zona más informativo */
         .zona-display {
-            font-size: 0.65rem;
-            color: var(--acento);
+            font-size: 0.75rem;       /* un poco más grande para legibilidad */
+            color: white;             /* era var(--acento) — ahora blanco para mayor visibilidad */
             text-transform: uppercase;
             font-weight: 700;
             letter-spacing: 2px;
-            margin-top: 8px;
+            margin-top: 10px;
+            min-height: 20px;
         }
 
-        /* Visualizador de escala */
+        .zona-display .zona-nombre { color: var(--acento); }
+        .zona-display .zona-lado { color: #aaa; font-size: 0.65rem; letter-spacing: 1px; }
+
+        /* =============================================
+           CAMBIO 4: Referencia de escala más clara
+        ============================================= */
         .escala-card {
             background: var(--negro-input);
             border: 1px solid var(--borde);
             border-radius: 14px;
-            padding: 16px;
+            padding: 20px 16px;
             margin-bottom: 16px;
             display: none;
         }
 
+        /* Nuevo encabezado con título principal y subtítulo explicativo */
+        .escala-header-titulo {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: white;             /* blanco para mayor visibilidad */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .escala-header-sub {
+            font-size: 0.8rem;
+            color: #bbb;              /* gris claro, más legible que el anterior */
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .escala-header-sub strong {
+            color: var(--acento);
+        }
+
+        /* El antiguo escala-header ya no se usa, lo reemplazamos */
         .escala-header {
             display: flex;
             justify-content: space-between;
@@ -496,13 +598,13 @@
             margin-bottom: 16px;
         }
 
-        #cm-label { color: var(--acento); font-weight: 700; }
+        #cm-label { color: var(--acento); font-weight: 700; font-size: 0.9rem; }
 
         .escala-visual {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .cuadro-tattoo {
@@ -528,14 +630,23 @@
             top: 13px; left: 10px;
         }
 
+        /* CAMBIO 4: etiquetas de referencia más claras y en blanco */
         .ref-label {
-            font-size: 0.55rem;
-            color: var(--texto-suave);
+            font-size: 0.75rem;
+            color: white;             /* era var(--texto-suave) */
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: center;
         }
 
-        /* Resultado */
+        .ref-label-sub {
+            font-size: 0.58rem;
+            color: #888;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* Resultado precio */
         #resultado-precio {
             text-align: center;
             padding: 20px;
@@ -557,19 +668,8 @@
             letter-spacing: 2px;
         }
 
-        .precio-valor {
-            font-family: var(--fuente-titulo);
-            font-size: 2rem;
-            color: var(--acento);
-        }
-
-        .precio-sub {
-            font-size: 0.65rem;
-            color: var(--texto-suave);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
+        .precio-valor { font-family: var(--fuente-titulo); font-size: 2rem; color: var(--acento); }
+        .precio-sub { font-size: 0.65rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
         @keyframes pulso {
             0%   { transform: scale(1); }
@@ -602,7 +702,6 @@
 
         .paso-dot.hecho { background: var(--acento); border-color: var(--acento); color: white; }
         .paso-dot.actual { border-color: var(--acento); color: var(--acento); }
-
         .paso-linea { flex: 1; height: 1px; background: var(--borde); }
         .paso-linea.hecha { background: var(--acento); }
 
@@ -639,9 +738,7 @@
         .resumen-key { color: var(--texto-suave); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 1px; }
         .resumen-val { color: var(--texto); font-weight: 700; }
 
-        /* =============================================
-           CUIDADOS + PRINT
-        ============================================= */
+        /* CUIDADOS */
         .cuidados-btn-toggle {
             width: 100%;
             background: none;
@@ -663,13 +760,7 @@
         }
 
         .cuidados-btn-toggle:hover { border-color: var(--borde-hover); }
-
-        .cuidados-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-
+        .cuidados-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
         .cuidados-body.abierto { max-height: 1000px; }
 
         .cuidado-grupo h4 {
@@ -693,9 +784,7 @@
 
         .cuidado-grupo li::before { content: "—"; color: var(--acento); position: absolute; left: 0; }
 
-        /* =============================================
-           TOAST NOTIFICATION
-        ============================================= */
+        /* TOAST */
         .toast {
             position: fixed;
             bottom: -80px;
@@ -716,9 +805,7 @@
 
         .toast.visible { bottom: 30px; }
 
-        /* =============================================
-           LOADING GALERÍA
-        ============================================= */
+        /* LOADING GALERÍA */
         .galeria-loading {
             grid-column: 1 / -1;
             text-align: center;
@@ -735,91 +822,9 @@
             50%       { opacity: 0.3; }
         }
 
-        .galeria-loading span {
-            animation: parpadeo 1.2s ease-in-out infinite;
-        }
+        .galeria-loading span { animation: parpadeo 1.2s ease-in-out infinite; }
 
-        /* =============================================
-           GALERÍA EN INICIO
-        ============================================= */
-        .galeria-titulo {
-            font-size: 0.65rem;
-            color: var(--texto-suave);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-weight: 700;
-            margin: 32px 0 14px;
-        }
-
-        .galeria-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 28px;
-        }
-
-        .galeria-card {
-            position: relative;
-            aspect-ratio: 1/1;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid var(--borde);
-            cursor: pointer;
-            transition: transform 0.25s ease, border-color 0.25s;
-            background: var(--negro-card);
-            content-visibility: auto; /* Solo procesa la imagen cuando el usuario scrollea cerca */
-            contain-intrinsic-size: 200px; /* Reserva el lugar de la foto */
-        }
-
-        .galeria-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--acento);
-        }
-
-        .galeria-card img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Placeholder cuando no hay imagen real */
-        .galeria-placeholder {
-            width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #111, #0d0d0d);
-            gap: 8px;
-        }
-
-        .placeholder-icon { font-size: 2rem; opacity: 0.3; }
-
-        .galeria-card-info {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 10px 12px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-        }
-
-        .galeria-card-nombre {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: white;
-        }
-
-        .galeria-card-count {
-            font-size: 0.55rem;
-            color: var(--acento);
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        /* =============================================
-           CARRETE / LIGHTBOX
-        ============================================= */
+        /* CARRETE / LIGHTBOX */
         .carrete-overlay {
             position: fixed;
             inset: 0;
@@ -894,37 +899,24 @@
             margin-bottom: 14px;
         }
 
-
         .print-solo { display: none; }
 
-        /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
         @media print {
-            * { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                color-scheme: light !important; /* Fuerza el modo claro para el PDF */
+    * { 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+        color-scheme: light !important; /* <--- CLAVE PARA MODO OSCURO */
+    }
+    body { background: white !important; color: black !important; padding: 0 !important; }
+            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, #carrete, #toast, .btn-principal, .btn-secundario, .cuidados-btn-toggle {
+                display: none !important;
             }
-            body { background: white !important; color: black !important; padding: 0 !important; }
-
-            /* Escondemos TODO excepto la sección de cuidados */
-            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, #carrete, #toast, .btn-principal, .btn-secundario, .cuidados-btn-toggle { 
-                display: none !important; 
-            }
-
-            /* Mostramos la sección de cuidados abierta por completo */
             #sec-cuidados {
                 display: block !important;
                 padding: 40px !important;
                 min-height: auto !important;
             }
-
-            .cuidados-body {
-                max-height: none !important;
-                display: block !important;
-                overflow: visible !important;
-            }
-
-            /* Header del PDF */
+            .cuidados-body { max-height: none !important; display: block !important; overflow: visible !important; }
             .print-solo {
                 display: flex !important;
                 flex-direction: column;
@@ -932,14 +924,12 @@
                 margin-bottom: 40px;
                 text-align: center;
             }
-
             .print-solo h1 {
                 font-family: 'Bungee Hairline', sans-serif !important;
                 color: #e63946 !important;
                 font-size: 3.5rem !important;
                 letter-spacing: 8px;
             }
-
             .cuidado-grupo h4 { color: #e63946 !important; font-size: 1.1rem !important; margin-top: 20px; }
             .cuidado-grupo li { color: #000 !important; font-size: 1rem !important; }
         }
@@ -947,13 +937,11 @@
 </head>
 <body>
 
-    <!-- ==========================================
-         NAVBAR — La barra que siempre se ve arriba.
-         Cada botón llama a mostrarSeccion('id').
-    ========================================== -->
     <nav class="navbar">
-        <a class="navbar-logo" href="#">ALX<span>.</span>TAT</a>
-        <div class="navbar-links">
+    <a class="navbar-logo" href="#" style="display: flex; align-items: center; gap: 10px;">
+        <img src="logo2026.png" alt="Logo" style="height: 30px; width: auto;"> ALX<span>.</span>TAT
+    </a>
+    <div class="navbar-links">
             <button class="nav-btn activo" onclick="mostrarSeccion('inicio')">Inicio</button>
             <button class="nav-btn" onclick="mostrarSeccion('bio')">Bio</button>
             <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
@@ -963,9 +951,7 @@
 
     <div id="toast" class="toast"></div>
 
-    <!-- ==========================================
-         SECCIÓN 1: INICIO / HERO
-    ========================================== -->
+    <!-- SECCIÓN 1: INICIO / HERO -->
     <section id="sec-inicio" class="seccion activa">
         <p class="hero-tag">✦ Buenos Aires · Argentina</p>
         <h1 class="hero-nombre">ALX<span class="linea-roja">.TAT</span></h1>
@@ -974,17 +960,23 @@
         <div class="hero-acciones">
             <button class="btn-principal" onclick="mostrarSeccion('turno')">Agendar Turno</button>
             <button class="btn-secundario" onclick="mostrarSeccion('cotizador')">Cotizar mi Tattoo</button>
+            <!-- CAMBIO 1: Botón Instagram -->
+            <a class="btn-instagram" href="https://instagram.com/alx.tat" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                @alx.tat — Instagram
+            </a>
         </div>
 
+        <!-- CAMBIO 2: "Portfolio" más grande y blanco -->
         <p class="galeria-titulo">// Portfolio</p>
         <div id="galeria-grid" class="galeria-grid"></div>
     </section>
 
-    <!-- ==========================================
-         SECCIÓN 2: BIO
-         Editá el texto acá para personalizarlo.
-    ========================================== -->
+    <!-- SECCIÓN 2: BIO -->
     <section id="sec-bio" class="seccion">
+        <!-- CAMBIO 2: título de sección más grande y blanco (via CSS .seccion-titulo) -->
         <p class="seccion-titulo">// Sobre mí</p>
 
         <div class="card">
@@ -1055,16 +1047,12 @@
         </div>
     </section>
 
-    <!-- ==========================================
-         SECCIÓN 3: COTIZADOR
-         Lógica idéntica a tu versión original,
-         pero con componentes más limpios.
-    ========================================== -->
+    <!-- SECCIÓN 3: COTIZADOR -->
     <section id="sec-cotizador" class="seccion">
+        <!-- CAMBIO 2: título de sección más grande y blanco -->
         <p class="seccion-titulo">// Cotizador</p>
 
         <div class="card">
-            <!-- Barra de progreso -->
             <div class="progreso-wrap">
                 <div class="progreso-meta">
                     <span>Completá los campos</span>
@@ -1075,7 +1063,6 @@
                 </div>
             </div>
 
-            <!-- Estilo -->
             <p class="label">Estilo de Tattoo</p>
             <select id="complejidad" class="input-campo" onchange="calcular()">
                 <option value="1">Línea Fina / Minimalista</option>
@@ -1083,153 +1070,129 @@
                 <option value="2">Realismo / Neo Tradicional / Full Color</option>
             </select>
 
-            <!-- Mapa corporal -->
             <p class="label">Zona a tatuar</p>
             <div class="mapa-wrap">
                 <svg viewBox="0 0 200 340" class="cuerpo-svg" style="width:160px">
 
-                    <!-- CABEZA -->
                     <ellipse cx="100" cy="22" rx="16" ry="18"
                         class="zona-touch"
-                        data-valor="1.5" data-nombre="Cabeza / Cara"
+                        data-valor="1.5" data-nombre="Cabeza / Cara" data-lado=""
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- CUELLO -->
                     <rect x="92" y="40" width="16" height="14" rx="4"
                         class="zona-touch"
-                        data-valor="1.5" data-nombre="Cuello / Nuca"
+                        data-valor="1.5" data-nombre="Cuello / Nuca" data-lado=""
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- PECHO / CLAVÍCULA -->
                     <path d="M72 58 Q100 54 128 58 L124 78 Q100 82 76 78 Z"
                         class="zona-touch"
-                        data-valor="1.3" data-nombre="Pecho / Clavícula"
+                        data-valor="1.3" data-nombre="Pecho / Clavícula" data-lado=""
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- ABDOMEN -->
                     <path d="M76 78 Q100 82 124 78 L122 110 Q100 114 78 110 Z"
                         class="zona-touch"
-                        data-valor="1.3" data-nombre="Abdomen"
+                        data-valor="1.3" data-nombre="Abdomen" data-lado=""
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- COSTILLAS IZQ -->
+                    <!-- CAMBIO 3: data-lado agrega info de lado -->
                     <path d="M62 72 L76 78 L78 108 L62 102 Z"
                         class="zona-touch"
-                        data-valor="1.6" data-nombre="Costillas"
+                        data-valor="1.6" data-nombre="Costillas" data-lado="Izquierda"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- COSTILLAS DER -->
                     <path d="M138 72 L124 78 L122 108 L138 102 Z"
                         class="zona-touch"
-                        data-valor="1.6" data-nombre="Costillas"
+                        data-valor="1.6" data-nombre="Costillas" data-lado="Derecha"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- BRAZO SUPERIOR IZQ -->
                     <path d="M54 58 L68 58 L72 58 L68 98 L54 94 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Brazo superior"
+                        data-valor="1.0" data-nombre="Brazo superior" data-lado="Izquierdo"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- BRAZO SUPERIOR DER -->
                     <path d="M146 58 L132 58 L128 58 L132 98 L146 94 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Brazo superior"
+                        data-valor="1.0" data-nombre="Brazo superior" data-lado="Derecho"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- ANTEBRAZO IZQ -->
                     <path d="M50 96 L66 100 L64 128 L48 124 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Antebrazo"
+                        data-valor="1.0" data-nombre="Antebrazo" data-lado="Izquierdo"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- ANTEBRAZO DER -->
                     <path d="M150 96 L134 100 L136 128 L152 124 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Antebrazo"
+                        data-valor="1.0" data-nombre="Antebrazo" data-lado="Derecho"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- MANO IZQ -->
                     <ellipse cx="46" cy="136" rx="10" ry="10"
                         class="zona-touch"
-                        data-valor="1.4" data-nombre="Mano / Dedos"
+                        data-valor="1.4" data-nombre="Mano / Dedos" data-lado="Izquierda"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- MANO DER -->
                     <ellipse cx="154" cy="136" rx="10" ry="10"
                         class="zona-touch"
-                        data-valor="1.4" data-nombre="Mano / Dedos"
+                        data-valor="1.4" data-nombre="Mano / Dedos" data-lado="Derecha"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- CADERA / GLUTEO IZQ -->
                     <path d="M62 110 L78 110 L80 140 L62 142 Z"
                         class="zona-touch"
-                        data-valor="1.1" data-nombre="Cadera / Glúteo"
+                        data-valor="1.1" data-nombre="Cadera / Glúteo" data-lado="Izquierdo"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- CADERA / GLUTEO DER -->
                     <path d="M138 110 L122 110 L120 140 L138 142 Z"
                         class="zona-touch"
-                        data-valor="1.1" data-nombre="Cadera / Glúteo"
+                        data-valor="1.1" data-nombre="Cadera / Glúteo" data-lado="Derecho"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- MUSLO IZQ -->
                     <path d="M64 142 L82 140 L84 186 L66 188 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Muslo"
+                        data-valor="1.0" data-nombre="Muslo" data-lado="Izquierdo"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- MUSLO DER -->
                     <path d="M136 142 L118 140 L116 186 L134 188 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Muslo"
+                        data-valor="1.0" data-nombre="Muslo" data-lado="Derecho"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- RODILLA IZQ -->
                     <ellipse cx="75" cy="196" rx="10" ry="9"
                         class="zona-touch"
-                        data-valor="1.3" data-nombre="Rodilla"
+                        data-valor="1.3" data-nombre="Rodilla" data-lado="Izquierda"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- RODILLA DER -->
                     <ellipse cx="125" cy="196" rx="10" ry="9"
                         class="zona-touch"
-                        data-valor="1.3" data-nombre="Rodilla"
+                        data-valor="1.3" data-nombre="Rodilla" data-lado="Derecha"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- PANTORRILLA IZQ -->
                     <path d="M66 206 L84 204 L82 244 L64 244 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Pantorrilla"
+                        data-valor="1.0" data-nombre="Pantorrilla" data-lado="Izquierda"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- PANTORRILLA DER -->
                     <path d="M134 206 L116 204 L118 244 L136 244 Z"
                         class="zona-touch"
-                        data-valor="1.0" data-nombre="Pantorrilla"
+                        data-valor="1.0" data-nombre="Pantorrilla" data-lado="Derecha"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- PIE IZQ -->
                     <path d="M62 246 L82 246 L84 260 L58 260 Z"
                         class="zona-touch"
-                        data-valor="1.4" data-nombre="Pie / Tobillo"
+                        data-valor="1.4" data-nombre="Pie / Tobillo" data-lado="Izquierdo"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- PIE DER -->
                     <path d="M138 246 L118 246 L116 260 L142 260 Z"
                         class="zona-touch"
-                        data-valor="1.4" data-nombre="Pie / Tobillo"
+                        data-valor="1.4" data-nombre="Pie / Tobillo" data-lado="Derecho"
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- ESPALDA ALTA (etiqueta visual, zona detrás) -->
                     <path d="M76 58 Q100 54 124 58 L122 80 Q100 84 78 80 Z"
                         class="zona-touch"
-                        data-valor="1.2" data-nombre="Espalda alta"
+                        data-valor="1.2" data-nombre="Espalda alta" data-lado=""
                         onclick="seleccionarZona(this)"
                         style="display:none"/>
 
                 </svg>
 
-                <!-- Botón para alternar vista frontal/trasera -->
                 <div style="display:flex; gap:8px; justify-content:center; margin-top:10px;">
                     <button onclick="setVista('frente')" id="btn-frente"
                         style="font-size:0.6rem; padding:5px 12px; border-radius:20px; border:1px solid var(--acento); background:var(--acento); color:white; cursor:pointer; font-weight:700; letter-spacing:1px; text-transform:uppercase;">
@@ -1241,54 +1204,52 @@
                     </button>
                 </div>
 
-                <p id="zona-display" class="zona-display">Seleccioná una zona</p>
+                <!-- CAMBIO 3: display con nombre + lado separados -->
+                <div id="zona-display" class="zona-display">
+                    <span id="zona-nombre-txt">Seleccioná una zona</span>
+                </div>
             </div>
 
-            <!-- Input oculto para valor de zona -->
             <select id="zona-cuerpo" style="display:none">
                 <option value="1">Brazo / Pierna</option>
                 <option value="1.2">Espalda / Torso</option>
                 <option value="1.4">Cabeza / Cuello / Costillas</option>
             </select>
 
-            <!-- Tamaño -->
             <p class="label">Tamaño aproximado (cm)</p>
             <input type="number" id="tamano" class="input-campo" placeholder="Ej: 15" min="1" oninput="calcular()">
 
-            <!-- Visualizador de escala -->
+            <!-- CAMBIO 4: Referencia de escala rediseñada -->
             <div id="escala-card" class="escala-card">
-                <div class="escala-header">
-                    <span>Referencia de escala</span>
-                    <span id="cm-label">— cm</span>
+                <div class="escala-header-titulo">Referencia de escala</div>
+                <div class="escala-header-sub">
+                    Tu tattoo tendrá aproximadamente <strong id="cm-label">— cm</strong>.<br>
+                    Abajo lo comparamos con el tamaño de una tarjeta de crédito estándar (8,5 × 5,4 cm).
                 </div>
                 <div class="escala-visual">
-                    <span class="ref-label">Tu tattoo</span>
+                    <span class="ref-label">↑ Tu tattoo</span>
                     <div id="cuadro-tattoo" class="cuadro-tattoo"></div>
                     <div class="tarjeta-ref"><div class="chip-tarjeta"></div></div>
-                    <span class="ref-label">Tarjeta de crédito (8.5 cm)</span>
+                    <span class="ref-label">↑ Tarjeta de crédito</span>
+                    <span class="ref-label-sub">Medida real: 8,5 cm de ancho × 5,4 cm de alto</span>
                 </div>
             </div>
 
-            <!-- Resultado precio -->
             <div id="resultado-precio">
                 <span class="precio-vacio">Completá los campos ↑</span>
             </div>
         </div>
 
-        <!-- Botón cotizar → turno -->
         <button id="btn-ir-turno" class="btn-principal" style="display:none" onclick="irATurnoConDatos()">
             Agendar con este presupuesto →
         </button>
     </section>
 
-    <!-- ==========================================
-         SECCIÓN 4: FORMULARIO DE TURNO
-         3 pasos: Datos → Detalles → Confirmación
-    ========================================== -->
+    <!-- SECCIÓN 4: FORMULARIO DE TURNO -->
     <section id="sec-turno" class="seccion">
+        <!-- CAMBIO 2: título de sección más grande y blanco -->
         <p class="seccion-titulo">// Agendar Turno</p>
 
-        <!-- Indicador de pasos -->
         <div class="turno-pasos">
             <div class="paso-dot actual" id="dot-1">1</div>
             <div class="paso-linea" id="linea-1"></div>
@@ -1297,8 +1258,10 @@
             <div class="paso-dot" id="dot-3">3</div>
         </div>
 
-        <!-- Campo oculto para guardar el presupuesto del cotizador -->
         <input type="hidden" id="t-presupuesto">
+        <!-- CAMBIO 3: guardamos también la zona con lado para el turno -->
+        <input type="hidden" id="t-zona-completa">
+
         <div id="paso-1" class="formulario-paso activo">
             <div class="card">
                 <p class="seccion-titulo">Tus Datos</p>
@@ -1315,7 +1278,6 @@
             <button class="btn-principal" onclick="siguientePaso(2)">Siguiente →</button>
         </div>
 
-        <!-- PASO 2: Detalles del tattoo -->
         <div id="paso-2" class="formulario-paso">
             <div class="card">
                 <p class="seccion-titulo">Tu Tattoo</p>
@@ -1364,7 +1326,6 @@
             <button class="btn-secundario" onclick="siguientePaso(1)">← Atrás</button>
         </div>
 
-        <!-- PASO 3: Resumen y confirmación -->
         <div id="paso-3" class="formulario-paso">
             <div class="card">
                 <p class="seccion-titulo">Resumen</p>
@@ -1386,14 +1347,12 @@
         </div>
     </section>
 
-    <!-- ==========================================
-         SECCIÓN 5: CUIDADOS (solo para PDF/print)
-    ========================================== -->
+    <!-- SECCIÓN 5: CUIDADOS (solo para PDF/print) -->
     <section id="sec-cuidados" class="seccion">
         <div class="print-solo">
-            <h1>ALX.TAT</h1>
-            <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados Profesionales</p>
-        </div>
+    <img src="logo2026.png" alt="Logo" style="max-width: 100px; margin-bottom: 10px;"> <h1>ALX.TAT</h1>
+    <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados Profesionales</p>
+</div>
         <div class="cuidado-grupo">
             <h4>I. Preparación (antes del turno)</h4>
             <ul>
@@ -1428,12 +1387,9 @@
     <script>
         // =============================================
         // GALERÍA — Conexión a Google Sheets
-        // Tu URL_SCRIPT original, exactamente igual.
-        // En el artefacto usamos datos de demo.
         // =============================================
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
-        
-        // Mapa de estilos → valor de complejidad (igual que antes)
+
         const mapaDificultad = {
             "línea fina": "1", "minimalista": "1",
             "blackwork": "1.5", "tradicional": "1.5", "puntillismo": "1.5",
@@ -1459,7 +1415,6 @@
             grid.innerHTML = '';
             fotosPorEstilo = {};
 
-            // Agrupamos por estilo (igual que tu código original)
             items.forEach(item => {
                 if (!item.estilo) return;
                 const key = item.estilo.trim();
@@ -1475,7 +1430,7 @@
             Object.keys(fotosPorEstilo).forEach(estilo => {
                 const grupo   = fotosPorEstilo[estilo];
                 const portada = grupo.find(f => String(f.portada).toUpperCase() === "SI") || grupo[0];
-                
+
                 const card = document.createElement('div');
                 card.className = 'galeria-card';
                 card.innerHTML = `
@@ -1490,7 +1445,6 @@
             });
         }
 
-        // Placeholders para cuando no hay conexión o estamos en demo
         function dibujarPlaceholders() {
             const estilos = [
                 { nombre: 'Línea Fina', count: '—' },
@@ -1531,7 +1485,6 @@
             document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
             slider.scrollLeft = 0;
 
-            // Botón "Cotizar este estilo" pre-selecciona el estilo en el cotizador
             document.getElementById('btn-cotizar-carrete').onclick = () => {
                 const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
                 document.getElementById('complejidad').value = dif;
@@ -1554,12 +1507,10 @@
             s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' });
         }
 
-        // Cargamos la galería al iniciar
         window.addEventListener('DOMContentLoaded', cargarGaleria);
 
-
-        // mostrarSeccion(id) muestra la sección pedida
-        // y marca el botón de nav como activo.
+        // =============================================
+        // NAVEGACIÓN
         // =============================================
         const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
 
@@ -1575,39 +1526,34 @@
 
         // =============================================
         // COTIZADOR
-        // Los precios los podés cambiar acá abajo.
-        // precioBase es el mínimo que cobrás por un tattoo.
         // =============================================
         const PRECIOS = {
-            base_bajo: 65000,    // Mínimo para línea fina
-            base_alto: 80000,    // Mínimo para realismo/color
+            base_bajo: 65000,
+            base_alto: 80000,
         };
 
         function calcular() {
-            const tamano     = parseFloat(document.getElementById('tamano').value) || 0;
+            const tamano      = parseFloat(document.getElementById('tamano').value) || 0;
             const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
-            const zona       = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
+            const zona        = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
 
-            // Progreso: cuántos campos completó el usuario
             let completados = 0;
-            if (tamano > 0)       completados++;
-            if (complejidad > 0)  completados++;
-            if (zona > 1)         completados++;
+            if (tamano > 0)      completados++;
+            if (complejidad > 0) completados++;
+            if (zona > 1)        completados++;
             const pct = Math.round((completados / 3) * 100);
             document.getElementById('barra-fill').style.width = pct + '%';
             document.getElementById('progreso-pct').innerText = pct + '%';
 
-            const resDiv = document.getElementById('resultado-precio');
+            const resDiv    = document.getElementById('resultado-precio');
             const escalaCard = document.getElementById('escala-card');
-            const btnTurno = document.getElementById('btn-ir-turno');
+            const btnTurno  = document.getElementById('btn-ir-turno');
 
             if (tamano > 0) {
-                // FÓRMULA: (precioBase / 10) × tamaño × complejidad × zona
                 const precioBase = complejidad >= 2 ? PRECIOS.base_alto : PRECIOS.base_bajo;
                 let total = (precioBase / 10) * tamano * complejidad * zona;
-                if (total < precioBase) total = precioBase; // Nunca menos que el mínimo
+                if (total < precioBase) total = precioBase;
 
-                // Mostramos el precio
                 resDiv.innerHTML = `
                     <div>
                         <div class="precio-valor">$${Math.round(total).toLocaleString('es-AR')}</div>
@@ -1617,15 +1563,13 @@
                 resDiv.classList.add('pulso');
                 setTimeout(() => resDiv.classList.remove('pulso'), 400);
 
-                // Visualizador de escala
                 escalaCard.style.display = 'block';
-                document.getElementById('cm-label').innerText = tamano + ' CM';
-                const px = Math.min(tamano * 10, 200); // Máx 200px
-                document.getElementById('cuadro-tattoo').style.width = px + 'px';
+                document.getElementById('cm-label').innerText = tamano + ' cm';
+                const px = Math.min(tamano * 10, 200);
+                document.getElementById('cuadro-tattoo').style.width  = px + 'px';
                 document.getElementById('cuadro-tattoo').style.height = px + 'px';
 
                 btnTurno.style.display = 'block';
-
             } else {
                 resDiv.innerHTML = '<span class="precio-vacio">Completá los campos ↑</span>';
                 escalaCard.style.display = 'none';
@@ -1633,11 +1577,13 @@
             }
         }
 
-        // Zonas de espalda (reemplazan las del frente al cambiar vista)
+        // =============================================
+        // MAPA CORPORAL — Vista espalda/frente
+        // =============================================
         const zonasEspalda = [
-            { id:'espalda-alta',  d:'M76 58 Q100 54 124 58 L122 80 Q100 74 78 80 Z',   valor:'1.2', nombre:'Espalda alta' },
-            { id:'espalda-baja',  d:'M78 80 Q100 74 122 80 L120 110 Q100 114 80 110 Z', valor:'1.1', nombre:'Espalda baja / Lumbar' },
-            { id:'nuca',          d:'M88 40 Q100 36 112 40 L112 54 Q100 50 88 54 Z',    valor:'1.5', nombre:'Nuca' },
+            { id:'espalda-alta', d:'M76 58 Q100 54 124 58 L122 80 Q100 74 78 80 Z',   valor:'1.2', nombre:'Espalda alta',        lado:'' },
+            { id:'espalda-baja', d:'M78 80 Q100 74 122 80 L120 110 Q100 114 80 110 Z', valor:'1.1', nombre:'Espalda baja / Lumbar', lado:'' },
+            { id:'nuca',         d:'M88 40 Q100 36 112 40 L112 54 Q100 50 88 54 Z',    valor:'1.5', nombre:'Nuca',                 lado:'' },
         ];
 
         let vistaActual = 'frente';
@@ -1647,68 +1593,84 @@
             vistaActual = vista;
             const svg = document.querySelector('.cuerpo-svg');
 
-            // Limpiamos zonas de espalda previas
             elementosEspalda.forEach(el => el.remove());
             elementosEspalda = [];
 
-            // Reseteamos selección
             document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
-            document.getElementById('zona-display').innerText = 'Seleccioná una zona';
+            // Reseteamos el display de zona
+            document.getElementById('zona-nombre-txt').textContent = 'Seleccioná una zona';
 
             const btnF = document.getElementById('btn-frente');
             const btnE = document.getElementById('btn-espalda');
 
             if (vista === 'espalda') {
-                // Ocultamos zonas del frente que no aplican atrás
-                document.querySelectorAll('.zona-touch').forEach(z => z.style.opacity = '0.15');
+                
 
-                // Agregamos zonas de espalda al SVG
                 zonasEspalda.forEach(z => {
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.setAttribute('d', z.d);
                     path.setAttribute('class', 'zona-touch');
                     path.setAttribute('data-valor', z.valor);
                     path.setAttribute('data-nombre', z.nombre);
+                    path.setAttribute('data-lado', z.lado);
                     path.setAttribute('onclick', 'seleccionarZona(this)');
                     svg.appendChild(path);
                     elementosEspalda.push(path);
                 });
 
-                btnE.style.background = 'var(--acento)';
-                btnE.style.color = 'white';
-                btnE.style.borderColor = 'var(--acento)';
-                btnF.style.background = 'transparent';
-                btnF.style.color = 'var(--texto-suave)';
-                btnF.style.borderColor = 'var(--borde-hover)';
+                btnE.style.background    = 'var(--acento)';
+                btnE.style.color         = 'white';
+                btnE.style.borderColor   = 'var(--acento)';
+                btnF.style.background    = 'transparent';
+                btnF.style.color         = 'var(--texto-suave)';
+                btnF.style.borderColor   = 'var(--borde-hover)';
             } else {
-                document.querySelectorAll('.zona-touch').forEach(z => z.style.opacity = '1');
-                btnF.style.background = 'var(--acento)';
-                btnF.style.color = 'white';
-                btnF.style.borderColor = 'var(--acento)';
-                btnE.style.background = 'transparent';
-                btnE.style.color = 'var(--texto-suave)';
-                btnE.style.borderColor = 'var(--borde-hover)';
+                
+                btnF.style.background    = 'var(--acento)';
+                btnF.style.color         = 'white';
+                btnF.style.borderColor   = 'var(--acento)';
+                btnE.style.background    = 'transparent';
+                btnE.style.color         = 'var(--texto-suave)';
+                btnE.style.borderColor   = 'var(--borde-hover)';
             }
         }
 
+        // CAMBIO 3: seleccionarZona muestra nombre + lado
         function seleccionarZona(el) {
             document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
             el.classList.add('activa');
             document.getElementById('zona-cuerpo').value = el.dataset.valor;
-            document.getElementById('zona-display').innerText = '✦ ' + el.dataset.nombre;
+
+            const nombre = el.dataset.nombre;
+            const lado   = el.dataset.lado;
+
+            // Guardamos la combinación completa para el WhatsApp
+            const zonaCompleta = lado ? nombre + ' · ' + lado : nombre;
+            document.getElementById('t-zona-completa').value = zonaCompleta;
+
+            // Mostramos en el display: nombre en rojo, lado en gris
+            const displayEl = document.getElementById('zona-nombre-txt');
+            if (lado) {
+                displayEl.innerHTML = `<span class="zona-nombre">✦ ${nombre}</span> <span class="zona-lado">· ${lado}</span>`;
+            } else {
+                displayEl.innerHTML = `<span class="zona-nombre">✦ ${nombre}</span>`;
+            }
+
             calcular();
         }
 
-        // Cuando el usuario viene del cotizador, pre-llenamos el turno
+        // =============================================
+        // IR A TURNO DESDE COTIZADOR
+        // =============================================
         function irATurnoConDatos() {
             const sel    = document.getElementById('complejidad');
             const estilo = sel.options[sel.selectedIndex].text;
             const tamano = document.getElementById('tamano').value;
             const precio = document.getElementById('resultado-precio').querySelector('.precio-valor');
+            const zonaCompleta = document.getElementById('t-zona-completa').value;
 
             if (estilo) document.getElementById('t-estilo').value = estilo.split('/')[0].trim();
-            
-            // Pre-llenamos los cm exactos
+
             if (tamano) {
                 document.getElementById('t-cm').value = tamano;
                 if (tamano <= 5)       document.getElementById('t-tamano').value = 'Pequeño (hasta 5cm)';
@@ -1717,22 +1679,18 @@
                 else                   document.getElementById('t-tamano').value = 'Pieza grande / Manga';
             }
 
-            // Guardamos el presupuesto visto para incluirlo en el WhatsApp
-            if (precio) {
-                document.getElementById('t-presupuesto').value = precio.innerText;
-            }
+            if (precio) document.getElementById('t-presupuesto').value = precio.innerText;
 
             mostrarSeccion('turno');
             mostrarToast('✦ Datos del cotizador pre-cargados');
         }
 
         // =============================================
-        // FORMULARIO DE TURNO — NAVEGACIÓN POR PASOS
+        // FORMULARIO DE TURNO
         // =============================================
         let pasoActual = 1;
 
         function siguientePaso(numeroPaso) {
-            // Validación del paso 1
             if (numeroPaso === 2) {
                 const nombre = document.getElementById('t-nombre').value.trim();
                 const tel    = document.getElementById('t-tel').value.trim();
@@ -1742,25 +1700,19 @@
                 }
             }
 
-            // Generamos el resumen en el paso 3
-            if (numeroPaso === 3) {
-                generarResumen();
-            }
+            if (numeroPaso === 3) generarResumen();
 
-            // Ocultamos el paso actual, mostramos el nuevo
             document.getElementById('paso-' + pasoActual).classList.remove('activo');
             document.getElementById('paso-' + numeroPaso).classList.add('activo');
 
-            // Actualizamos los indicadores visuales
             for (let i = 1; i <= 3; i++) {
                 const dot = document.getElementById('dot-' + i);
                 dot.classList.remove('hecho', 'actual');
-                if (i < numeroPaso)      dot.classList.add('hecho');
+                if (i < numeroPaso)        dot.classList.add('hecho');
                 else if (i === numeroPaso) dot.classList.add('actual');
             }
             for (let i = 1; i <= 2; i++) {
-                const linea = document.getElementById('linea-' + i);
-                linea.classList.toggle('hecha', i < numeroPaso);
+                document.getElementById('linea-' + i).classList.toggle('hecha', i < numeroPaso);
             }
 
             pasoActual = numeroPaso;
@@ -1768,14 +1720,17 @@
         }
 
         function generarResumen() {
-            const presupuesto = document.getElementById('t-presupuesto').value;
-            const cm = document.getElementById('t-cm').value;
+            const presupuesto  = document.getElementById('t-presupuesto').value;
+            const cm           = document.getElementById('t-cm').value;
+            // CAMBIO 3: incluimos la zona con lado en el resumen
+            const zonaCompleta = document.getElementById('t-zona-completa').value;
+
             const datos = {
                 'Nombre':      document.getElementById('t-nombre').value,
                 'WhatsApp':    document.getElementById('t-tel').value,
                 'Experiencia': document.getElementById('t-experiencia').value,
                 'Estilo':      document.getElementById('t-estilo').value,
-                'Zona':        document.getElementById('t-zona').value,
+                'Zona':        zonaCompleta || document.getElementById('t-zona').value,
                 'Tamaño (cm)': cm ? cm + ' cm' : '—',
                 'Referencia':  document.getElementById('t-tamano').value,
                 'Fecha pref.': document.getElementById('t-fecha').value || 'A coordinar',
@@ -1799,21 +1754,22 @@
         }
 
         // =============================================
-        // WHATSAPP — Armamos el mensaje estructurado
+        // WHATSAPP
         // =============================================
         function enviarPorWhatsApp() {
             const nombre      = document.getElementById('t-nombre').value;
             const experiencia = document.getElementById('t-experiencia').value;
             const estilo      = document.getElementById('t-estilo').value;
-            const zona        = document.getElementById('t-zona').value;
-            const cm          = document.getElementById('t-cm').value;
-            const tamano      = document.getElementById('t-tamano').value;
-            const fecha       = document.getElementById('t-fecha').value || 'A coordinar';
-            const descripcion = document.getElementById('t-descripcion').value || '(Sin descripción)';
-            const presupuesto = document.getElementById('t-presupuesto').value;
+            // CAMBIO 3: zona con lado en el mensaje de WhatsApp
+            const zonaCompleta = document.getElementById('t-zona-completa').value || document.getElementById('t-zona').value;
+            const cm           = document.getElementById('t-cm').value;
+            const tamano       = document.getElementById('t-tamano').value;
+            const fecha        = document.getElementById('t-fecha').value || 'A coordinar';
+            const descripcion  = document.getElementById('t-descripcion').value || '(Sin descripción)';
+            const presupuesto  = document.getElementById('t-presupuesto').value;
 
-            const lineaPresupuesto = presupuesto ? `• Presupuesto visto: ${presupuesto}\n` : '';
-            const lineaCm = cm ? `• Tamaño exacto: ${cm} cm\n` : '';
+            const lineaPresupuesto = presupuesto  ? `• Presupuesto visto: ${presupuesto}\n` : '';
+            const lineaCm          = cm            ? `• Tamaño exacto: ${cm} cm\n`           : '';
 
             const msg =
 `¡Hola Alex! 🖤 Quiero agendar un turno:
@@ -1824,7 +1780,7 @@
 
 *MI TATTOO*
 • Estilo: ${estilo}
-• Zona: ${zona}
+• Zona: ${zonaCompleta}
 ${lineaCm}• Referencia de tamaño: ${tamano}
 • Fecha preferida: ${fecha}
 • Descripción: ${descripcion}
@@ -1838,14 +1794,14 @@ ${lineaPresupuesto}
         // TOGGLE CUIDADOS
         // =============================================
         function toggleCuidados() {
-            const body = document.getElementById('cuidados-body');
+            const body  = document.getElementById('cuidados-body');
             const icono = document.getElementById('icono-cuidados');
             body.classList.toggle('abierto');
             icono.innerText = body.classList.contains('abierto') ? '−' : '+';
         }
 
         // =============================================
-        // TOAST — Notificación temporal
+        // TOAST
         // =============================================
         function mostrarToast(msg) {
             const t = document.getElementById('toast');
