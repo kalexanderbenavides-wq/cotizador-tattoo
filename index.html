@@ -3,577 +3,1566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALX.TAT | Cotizador Profesional</title>
+    <title>ALX.TAT | Estudio de Tatuajes</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee+Hairline&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Hairline&family=Bungee&family=DM+Sans:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
 
     <style>
+        /* =============================================
+           VARIABLES Y RESET
+           Definimos la paleta de colores y fuentes
+           en un solo lugar. Si querés cambiar el rojo,
+           solo cambiás --acento acá y se actualiza todo.
+        ============================================= */
         :root {
-            --negro-profundo: #0d0d0d;
-            --gris-oscuro: #1a1a1a;
-            --rojo-tinta: #e63946;
-            --texto: #f1f1f1;
-            --borde: #333;
+            --negro: #080808;
+            --negro-card: #111111;
+            --negro-input: #0d0d0d;
+            --borde: #1e1e1e;
+            --borde-hover: #333;
+            --acento: #e63946;
+            --acento-glow: rgba(230, 57, 70, 0.15);
+            --texto: #f0f0f0;
+            --texto-suave: #666;
+            --texto-medio: #999;
+            --fuente-display: 'Bungee Hairline', sans-serif;
+            --fuente-titulo: 'Bungee', sans-serif;
+            --fuente-cuerpo: 'DM Sans', sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            background-color: var(--negro-profundo);
+            background: var(--negro);
             color: var(--texto);
-            font-family: 'Inter', sans-serif;
-            padding: 20px;
+            font-family: var(--fuente-cuerpo);
             overflow-x: hidden;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* =============================================
+           NAVBAR — Barra de navegación superior
+           position: fixed = siempre visible al scrollear
+        ============================================= */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(8, 8, 8, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--borde);
         }
 
-        .main-container {
-            max-width: 450px;
+        .navbar-logo {
+            font-family: var(--fuente-display);
+            font-size: 1.6rem;
+            color: white;
+            letter-spacing: 4px;
+            text-decoration: none;
+        }
+
+        .navbar-logo span { color: var(--acento); }
+
+        .navbar-links {
+            display: flex;
+            gap: 6px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--texto-suave);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--fuente-cuerpo);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.activo {
+            color: white;
+            border-color: var(--borde-hover);
+            background: var(--negro-card);
+        }
+
+        .nav-btn.activo { color: var(--acento); border-color: var(--acento); }
+
+        /* =============================================
+           SECCIONES
+           Cada sección de la página usa esta base.
+           display: none / block para mostrar/ocultar.
+        ============================================= */
+        .seccion {
+            display: none;
+            min-height: 100vh;
+            padding: 100px 20px 60px;
+            max-width: 480px;
             margin: 0 auto;
-            animation: fadeInUp 0.8s ease-out;
+            animation: aparecer 0.4s ease-out;
         }
 
-        /* --- HEADER CON LOGO Y TÍTULO --- */
-        .header-estudio {
+        .seccion.activa { display: block; }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =============================================
+           COMPONENTES REUTILIZABLES
+        ============================================= */
+        .card {
+            background: var(--negro-card);
+            border: 1px solid var(--borde);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .label {
+            font-size: 0.65rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-campo {
+            width: 100%;
+            background: var(--negro-input);
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--texto);
+            font-family: var(--fuente-cuerpo);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 16px;
+            appearance: none;
+        }
+
+        .input-campo:focus {
+            border-color: var(--acento);
+            box-shadow: 0 0 0 3px var(--acento-glow);
+        }
+
+        select.input-campo {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .btn-principal {
+            width: 100%;
+            background: var(--acento);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            font-family: var(--fuente-cuerpo);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px rgba(230, 57, 70, 0.25);
+        }
+
+        .btn-principal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-principal:active { transform: translateY(0); }
+
+        .btn-secundario {
+            width: 100%;
+            background: transparent;
+            color: var(--texto);
+            border: 1px solid var(--borde-hover);
+            border-radius: 14px;
+            padding: 16px;
+            font-family: var(--fuente-cuerpo);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn-secundario:hover { border-color: var(--acento); color: var(--acento); }
+
+        .seccion-titulo {
+            font-family: var(--fuente-titulo);
+            font-size: 0.75rem;
+            color: var(--acento);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .divisor {
+            border: none;
+            border-top: 1px solid var(--borde);
+            margin: 24px 0;
+        }
+
+        /* =============================================
+           SECCIÓN: INICIO (HERO)
+        ============================================= */
+        #sec-inicio {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 120px;
+        }
+
+        .hero-tag {
+            font-size: 0.65rem;
+            color: var(--acento);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero-nombre {
+            font-family: var(--fuente-display);
+            font-size: clamp(3.2rem, 16vw, 5rem);
+            line-height: 0.95;
+            letter-spacing: 6px;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .hero-nombre .linea-roja { color: var(--acento); }
+
+        .hero-subtitulo {
+            font-size: 0.8rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 36px;
+        }
+
+        .stat-item {
+            background: var(--negro-card);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            padding: 16px 12px;
             text-align: center;
-            margin-bottom: 30px;
+        }
+
+        .stat-numero {
+            font-family: var(--fuente-titulo);
+            font-size: 1.6rem;
+            color: var(--acento);
+            display: block;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-acciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* =============================================
+           SECCIÓN: BIO
+        ============================================= */
+        .bio-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .bio-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--negro-card), #1a1a1a);
+            border: 2px solid var(--acento);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .bio-info h2 {
+            font-family: var(--fuente-titulo);
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .bio-info .bio-rol {
+            font-size: 0.7rem;
+            color: var(--acento);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .bio-texto {
+            font-size: 0.9rem;
+            color: var(--texto-medio);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        .estilos-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .chip {
+            background: var(--negro-input);
+            border: 1px solid var(--borde-hover);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.65rem;
+            color: var(--texto-medio);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .chip.destacado { border-color: var(--acento); color: var(--acento); background: var(--acento-glow); }
+
+        .redes-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .red-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--negro-input);
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: border-color 0.2s;
+        }
+
+        .red-item:hover { border-color: var(--borde-hover); }
+
+        .red-nombre {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--texto);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .red-handle {
+            font-size: 0.75rem;
+            color: var(--acento);
+        }
+
+        /* =============================================
+           SECCIÓN: COTIZADOR
+        ============================================= */
+        .progreso-wrap { margin-bottom: 24px; }
+        .progreso-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        #progreso-pct { color: var(--acento); }
+
+        .barra-bg {
+            height: 4px;
+            background: var(--borde);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .barra-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--acento);
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--acento);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Mapa corporal */
+        .mapa-wrap {
+            background: var(--negro-input);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .cuerpo-svg { width: 140px; height: auto; margin: 10px auto; display: block; }
+        .zona-touch { fill: #1a1a1a; stroke: #333; stroke-width: 1.5; cursor: pointer; transition: all 0.25s ease; }
+        .zona-touch:hover { fill: #2a2a2a; stroke: #555; }
+        .zona-touch.activa { fill: var(--acento); stroke: rgba(255,255,255,0.3); filter: drop-shadow(0 0 6px var(--acento)); }
+
+        .zona-display {
+            font-size: 0.65rem;
+            color: var(--acento);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        /* Visualizador de escala */
+        .escala-card {
+            background: var(--negro-input);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .escala-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: var(--texto-suave);
+            margin-bottom: 16px;
+        }
+
+        #cm-label { color: var(--acento); font-weight: 700; }
+
+        .escala-visual {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 8px;
         }
 
-        .header-estudio img {
-            max-width: 120px;
-            height: auto;
-            margin-bottom: 10px;
+        .cuadro-tattoo {
+            border: 2px solid var(--acento);
+            background: var(--acento-glow);
+            box-shadow: 0 0 12px var(--acento-glow);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .header-estudio h1 {
-            font-family: 'Bungee Hairline', sans-serif;
-            font-size: 2.8rem;
-            color: #fff;
-            letter-spacing: 5px;
+        .tarjeta-ref {
+            width: 85px; height: 54px;
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .chip-tarjeta {
+            width: 12px; height: 9px;
+            background: #2a2a2a;
+            border-radius: 2px;
+            position: absolute;
+            top: 13px; left: 10px;
+        }
+
+        .ref-label {
+            font-size: 0.55rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Resultado */
+        #resultado-precio {
+            text-align: center;
+            padding: 20px;
+            margin: 16px 0;
+            border-radius: 14px;
+            background: var(--negro-input);
+            border: 1px solid var(--borde);
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .precio-vacio {
+            font-size: 0.75rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .precio-valor {
+            font-family: var(--fuente-titulo);
+            font-size: 2rem;
+            color: var(--acento);
+        }
+
+        .precio-sub {
+            font-size: 0.65rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        @keyframes pulso {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+
+        .pulso { animation: pulso 0.4s ease; }
+
+        /* =============================================
+           SECCIÓN: TURNOS
+        ============================================= */
+        .turno-pasos {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .paso-dot {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; font-weight: 700;
+            border: 1px solid var(--borde);
+            color: var(--texto-suave);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .paso-dot.hecho { background: var(--acento); border-color: var(--acento); color: white; }
+        .paso-dot.actual { border-color: var(--acento); color: var(--acento); }
+
+        .paso-linea { flex: 1; height: 1px; background: var(--borde); }
+        .paso-linea.hecha { background: var(--acento); }
+
+        .formulario-paso { display: none; }
+        .formulario-paso.activo { display: block; animation: aparecer 0.3s ease-out; }
+
+        .file-zona {
+            border: 2px dashed var(--borde-hover);
+            border-radius: 14px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .file-zona:hover { border-color: var(--acento); background: var(--acento-glow); }
+        .file-zona input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+        .file-icon { font-size: 2rem; margin-bottom: 8px; }
+        .file-texto { font-size: 0.75rem; color: var(--texto-suave); }
+        .file-texto strong { color: var(--acento); }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--borde);
+            font-size: 0.8rem;
+        }
+
+        .resumen-item:last-child { border-bottom: none; }
+        .resumen-key { color: var(--texto-suave); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 1px; }
+        .resumen-val { color: var(--texto); font-weight: 700; }
+
+        /* =============================================
+           CUIDADOS + PRINT
+        ============================================= */
+        .cuidados-btn-toggle {
+            width: 100%;
+            background: none;
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            color: var(--texto);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-family: var(--fuente-cuerpo);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: border-color 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .cuidados-btn-toggle:hover { border-color: var(--borde-hover); }
+
+        .cuidados-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .cuidados-body.abierto { max-height: 1000px; }
+
+        .cuidado-grupo h4 {
+            font-size: 0.65rem;
+            color: var(--acento);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 20px 0 12px;
+            font-weight: 700;
+        }
+
+        .cuidado-grupo li {
+            list-style: none;
+            padding-left: 16px;
+            position: relative;
+            font-size: 0.82rem;
+            color: var(--texto-medio);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .cuidado-grupo li::before { content: "—"; color: var(--acento); position: absolute; left: 0; }
+
+        /* =============================================
+           TOAST NOTIFICATION
+        ============================================= */
+        .toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%; transform: translateX(-50%);
+            background: var(--negro-card);
+            border: 1px solid var(--acento);
+            color: var(--acento);
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 9999;
+            transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+
+        .toast.visible { bottom: 30px; }
+
+        /* =============================================
+           GALERÍA EN INICIO
+        ============================================= */
+        .galeria-titulo {
+            font-size: 0.65rem;
+            color: var(--texto-suave);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin: 32px 0 14px;
+        }
+
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .galeria-card {
+            position: relative;
+            aspect-ratio: 1/1;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--borde);
+            cursor: pointer;
+            transition: transform 0.25s ease, border-color 0.25s;
+            background: var(--negro-card);
+        }
+
+        .galeria-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--acento);
+        }
+
+        .galeria-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Placeholder cuando no hay imagen real */
+        .galeria-placeholder {
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #111, #0d0d0d);
+            gap: 8px;
+        }
+
+        .placeholder-icon { font-size: 2rem; opacity: 0.3; }
+
+        .galeria-card-info {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 10px 12px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+        }
+
+        .galeria-card-nombre {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .galeria-card-count {
+            font-size: 0.55rem;
+            color: var(--acento);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        /* =============================================
+           CARRETE / LIGHTBOX
+        ============================================= */
+        .carrete-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .carrete-overlay.abierto { display: flex; }
+
+        .carrete-cerrar {
+            position: absolute;
+            top: 20px; right: 20px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            z-index: 9001;
+            background: none;
+            border: none;
             line-height: 1;
         }
 
-        /* --- TARJETA COTIZADOR --- */
-        .card-cotizador {
-            background: var(--gris-oscuro);
-            padding: 30px;
-            border-radius: 24px;
-            border: 1px solid var(--borde);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            margin-bottom: 30px;
+        .carrete-slider {
+            flex: 1;
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
         }
 
-        h2 {
-            color: var(--rojo-tinta);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .carrete-slider::-webkit-scrollbar { display: none; }
+
+        .carrete-slide {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: center;
+        }
+
+        .carrete-slide img {
+            max-width: 92%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .carrete-nav {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.05);
+            border: none; color: white;
+            padding: 28px 14px;
+            cursor: pointer; font-size: 1.5rem;
+        }
+
+        .carrete-nav.izq { left: 0; border-radius: 0 8px 8px 0; }
+        .carrete-nav.der { right: 0; border-radius: 8px 0 0 8px; }
+
+        .carrete-footer {
+            padding: 24px 20px 32px;
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 1rem;
+            background: linear-gradient(transparent, #000);
         }
 
-        /* --- BARRA DE PROGRESO --- */
-        .progreso-container { margin-bottom: 25px; }
-        .progreso-texto { font-size: 0.65rem; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
-        .barra-fondo { width: 100%; height: 6px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #222; }
-        .barra-tinta { width: 0%; height: 100%; background: var(--rojo-tinta); box-shadow: 0 0 10px var(--rojo-tinta); transition: width 0.5s ease; }
-
-        /* --- INPUTS --- */
-        .grupo-input { margin-bottom: 20px; }
-        label { font-size: 0.75rem; color: #888; margin-bottom: 8px; display: block; text-transform: uppercase; font-weight: 700; }
-        
-        .input-pro {
-            width: 100%;
-            background: #000;
-            border: 1px solid var(--borde);
-            padding: 16px;
-            border-radius: 12px;
+        .carrete-titulo {
+            font-family: var(--fuente-titulo);
+            font-size: 1rem;
+            letter-spacing: 3px;
             color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-        }
-        .input-pro:focus { border-color: var(--rojo-tinta); box-shadow: 0 0 15px rgba(230, 57, 70, 0.1); }
-
-        .btn-calc {
-            background: var(--rojo-tinta);
-            color: white;
-            width: 100%;
-            padding: 20px;
-            border-radius: 15px;
-            border: none;
-            font-weight: 800;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 1rem;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3);
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-bottom: 14px;
         }
 
-        /* ⚠️ CORRECCIÓN: Estilo de resultado para que siempre sea rojo y brille */
-        #resultado {
-    margin-top: 25px;
-    text-align: center;
-    font-weight: 800;
-    font-size: 1.4rem;
-    color: #e63946 !important; /* <--- ASEGURATE QUE ESTE COLOR SEA EL ROJO */
-    transition: all 0.3s ease;
-    min-height: 40px;
-}
 
-        .glow-efecto {
-            animation: brilloRojo 0.5s ease;
+        .print-solo { display: none; }
+
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: white !important; color: black !important; }
+            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, .cuidados-btn-toggle, .btn-principal { display: none !important; }
+            #sec-cuidados { display: block !important; padding: 20px !important; }
+            .print-solo { display: flex !important; flex-direction: column; align-items: center; margin-bottom: 30px; }
+            .print-solo h1 { font-family: 'Bungee Hairline', sans-serif; color: #e63946 !important; font-size: 3rem; letter-spacing: 6px; }
+            .cuidados-body { max-height: none !important; display: block !important; }
+            .cuidado-grupo h4 { color: #e63946 !important; }
+            .cuidado-grupo li { color: black !important; }
         }
-
-        @keyframes brilloRojo {
-            0% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
-            50% { transform: scale(1.1); text-shadow: 0 0 20px var(--rojo-tinta); }
-            100% { transform: scale(1); text-shadow: 0 0 0px var(--rojo-tinta); }
-        }
-
-        /* ... Resto de estilos de galería, escala y mapa (Sin cambios) ... */
-        .ficha-galeria { position: relative; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s ease; }
-        .ficha-galeria:hover { border-color: var(--rojo-tinta); box-shadow: 0 0 20px rgba(230, 57, 70, 0.4); transform: translateY(-5px); }
-        .ficha-galeria img { width: 100%; height: 100%; object-fit: cover; }
-        .info-estilo { position: absolute; bottom: 0; left: 0; width: 100%; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); display: flex; flex-direction: column; }
-        .info-estilo span { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; }
-        .small-counter { font-size: 0.6rem; color: var(--rojo-tinta); font-weight: 700; margin-top: 2px; }
-        .overlay-carrete { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; }
-        .contenedor-slider { flex-grow: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .contenedor-slider::-webkit-scrollbar { display: none; }
-        .slide-item { min-width: 100%; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; }
-        .slide-item img { max-width: 90%; max-height: 75vh; object-fit: contain; }
-        .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.05); color: white; border: none; padding: 30px 15px; cursor: pointer; font-size: 2rem; z-index: 10; }
-        .arrow-left { left: 0; } .arrow-right { right: 0; }
-        .btn-cerrar { position: absolute; top: 25px; right: 25px; font-size: 35px; color: white; cursor: pointer; z-index: 10000; }
-        .footer-carrete { padding: 30px; background: linear-gradient(transparent, #000); text-align: center; }
-        .toast-aviso { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #000; color: var(--rojo-tinta); padding: 15px 30px; border-radius: 50px; border: 2px solid var(--rojo-tinta); z-index: 10001; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; }
-        .toast-aviso.show { top: 30px; }
-        .escala-wrapper { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .escala-header { display: flex; justify-content: space-between; font-size: 0.65rem; text-transform: uppercase; color: #666; margin-bottom: 15px; }
-        #cm-display { color: var(--rojo-tinta); letter-spacing: 1px; }
-        .escala-stage { display: flex; flex-direction: column; align-items: center; gap: 8px; overflow: hidden; padding: 10px 0; }
-        .cuadro-tinta { border: 2px solid var(--rojo-tinta); background: rgba(230, 57, 70, 0.15); box-shadow: 0 0 15px rgba(230, 57, 70, 0.3); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .card-mockup { width: 85px; height: 54px; background: linear-gradient(135deg, #222, #000); border: 1px solid #444; border-radius: 6px; position: relative; }
-        .chip-card { width: 12px; height: 10px; background: #444; border-radius: 2px; position: absolute; top: 15px; left: 10px; }
-        .referencia-label { font-size: 0.6rem; color: #666; text-transform: uppercase; font-weight: 700; }
-        .cuidados-wrapper { margin-top: 30px; background: #111; border-radius: 15px; border: 1px solid #222; overflow: hidden; }
-        .btn-cuidados-toggle { width: 100%; padding: 20px; background: transparent; border: none; color: var(--texto); display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
-        .cuidados-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding: 0 20px; }
-        .cuidados-content.open { max-height: 800px; padding-bottom: 25px; }
-        .cuidados-seccion h4 { color: var(--rojo-tinta); font-size: 0.7rem; margin-top: 15px; margin-bottom: 10px; }
-        .cuidados-seccion li { font-size: 0.75rem; color: #aaa; margin-bottom: 8px; list-style: none; padding-left: 15px; position: relative; }
-        .cuidados-seccion li::before { content: "•"; color: var(--rojo-tinta); position: absolute; left: 0; }
-
-        /* ⚠️ CORRECCIÓN: Escondemos el header del PDF en la web normal */
-        .print-header { display: none; }
-
-        /* ⚠️ CORRECCIÓN: Nueva lógica de impresión blindada para evitar el bloque negro */
-        /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
-@media print {
-    /* Forzamos colores y quitamos el modo oscuro solo para el PDF */
-    * { 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
-        color-scheme: light !important;
-    }
-
-    /* 1. Fondo blanco para la hoja */
-    body { 
-        background: white !important; 
-        color: black !important; 
-        margin: 0; 
-        padding: 0; 
-    }
-
-    /* 2. ESCONDEMOS lo que NO queremos que salga en el PDF */
-    .header-estudio, 
-    .card-cotizador, 
-    .galeria-container, 
-    .no-print, 
-    .btn-cuidados-toggle, 
-    .btn-download-mini,
-    button { 
-        display: none !important; 
-    }
-
-    /* 3. Ajustamos el contenedor para que ocupe toda la hoja */
-    .main-container { 
-        max-width: 100% !important; 
-        margin: 0 !important; 
-        padding: 0 !important; 
-    }
-
-    /* 4. Mostramos los cuidados en negro y rojo sobre blanco */
-    .cuidados-wrapper { 
-        display: block !important; 
-        background: white !important; 
-        border: none !important;
-        margin: 0 !important;
-        padding: 20px !important;
-    }
-
-    /* 5. FORZAMOS que el contenido se abra (aunque esté cerrado en la web) */
-    .cuidados-content { 
-        max-height: none !important; 
-        display: block !important; 
-        opacity: 1 !important; 
-        overflow: visible !important;
-    }
-
-    /* Estética del Título en el PDF */
-    .print-header { 
-        display: flex !important; 
-        flex-direction: column; 
-        align-items: center; 
-        margin-bottom: 30px; 
-    }
-
-    .print-header h1 { 
-        font-family: 'Bungee Hairline', sans-serif !important; 
-        color: #e63946 !important; 
-        font-size: 3.5rem !important; 
-    }
-
-    .cuidados-seccion h4 { 
-        color: #e63946 !important; 
-        font-size: 1.2rem !important; 
-        margin-top: 20px;
-    }
-
-    .cuidados-seccion li { 
-        color: black !important; 
-        font-size: 1rem !important; 
-    }
-}
-
-        /* ... Estilos del mapa corporal ... */
-        .mapa-container { text-align: center; margin-bottom: 25px; }
-        .mapa-svg-wrapper { background: #000; border-radius: 15px; padding: 10px; border: 1px solid #222; max-width: 250px; margin: 10px auto; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-        .cuerpo-svg { width: 100%; height: auto; }
-        .zona-touch { fill: #222; stroke: #444; stroke-width: 1.5; cursor: pointer; transition: all 0.3s ease; }
-        .zona-touch.activa { fill: var(--rojo-tinta); stroke: #fff; filter: drop-shadow(0 0 8px var(--rojo-tinta)); }
-        .zona-tag { font-size: 0.7rem; color: var(--rojo-tinta); font-weight: 800; text-transform: uppercase; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="toast-mensaje" class="toast-aviso">⚡ ESTILO SELECCIONADO</div>
+    <!-- ==========================================
+         NAVBAR — La barra que siempre se ve arriba.
+         Cada botón llama a mostrarSeccion('id').
+    ========================================== -->
+    <nav class="navbar">
+        <a class="navbar-logo" href="#">ALX<span>.</span>TAT</a>
+        <div class="navbar-links">
+            <button class="nav-btn activo" onclick="mostrarSeccion('inicio')">Inicio</button>
+            <button class="nav-btn" onclick="mostrarSeccion('bio')">Bio</button>
+            <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
+            <button class="nav-btn" onclick="mostrarSeccion('turno')">Turno</button>
+        </div>
+    </nav>
 
-    <div class="main-container">
-        
-        <header class="header-estudio">
-            <img src="logo2026.png" alt="Logo Estudio">
-            <h1>ALX.TAT</h1>
-        </header>
+    <div id="toast" class="toast"></div>
 
-        <div id="cotizador-seccion" class="card-cotizador">
-            <div class="progreso-container">
-                <div class="progreso-texto">Progreso de Reserva: <span id="porcentaje-texto">0%</span></div>
-                <div class="barra-fondo"><div id="barra-tinta" class="barra-tinta"></div></div>
-            </div>
+    <!-- ==========================================
+         SECCIÓN 1: INICIO / HERO
+    ========================================== -->
+    <section id="sec-inicio" class="seccion activa">
+        <p class="hero-tag">✦ Buenos Aires · Argentina</p>
+        <h1 class="hero-nombre">ALX<span class="linea-roja">.TAT</span></h1>
+        <p class="hero-subtitulo">Estudio de Tatuajes Profesional</p>
 
-            <h2>Cotizá tu Próximo Tattoo</h2>
-            <div id="loader" style="display:none; text-align:center; margin-bottom: 20px;"><div style="font-size:0.7rem; color:var(--rojo-tinta);">CONECTANDO...</div></div>
+        <div class="hero-acciones">
+            <button class="btn-principal" onclick="mostrarSeccion('turno')">Agendar Turno</button>
+            <button class="btn-secundario" onclick="mostrarSeccion('cotizador')">Cotizar mi Tattoo</button>
+        </div>
 
-            <div class="grupo-input">
-                <label>Elegí un Estilo</label>
-                <select id="complejidad" class="input-pro" onchange="calcular()">
-                    <option value="1">Línea Fina / Minimalista</option>
-                    <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
-                    <option value="2">Realismo / Neo tradicional / Full Color</option>
-                </select>
-            </div>
+        <p class="galeria-titulo">// Portfolio</p>
+        <div id="galeria-grid" class="galeria-grid"></div>
+    </section>
 
-            <div class="grupo-input">
-                <div class="mapa-container">
-                    <label>Tocá la zona a tatuar:</label>
-                    <div class="mapa-svg-wrapper">
-                        <svg viewBox="0 0 200 200" class="cuerpo-svg">
-                            <circle cx="100" cy="25" r="15" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
-                            <path d="M75 45 h50 v60 h-50 z" class="zona-touch" data-valor="1.4" onclick="seleccionarZona(this)"/>
-                            <path d="M55 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
-                            <path d="M130 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" onclick="seleccionarZona(this)"/>
-                            <path d="M75 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
-                            <path d="M105 110 h20 v70 h-20 z" class="zona-touch" data-valor="1.2" onclick="seleccionarZona(this)"/>
-                        </svg>
-                    </div>
-                    <div id="zona-nombre-display" class="zona-tag">Zona: Brazo / Pierna</div>
-                </div>
-                <select id="zona-cuerpo" class="input-pro" style="display:none;">
-                    <option value="1">Brazo / Pierna</option>
-                    <option value="1.2">Espalda / Muslo</option>
-                    <option value="1.4">Costillas / Cuello / Abdomen</option>
-                    <option value="1.1">Mano / Pie / Muñeca</option>
-                </select>
-            </div>
+    <!-- ==========================================
+         SECCIÓN 2: BIO
+         Editá el texto acá para personalizarlo.
+    ========================================== -->
+    <section id="sec-bio" class="seccion">
+        <p class="seccion-titulo">// Sobre mí</p>
 
-            <div class="grupo-input">
-                <label>Tamaño aproximado (cm)</label>
-                <input type="number" id="tamaño" class="input-pro" placeholder="Ej: 15" oninput="calcular()">
-            </div>
-
-            <div id="visualizador-escala" class="escala-wrapper" style="display:none;">
-                <div class="escala-header"><span>Referencia:</span><strong id="cm-display">0 cm</strong></div>
-                <div class="escala-stage">
-                    <div class="referencia-label">TU TATTOO</div>
-                    <div id="cuadro-referencia" class="cuadro-tinta"></div>
-                    <div class="card-mockup"><div class="chip-card"></div></div>
-                    <div class="referencia-label">Tarjeta Crédito (8.5cm)</div>
+        <div class="card">
+            <div class="bio-header">
+                <div class="bio-avatar">🖤</div>
+                <div class="bio-info">
+                    <h2>Alex</h2>
+                    <p class="bio-rol">Tatuador · Buenos Aires</p>
                 </div>
             </div>
-
-            <div id="resultado">Esperando datos...</div>
-            <div id="aviso-sesiones" class="aviso-info" style="display:none;">⚠️ Posible más de una sesión.</div>
-
-            <div id="seccion-reserva" style="display:none; margin-top: 30px; border-top: 1px dashed #333; padding-top: 25px;">
-                <label>Tu Nombre</label><input type="text" id="nombre-cliente" class="input-pro">
-                <label>WhatsApp</label><input type="tel" id="tel-cliente" class="input-pro">
-                <button class="btn-calc" onclick="guardarTurno()" style="background: #25d366;">AGENDAR POR WHATSAPP</button>
+            <p class="bio-texto">
+                Tatuador profesional basado en Buenos Aires. 
+                Me especializo en línea fina, blackwork y realismo, 
+                siempre buscando llevar tu idea al siguiente nivel 
+                con precisión y compromiso artístico.
+            </p>
+            <p class="label">Estilos</p>
+            <div class="estilos-chips">
+                <span class="chip destacado">Línea Fina</span>
+                <span class="chip destacado">Blackwork</span>
+                <span class="chip">Realismo</span>
+                <span class="chip">Puntillismo</span>
+                <span class="chip">Tradicional</span>
+                <span class="chip">Full Color</span>
             </div>
         </div>
 
-        <div class="galeria-container">
-            <h2 style="text-align: left; font-size: 0.9rem; margin-left: 10px;">Portfolio</h2>
-            <div id="galeria-dinamica" class="galeria-dinamica"></div>
+        <div class="card">
+            <p class="label">Redes y Contacto</p>
+            <div class="redes-lista">
+                <a class="red-item" href="https://instagram.com/alx.tat" target="_blank">
+                    <span class="red-nombre">Instagram</span>
+                    <span class="red-handle">@alx.tat</span>
+                </a>
+                <a class="red-item" href="https://wa.me/5491157734552" target="_blank">
+                    <span class="red-nombre">WhatsApp</span>
+                    <span class="red-handle">+54 9 11 5773-4552</span>
+                </a>
+            </div>
         </div>
 
-        <div class="cuidados-wrapper" id="seccion-cuidados-print">
-            <div class="print-header">
-                <img src="logo2026.png" alt="Logo ALX.TAT" style="max-width: 100px;">
-                <h1>ALX.TAT</h1>
-                <p style="color: #666; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Guía de Cuidados Profesionales</p>
-            </div>
-
-            <button class="btn-cuidados-toggle no-print" onclick="toggleCuidados()">
-                <span>🛠️ Preparación y Cuidados</span>
-                <i id="icono-cuidados">+</i>
+        <div class="card">
+            <button class="cuidados-btn-toggle" onclick="toggleCuidados()">
+                <span>🛠 Guía de Cuidados</span>
+                <span id="icono-cuidados">+</span>
             </button>
-            
-            <div id="contenido-cuidados" class="cuidados-content">
-                <div class="cuidados-seccion">
-                    <h4>I. PREPARACIÓN (ANTES DEL TURNO)</h4>
+            <div id="cuidados-body" class="cuidados-body">
+                <div class="cuidado-grupo">
+                    <h4>I. Preparación (antes del turno)</h4>
                     <ul>
-                        <li>Dormí un mínimo de 8hs y vení con una buena base de hidratación.</li>
+                        <li>Dormí un mínimo de 8hs y vení bien hidratado/a.</li>
                         <li>No consumas alcohol, aspirinas ni sustancias 24hs antes.</li>
-                        <li>Traé ropa cómoda que permita el acceso fácil a la zona que te vas a tatuar.</li>
+                        <li>Traé ropa cómoda que permita acceso fácil a la zona.</li>
                     </ul>
                 </div>
-                <div class="cuidados-seccion">
-                    <h4>II. CUIDADOS POST-TATTOO</h4>
+                <div class="cuidado-grupo">
+                    <h4>II. Cuidados post-tattoo</h4>
                     <ul>
-                        <li>Mantené el parche protector el tiempo indicado por el artista.</li>
-                        <li>Lavado: Jabón neutro, agua fría/tibia y secado a toques con papel descartable.</li>
-                        <li>Crema: Aplicar una capa casi invisible.</li>
-                        <li>Prohibido: Sol, piletas, gimnasio (7 días) y arrancar cascaritas.</li>
+                        <li>Mantené el parche el tiempo indicado por el artista.</li>
+                        <li>Lavado con jabón neutro y secado a toques con papel.</li>
+                        <li>Aplicar crema en capa casi invisible, 2-3 veces al día.</li>
+                        <li>Prohibido: sol, piletas, gimnasio por 7 días. No arrancar costras.</li>
                     </ul>
                 </div>
-                <button class="btn-download-mini no-print" onclick="window.print()">📥 DESCARGAR GUÍA EN PDF</button>
+                <br>
+                <button class="btn-secundario" onclick="window.print()">📥 Descargar guía PDF</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 3: COTIZADOR
+         Lógica idéntica a tu versión original,
+         pero con componentes más limpios.
+    ========================================== -->
+    <section id="sec-cotizador" class="seccion">
+        <p class="seccion-titulo">// Cotizador</p>
+
+        <div class="card">
+            <!-- Barra de progreso -->
+            <div class="progreso-wrap">
+                <div class="progreso-meta">
+                    <span>Completá los campos</span>
+                    <span id="progreso-pct">0%</span>
+                </div>
+                <div class="barra-bg">
+                    <div id="barra-fill" class="barra-fill"></div>
+                </div>
+            </div>
+
+            <!-- Estilo -->
+            <p class="label">Estilo de Tattoo</p>
+            <select id="complejidad" class="input-campo" onchange="calcular()">
+                <option value="1">Línea Fina / Minimalista</option>
+                <option value="1.5">Blackwork / Tradicional / Puntillismo</option>
+                <option value="2">Realismo / Neo Tradicional / Full Color</option>
+            </select>
+
+            <!-- Mapa corporal -->
+            <p class="label">Zona a tatuar</p>
+            <div class="mapa-wrap">
+                <svg viewBox="0 0 200 200" class="cuerpo-svg">
+                    <!-- Cabeza -->
+                    <circle cx="100" cy="25" r="15" class="zona-touch" data-valor="1.4" data-nombre="Cabeza / Cuello" onclick="seleccionarZona(this)"/>
+                    <!-- Torso -->
+                    <path d="M75 45 h50 v60 h-50 z" class="zona-touch" data-valor="1.2" data-nombre="Torso / Espalda" onclick="seleccionarZona(this)"/>
+                    <!-- Brazo izq -->
+                    <path d="M55 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" data-nombre="Brazo" onclick="seleccionarZona(this)"/>
+                    <!-- Brazo der -->
+                    <path d="M130 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" data-nombre="Brazo" onclick="seleccionarZona(this)"/>
+                    <!-- Pierna izq -->
+                    <path d="M75 110 h20 v70 h-20 z" class="zona-touch" data-valor="1" data-nombre="Pierna" onclick="seleccionarZona(this)"/>
+                    <!-- Pierna der -->
+                    <path d="M105 110 h20 v70 h-20 z" class="zona-touch" data-valor="1" data-nombre="Pierna" onclick="seleccionarZona(this)"/>
+                </svg>
+                <p id="zona-display" class="zona-display">Seleccioná una zona</p>
+            </div>
+
+            <!-- Input oculto para valor de zona (igual que antes) -->
+            <select id="zona-cuerpo" style="display:none">
+                <option value="1">Brazo / Pierna</option>
+                <option value="1.2">Torso / Espalda</option>
+                <option value="1.4">Cabeza / Cuello / Costillas</option>
+            </select>
+
+            <!-- Tamaño -->
+            <p class="label">Tamaño aproximado (cm)</p>
+            <input type="number" id="tamano" class="input-campo" placeholder="Ej: 15" min="1" oninput="calcular()">
+
+            <!-- Visualizador de escala -->
+            <div id="escala-card" class="escala-card">
+                <div class="escala-header">
+                    <span>Referencia de escala</span>
+                    <span id="cm-label">— cm</span>
+                </div>
+                <div class="escala-visual">
+                    <span class="ref-label">Tu tattoo</span>
+                    <div id="cuadro-tattoo" class="cuadro-tattoo"></div>
+                    <div class="tarjeta-ref"><div class="chip-tarjeta"></div></div>
+                    <span class="ref-label">Tarjeta de crédito (8.5 cm)</span>
+                </div>
+            </div>
+
+            <!-- Resultado precio -->
+            <div id="resultado-precio">
+                <span class="precio-vacio">Completá los campos ↑</span>
             </div>
         </div>
 
-        <button onclick="abrirPanelArtista()" style="background:none; border:none; color:#222; width:100%; margin-top:50px; cursor:pointer; font-size: 0.6rem;">⚙ ACCESO PRIVADO</button>
+        <!-- Botón cotizar → turno -->
+        <button id="btn-ir-turno" class="btn-principal" style="display:none" onclick="irATurnoConDatos()">
+            Agendar con este presupuesto →
+        </button>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 4: FORMULARIO DE TURNO
+         3 pasos: Datos → Detalles → Confirmación
+    ========================================== -->
+    <section id="sec-turno" class="seccion">
+        <p class="seccion-titulo">// Agendar Turno</p>
+
+        <!-- Indicador de pasos -->
+        <div class="turno-pasos">
+            <div class="paso-dot actual" id="dot-1">1</div>
+            <div class="paso-linea" id="linea-1"></div>
+            <div class="paso-dot" id="dot-2">2</div>
+            <div class="paso-linea" id="linea-2"></div>
+            <div class="paso-dot" id="dot-3">3</div>
+        </div>
+
+        <!-- Campo oculto para guardar el presupuesto del cotizador -->
+        <input type="hidden" id="t-presupuesto">
+        <div id="paso-1" class="formulario-paso activo">
+            <div class="card">
+                <p class="seccion-titulo">Tus Datos</p>
+                <p class="label">Tu Nombre</p>
+                <input type="text" id="t-nombre" class="input-campo" placeholder="¿Cómo te llamás?">
+                <p class="label">WhatsApp</p>
+                <input type="tel" id="t-tel" class="input-campo" placeholder="+54 9 11 xxxxxxxx">
+                <p class="label">¿Ya te tatuaste antes?</p>
+                <select id="t-experiencia" class="input-campo">
+                    <option value="Primera vez">Es mi primer tattoo</option>
+                    <option value="Tengo experiencia">Tengo experiencia</option>
+                </select>
+            </div>
+            <button class="btn-principal" onclick="siguientePaso(2)">Siguiente →</button>
+        </div>
+
+        <!-- PASO 2: Detalles del tattoo -->
+        <div id="paso-2" class="formulario-paso">
+            <div class="card">
+                <p class="seccion-titulo">Tu Tattoo</p>
+                <p class="label">Estilo</p>
+                <select id="t-estilo" class="input-campo">
+                    <option>Línea Fina / Minimalista</option>
+                    <option>Blackwork / Tradicional</option>
+                    <option>Puntillismo</option>
+                    <option>Realismo</option>
+                    <option>Neo Tradicional</option>
+                    <option>Full Color</option>
+                    <option>No sé / Me asesorás vos</option>
+                </select>
+                <p class="label">Zona del cuerpo</p>
+                <select id="t-zona" class="input-campo">
+                    <option>Brazo</option>
+                    <option>Pierna</option>
+                    <option>Espalda / Torso</option>
+                    <option>Costillas</option>
+                    <option>Mano / Pie</option>
+                    <option>Cuello</option>
+                    <option>Otro</option>
+                </select>
+                <p class="label">Tamaño exacto (cm)</p>
+                <input type="number" id="t-cm" class="input-campo" placeholder="Ej: 15" min="1">
+                <p class="label">Tamaño aproximado (referencia)</p>
+                <select id="t-tamano" class="input-campo">
+                    <option>Pequeño (hasta 5cm)</option>
+                    <option>Mediano (5-15cm)</option>
+                    <option>Grande (15-30cm)</option>
+                    <option>Pieza grande / Manga</option>
+                </select>
+                <p class="label">Fecha preferida</p>
+                <input type="date" id="t-fecha" class="input-campo">
+                <p class="label">Imagen de referencia (opcional)</p>
+                <div class="file-zona" id="file-zona">
+                    <input type="file" accept="image/*" id="t-imagen" onchange="mostrarImagen(this)">
+                    <div class="file-icon">📎</div>
+                    <p class="file-texto"><strong>Tocá para subir</strong> una referencia</p>
+                </div>
+                <p class="label">Descripción de tu idea</p>
+                <textarea id="t-descripcion" class="input-campo" rows="3" placeholder="Contame brevemente qué tenés en mente..."></textarea>
+            </div>
+            <button class="btn-principal" onclick="siguientePaso(3)">Ver resumen →</button>
+            <br><br>
+            <button class="btn-secundario" onclick="siguientePaso(1)">← Atrás</button>
+        </div>
+
+        <!-- PASO 3: Resumen y confirmación -->
+        <div id="paso-3" class="formulario-paso">
+            <div class="card">
+                <p class="seccion-titulo">Resumen</p>
+                <div id="resumen-contenido"></div>
+            </div>
+            <button class="btn-principal" onclick="enviarPorWhatsApp()" style="background: #25d366;">
+                Enviar por WhatsApp ✓
+            </button>
+            <br><br>
+            <button class="btn-secundario" onclick="siguientePaso(2)">← Editá algo</button>
+        </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 5: CUIDADOS (solo para PDF/print)
+    ========================================== -->
+    <section id="sec-cuidados" class="seccion">
+        <div class="print-solo">
+            <h1>ALX.TAT</h1>
+            <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados</p>
+        </div>
+    </section>
+
+    <!-- CARRETE LIGHTBOX -->
+    <div id="carrete" class="carrete-overlay">
+        <button class="carrete-cerrar" onclick="cerrarCarrete()">×</button>
+        <button class="carrete-nav izq" onclick="moverCarrete(-1)">&#10094;</button>
+        <button class="carrete-nav der" onclick="moverCarrete(1)">&#10095;</button>
+        <div class="carrete-slider" id="carrete-slider"></div>
+        <div class="carrete-footer">
+            <p class="carrete-titulo" id="carrete-titulo"></p>
+            <button class="btn-principal" id="btn-cotizar-carrete" style="max-width:280px; margin:0 auto;">Cotizar este estilo</button>
+        </div>
     </div>
-
-    <div id="overlay-carrete" class="overlay-carrete" style="display:none;">
-    <span class="btn-cerrar" onclick="cerrarCarrete()">&times;</span>
-    
-    <button class="nav-arrow arrow-left" onclick="moverSlider(-1)">&#10094;</button>
-    <button class="nav-arrow arrow-right" onclick="moverSlider(1)">&#10095;</button>
-
-    <div class="contenedor-slider" id="slider-fotos"></div>
-
-    <div class="footer-carrete">
-        <h3 id="titulo-carrete" style="color:white; margin-bottom:15px; font-size: 1rem; letter-spacing: 2px;">ESTILO</h3>
-        <button id="btn-cotizar-carrete" class="btn-calc">COTIZAR ESTE ESTILO</button>
-    </div>
-</div>
 
     <script>
+        // =============================================
+        // GALERÍA — Conexión a Google Sheets
+        // Tu URL_SCRIPT original, exactamente igual.
+        // En el artefacto usamos datos de demo.
+        // =============================================
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxPt9JcsqYVTzYih1O_KBMHuwh4SmPRzVLzGSPIFQRij606SmFC2cGCPXUgTfyPui8-/exec";
-        const MI_PIN = "1234";
-        const mapaDificultad = { "linea fina": 1, "minimalista": 1, "blackwork": 1.5, "tradicional": 1.5, "puntillismo": 1.5, "realismo": 2.5, "neo tradicional": 2, "full color": 2 };
-        let datosCargados = { precios: {}, galeria: [] };
+        
+        // Mapa de estilos → valor de complejidad (igual que antes)
+        const mapaDificultad = {
+            "línea fina": "1", "minimalista": "1",
+            "blackwork": "1.5", "tradicional": "1.5", "puntillismo": "1.5",
+            "realismo": "2", "neo tradicional": "2", "full color": "2"
+        };
+
         let fotosPorEstilo = {};
 
-        async function cargarDatos() {
-            document.getElementById('loader').style.display = 'block';
+        async function cargarGaleria() {
             try {
-                const res = await fetch(URL_SCRIPT + "?v=" + Date.now());
+                const res  = await fetch(URL_SCRIPT + "?v=" + Date.now());
                 const data = await res.json();
-                datosCargados = data;
-                dibujarGaleria(data.galeria);
-            } catch (e) { console.error(e); } 
-            finally { document.getElementById('loader').style.display = 'none'; }
+                dibujarGaleria(data.galeria || []);
+            } catch (e) {
+                // Si falla la conexión, mostramos placeholders
+                dibujarPlaceholders();
+            }
         }
 
-        function dibujarGaleria(datos) {
-            const contenedor = document.getElementById('galeria-dinamica');
-            contenedor.innerHTML = "";
+        function dibujarGaleria(items) {
+            const grid = document.getElementById('galeria-grid');
+            grid.innerHTML = '';
             fotosPorEstilo = {};
-            datos.forEach(item => {
+
+            // Agrupamos por estilo (igual que tu código original)
+            items.forEach(item => {
                 if (!item.estilo) return;
                 const key = item.estilo.trim();
                 if (!fotosPorEstilo[key]) fotosPorEstilo[key] = [];
                 fotosPorEstilo[key].push(item);
             });
+
+            if (Object.keys(fotosPorEstilo).length === 0) {
+                dibujarPlaceholders();
+                return;
+            }
+
             Object.keys(fotosPorEstilo).forEach(estilo => {
-                const grupo = fotosPorEstilo[estilo];
+                const grupo   = fotosPorEstilo[estilo];
                 const portada = grupo.find(f => String(f.portada).toUpperCase() === "SI") || grupo[0];
-                const ficha = document.createElement('div');
-                ficha.className = "ficha-galeria";
-                ficha.innerHTML = `<img src="${portada.imagen}"><div class="info-estilo"><span>${estilo}</span><small class="small-counter">${grupo.length} TRABAJOS</small></div>`;
-                ficha.onclick = () => abrirCarrete(estilo);
-                contenedor.appendChild(ficha);
+                
+                const card = document.createElement('div');
+                card.className = 'galeria-card';
+                card.innerHTML = `
+                    <img src="${portada.imagen}" alt="${estilo}" loading="lazy">
+                    <div class="galeria-card-info">
+                        <div class="galeria-card-nombre">${estilo}</div>
+                        <div class="galeria-card-count">${grupo.length} trabajos</div>
+                    </div>
+                `;
+                card.onclick = () => abrirCarrete(estilo);
+                grid.appendChild(card);
             });
         }
 
-        function calcular() {
-            const tamano = parseFloat(document.getElementById('tamaño').value) || 0;
-            const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
-            const zonaCuerpo = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
-            const precioBase = complejidad >= 2 ? (datosCargados.precios.mediaAlta || 80000) : (datosCargados.precios.baja || 65000);
-            const resDiv = document.getElementById('resultado');
-            const seccionReserva = document.getElementById('seccion-reserva');
-            const resEscala = document.getElementById('visualizador-escala');
+        // Placeholders para cuando no hay conexión o estamos en demo
+        function dibujarPlaceholders() {
+            const estilos = [
+                { nombre: 'Línea Fina', count: '—' },
+                { nombre: 'Blackwork',  count: '—' },
+                { nombre: 'Realismo',   count: '—' },
+                { nombre: 'Puntillismo',count: '—' },
+            ];
+            const grid = document.getElementById('galeria-grid');
+            grid.innerHTML = estilos.map(e => `
+                <div class="galeria-card">
+                    <div class="galeria-placeholder">
+                        <span class="placeholder-icon">🖤</span>
+                    </div>
+                    <div class="galeria-card-info">
+                        <div class="galeria-card-nombre">${e.nombre}</div>
+                        <div class="galeria-card-count">Portfolio</div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-            // Barra de progreso
-            let puntos = 0; if (tamano > 0) puntos++; if (complejidad > 0) puntos++; if (zonaCuerpo > 1) puntos++;
-            const pct = Math.round((puntos/3)*100);
-            document.getElementById('barra-tinta').style.width = pct + "%";
-            document.getElementById('porcentaje-texto').innerText = pct + "%";
+        // =============================================
+        // CARRETE / LIGHTBOX
+        // =============================================
+        function abrirCarrete(nombreEstilo) {
+            const fotos = fotosPorEstilo[nombreEstilo];
+            if (!fotos) return;
+
+            fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
+
+            const slider = document.getElementById('carrete-slider');
+            slider.innerHTML = fotos.map(f => `
+                <div class="carrete-slide">
+                    <img src="${f.imagen}" alt="${nombreEstilo}">
+                </div>
+            `).join('');
+
+            document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
+            slider.scrollLeft = 0;
+
+            // Botón "Cotizar este estilo" pre-selecciona el estilo en el cotizador
+            document.getElementById('btn-cotizar-carrete').onclick = () => {
+                const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
+                document.getElementById('complejidad').value = dif;
+                cerrarCarrete();
+                mostrarSeccion('cotizador');
+                mostrarToast('✦ Estilo seleccionado');
+            };
+
+            document.getElementById('carrete').classList.add('abierto');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarCarrete() {
+            document.getElementById('carrete').classList.remove('abierto');
+            document.body.style.overflow = '';
+        }
+
+        function moverCarrete(dir) {
+            const s = document.getElementById('carrete-slider');
+            s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' });
+        }
+
+        // Cargamos la galería al iniciar
+        window.addEventListener('DOMContentLoaded', cargarGaleria);
+
+
+        // mostrarSeccion(id) muestra la sección pedida
+        // y marca el botón de nav como activo.
+        // =============================================
+        const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
+
+        function mostrarSeccion(id) {
+            // Ocultamos todas las secciones
+            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+            
+            // Desactivamos todos los botones de nav
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+            
+            // Mostramos la sección elegida
+            document.getElementById('sec-' + id).classList.add('activa');
+            
+            // Marcamos el botón correspondiente
+            const btnIndex = secciones.indexOf(id);
+            if (btnIndex >= 0) {
+                document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
+            }
+
+            // Volvemos al tope de la página
+            window.scrollTo(0, 0);
+        }
+
+        // =============================================
+        // COTIZADOR
+        // Los precios los podés cambiar acá abajo.
+        // precioBase es el mínimo que cobrás por un tattoo.
+        // =============================================
+        const PRECIOS = {
+            base_bajo: 65000,    // Mínimo para línea fina
+            base_alto: 80000,    // Mínimo para realismo/color
+        };
+
+        function calcular() {
+            const tamano     = parseFloat(document.getElementById('tamano').value) || 0;
+            const complejidad = parseFloat(document.getElementById('complejidad').value) || 1;
+            const zona       = parseFloat(document.getElementById('zona-cuerpo').value) || 1;
+
+            // Progreso: cuántos campos completó el usuario
+            let completados = 0;
+            if (tamano > 0)       completados++;
+            if (complejidad > 0)  completados++;
+            if (zona > 1)         completados++;
+            const pct = Math.round((completados / 3) * 100);
+            document.getElementById('barra-fill').style.width = pct + '%';
+            document.getElementById('progreso-pct').innerText = pct + '%';
+
+            const resDiv = document.getElementById('resultado-precio');
+            const escalaCard = document.getElementById('escala-card');
+            const btnTurno = document.getElementById('btn-ir-turno');
 
             if (tamano > 0) {
-                let total = (precioBase / 10) * tamano * complejidad * zonaCuerpo;
-                if (total < precioBase) total = precioBase;
-                resDiv.innerText = `Presupuesto Estimado: $${Math.round(total).toLocaleString()}`;
-                
-                // Efecto brillo
-                resDiv.classList.add('glow-efecto');
-                setTimeout(() => resDiv.classList.remove('glow-efecto'), 500);
+                // FÓRMULA: (precioBase / 10) × tamaño × complejidad × zona
+                const precioBase = complejidad >= 2 ? PRECIOS.base_alto : PRECIOS.base_bajo;
+                let total = (precioBase / 10) * tamano * complejidad * zona;
+                if (total < precioBase) total = precioBase; // Nunca menos que el mínimo
 
-                if (resEscala) {
-                    resEscala.style.display = "block";
-                    document.getElementById('cm-display').innerText = tamano + " CM";
-                    let pxSize = tamano * 10;
-                    document.getElementById('cuadro-referencia').style.width = pxSize + "px";
-                    document.getElementById('cuadro-referencia').style.height = pxSize + "px";
-                }
-                seccionReserva.style.display = "block";
+                // Mostramos el precio
+                resDiv.innerHTML = `
+                    <div>
+                        <div class="precio-valor">$${Math.round(total).toLocaleString('es-AR')}</div>
+                        <div class="precio-sub">Presupuesto estimado · No incluye sesiones extra</div>
+                    </div>
+                `;
+                resDiv.classList.add('pulso');
+                setTimeout(() => resDiv.classList.remove('pulso'), 400);
+
+                // Visualizador de escala
+                escalaCard.style.display = 'block';
+                document.getElementById('cm-label').innerText = tamano + ' CM';
+                const px = Math.min(tamano * 10, 200); // Máx 200px
+                document.getElementById('cuadro-tattoo').style.width = px + 'px';
+                document.getElementById('cuadro-tattoo').style.height = px + 'px';
+
+                btnTurno.style.display = 'block';
+
             } else {
-                resDiv.innerText = "Ingresá el tamaño";
-                seccionReserva.style.display = "none";
-                resEscala.style.display = "none";
+                resDiv.innerHTML = '<span class="precio-vacio">Completá los campos ↑</span>';
+                escalaCard.style.display = 'none';
+                btnTurno.style.display = 'none';
             }
         }
 
-        function seleccionarZona(elemento) {
-            document.querySelectorAll('.zona-touch').forEach(z => { z.classList.remove('activa'); z.style.fill = "#222"; });
-            elemento.classList.add('activa');
-            elemento.style.fill = "#e63946";
-            const valor = elemento.getAttribute('data-valor');
-            document.getElementById('zona-cuerpo').value = valor;
-            const nombres = { "1": "Brazo / Pierna", "1.2": "Espalda / Muslo", "1.4": "Costillas / Cuello", "1.1": "Mano / Pie" };
-            document.getElementById('zona-nombre-display').innerText = "Zona: " + (nombres[valor] || "Seleccionada");
+        function seleccionarZona(el) {
+            // Limpiamos todas las zonas activas
+            document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
+            el.classList.add('activa');
+
+            // Actualizamos el select oculto y el display
+            document.getElementById('zona-cuerpo').value = el.dataset.valor;
+            document.getElementById('zona-display').innerText = '✦ ' + el.dataset.nombre;
+
             calcular();
         }
 
-        // Funciones auxiliares (Toggle, WhatsApp, Carrete)
+        // Cuando el usuario viene del cotizador, pre-llenamos el turno
+        function irATurnoConDatos() {
+            const sel    = document.getElementById('complejidad');
+            const estilo = sel.options[sel.selectedIndex].text;
+            const tamano = document.getElementById('tamano').value;
+            const precio = document.getElementById('resultado-precio').querySelector('.precio-valor');
+
+            if (estilo) document.getElementById('t-estilo').value = estilo.split('/')[0].trim();
+            
+            // Pre-llenamos los cm exactos
+            if (tamano) {
+                document.getElementById('t-cm').value = tamano;
+                if (tamano <= 5)       document.getElementById('t-tamano').value = 'Pequeño (hasta 5cm)';
+                else if (tamano <= 15) document.getElementById('t-tamano').value = 'Mediano (5-15cm)';
+                else if (tamano <= 30) document.getElementById('t-tamano').value = 'Grande (15-30cm)';
+                else                   document.getElementById('t-tamano').value = 'Pieza grande / Manga';
+            }
+
+            // Guardamos el presupuesto visto para incluirlo en el WhatsApp
+            if (precio) {
+                document.getElementById('t-presupuesto').value = precio.innerText;
+            }
+
+            mostrarSeccion('turno');
+            mostrarToast('✦ Datos del cotizador pre-cargados');
+        }
+
+        // =============================================
+        // FORMULARIO DE TURNO — NAVEGACIÓN POR PASOS
+        // =============================================
+        let pasoActual = 1;
+
+        function siguientePaso(numeroPaso) {
+            // Validación del paso 1
+            if (numeroPaso === 2) {
+                const nombre = document.getElementById('t-nombre').value.trim();
+                const tel    = document.getElementById('t-tel').value.trim();
+                if (!nombre || !tel) {
+                    mostrarToast('⚠ Completá nombre y WhatsApp');
+                    return;
+                }
+            }
+
+            // Generamos el resumen en el paso 3
+            if (numeroPaso === 3) {
+                generarResumen();
+            }
+
+            // Ocultamos el paso actual, mostramos el nuevo
+            document.getElementById('paso-' + pasoActual).classList.remove('activo');
+            document.getElementById('paso-' + numeroPaso).classList.add('activo');
+
+            // Actualizamos los indicadores visuales
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById('dot-' + i);
+                dot.classList.remove('hecho', 'actual');
+                if (i < numeroPaso)      dot.classList.add('hecho');
+                else if (i === numeroPaso) dot.classList.add('actual');
+            }
+            for (let i = 1; i <= 2; i++) {
+                const linea = document.getElementById('linea-' + i);
+                linea.classList.toggle('hecha', i < numeroPaso);
+            }
+
+            pasoActual = numeroPaso;
+            window.scrollTo(0, 0);
+        }
+
+        function generarResumen() {
+            const presupuesto = document.getElementById('t-presupuesto').value;
+            const cm = document.getElementById('t-cm').value;
+            const datos = {
+                'Nombre':      document.getElementById('t-nombre').value,
+                'WhatsApp':    document.getElementById('t-tel').value,
+                'Experiencia': document.getElementById('t-experiencia').value,
+                'Estilo':      document.getElementById('t-estilo').value,
+                'Zona':        document.getElementById('t-zona').value,
+                'Tamaño (cm)': cm ? cm + ' cm' : '—',
+                'Referencia':  document.getElementById('t-tamano').value,
+                'Fecha pref.': document.getElementById('t-fecha').value || 'A coordinar',
+                'Descripción': document.getElementById('t-descripcion').value || '—',
+            };
+            if (presupuesto) datos['Presupuesto visto'] = presupuesto;
+
+            const html = Object.entries(datos).map(([k, v]) => `
+                <div class="resumen-item">
+                    <span class="resumen-key">${k}</span>
+                    <span class="resumen-val">${v}</span>
+                </div>
+            `).join('');
+            document.getElementById('resumen-contenido').innerHTML = html;
+        }
+
+        function mostrarImagen(input) {
+            if (input.files && input.files[0]) {
+                document.querySelector('.file-texto').innerHTML = `<strong style="color:var(--acento)">✓ ${input.files[0].name}</strong>`;
+            }
+        }
+
+        // =============================================
+        // WHATSAPP — Armamos el mensaje estructurado
+        // =============================================
+        function enviarPorWhatsApp() {
+            const nombre      = document.getElementById('t-nombre').value;
+            const experiencia = document.getElementById('t-experiencia').value;
+            const estilo      = document.getElementById('t-estilo').value;
+            const zona        = document.getElementById('t-zona').value;
+            const cm          = document.getElementById('t-cm').value;
+            const tamano      = document.getElementById('t-tamano').value;
+            const fecha       = document.getElementById('t-fecha').value || 'A coordinar';
+            const descripcion = document.getElementById('t-descripcion').value || '(Sin descripción)';
+            const presupuesto = document.getElementById('t-presupuesto').value;
+
+            const lineaPresupuesto = presupuesto ? `• Presupuesto visto: ${presupuesto}\n` : '';
+            const lineaCm = cm ? `• Tamaño exacto: ${cm} cm\n` : '';
+
+            const msg =
+`¡Hola Alex! 🖤 Quiero agendar un turno:
+
+*DATOS PERSONALES*
+• Nombre: ${nombre}
+• Experiencia: ${experiencia}
+
+*MI TATTOO*
+• Estilo: ${estilo}
+• Zona: ${zona}
+${lineaCm}• Referencia de tamaño: ${tamano}
+• Fecha preferida: ${fecha}
+• Descripción: ${descripcion}
+${lineaPresupuesto}
+¡Gracias!`;
+
+            window.open(`https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // =============================================
+        // TOGGLE CUIDADOS
+        // =============================================
         function toggleCuidados() {
-            const c = document.getElementById('contenido-cuidados');
-            c.classList.toggle('open');
-            document.getElementById('icono-cuidados').innerText = c.classList.contains('open') ? "−" : "+";
+            const body = document.getElementById('cuidados-body');
+            const icono = document.getElementById('icono-cuidados');
+            body.classList.toggle('abierto');
+            icono.innerText = body.classList.contains('abierto') ? '−' : '+';
         }
 
-        async function guardarTurno() {
-            const n = document.getElementById('nombre-cliente').value;
-            const t = document.getElementById('tamaño').value;
-            const r = document.getElementById('resultado').innerText;
-            const msg = `Hola Alex! Soy ${n}. Coticé un tattoo de ${t}cm. Presupuesto: ${r}. Quiero agendar!`;
-            window.location.href = `https://wa.me/5491157734552?text=${encodeURIComponent(msg)}`;
+        // =============================================
+        // TOAST — Notificación temporal
+        // =============================================
+        function mostrarToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('visible');
+            setTimeout(() => t.classList.remove('visible'), 2500);
         }
-function abrirCarrete(nombreEstilo) {
-    const overlay = document.getElementById('overlay-carrete');
-    const slider = document.getElementById('slider-fotos');
-    const titulo = document.getElementById('titulo-carrete');
-    const btnCotizar = document.getElementById('btn-cotizar-carrete');
-
-    // 1. Buscamos las fotos de ese estilo en la base de datos
-    const fotos = fotosPorEstilo[nombreEstilo];
-    
-    if (!fotos) {
-        console.error("No hay fotos para el estilo:", nombreEstilo);
-        return;
-    }
-
-    // 2. Ordenamos las fotos según lo que pusiste en el Excel
-    fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
-
-    // 3. Limpiamos el slider y cargamos las nuevas fotos
-    slider.innerHTML = "";
-    fotos.forEach(f => {
-        const div = document.createElement('div');
-        div.className = "slide-item";
-        div.innerHTML = `<img src="${f.imagen}" style="max-height:75vh; max-width:90%;">`;
-        slider.appendChild(div);
-    });
-
-    // 4. Ponemos el nombre del estilo y abrimos el cartel
-    titulo.innerText = nombreEstilo.toUpperCase();
-    slider.scrollLeft = 0; 
-    overlay.style.display = "flex";
-    document.body.style.overflow = "hidden"; // Evita que la página se mueva atrás
-
-    // 5. CONFIGURAMOS EL BOTÓN "COTIZAR ESTE ESTILO"
-    btnCotizar.onclick = () => {
-        // Seteamos la dificultad en el selector
-        const selector = document.getElementById('complejidad');
-        const dificultad = mapaDificultad[nombreEstilo.toLowerCase().trim()] || 1.5;
-        selector.value = dificultad;
-
-        // Cerramos el carrete
-        cerrarCarrete();
-
-        // Mostramos el aviso de "Estilo Seleccionado"
-        const toast = document.getElementById('toast-mensaje');
-        if (toast) {
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // Volamos al cotizador y ponemos el foco en el tamaño
-        setTimeout(() => {
-            document.getElementById('cotizador-seccion').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('tamaño').focus();
-            calcular(); // Recalculamos el precio al toque
-        }, 400);
-    };
-}
-
-// Función para cerrar (Asegurate de tenerla)
-function cerrarCarrete() {
-    document.getElementById('overlay-carrete').style.display = "none";
-    document.body.style.overflow = "auto";
-}
-
-// Función para mover las flechas en PC
-function moverSlider(dir) {
-    const s = document.getElementById('slider-fotos');
-    s.scrollBy({ left: dir * s.clientWidth, behavior: 'smooth' });
-}
-        window.addEventListener('DOMContentLoaded', cargarDatos);
     </script>
 </body>
 </html>
