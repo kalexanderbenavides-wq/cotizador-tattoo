@@ -876,27 +876,34 @@
 
         .print-solo { display: none; }
 
+        /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
         @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                color-scheme: light !important; /* Fuerza el modo claro para el PDF */
+            }
             body { background: white !important; color: black !important; padding: 0 !important; }
 
-            /* Ocultamos todo excepto la sección de cuidados */
-            .navbar,
-            #sec-inicio,
-            #sec-bio,
-            #sec-cotizador,
-            #sec-turno,
-            #carrete,
-            #toast { display: none !important; }
+            /* Escondemos TODO excepto la sección de cuidados */
+            .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, #carrete, #toast, .btn-principal, .btn-secundario, .cuidados-btn-toggle { 
+                display: none !important; 
+            }
 
-            /* Forzamos que sec-cuidados se muestre aunque esté oculta */
+            /* Mostramos la sección de cuidados abierta por completo */
             #sec-cuidados {
                 display: block !important;
-                padding: 40px 30px !important;
+                padding: 40px !important;
                 min-height: auto !important;
             }
 
-            /* Mostramos el header del PDF */
+            .cuidados-body {
+                max-height: none !important;
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            /* Header del PDF */
             .print-solo {
                 display: flex !important;
                 flex-direction: column;
@@ -908,28 +915,12 @@
             .print-solo h1 {
                 font-family: 'Bungee Hairline', sans-serif !important;
                 color: #e63946 !important;
-                font-size: 3rem !important;
+                font-size: 3.5rem !important;
                 letter-spacing: 8px;
-                margin-bottom: 6px;
             }
 
-            /* Grupos de cuidados en negro sobre blanco */
-            .cuidado-grupo h4 {
-                color: #e63946 !important;
-                font-size: 0.85rem !important;
-                margin-top: 24px;
-                margin-bottom: 12px;
-            }
-
-            .cuidado-grupo li {
-                color: #111 !important;
-                font-size: 0.9rem !important;
-                margin-bottom: 10px;
-            }
-
-            .cuidado-grupo li::before {
-                color: #e63946 !important;
-            }
+            .cuidado-grupo h4 { color: #e63946 !important; font-size: 1.1rem !important; margin-top: 20px; }
+            .cuidado-grupo li { color: #000 !important; font-size: 1rem !important; }
         }
     </style>
 </head>
@@ -1361,6 +1352,14 @@
             <button class="btn-principal" onclick="enviarPorWhatsApp()" style="background: #25d366;">
                 Enviar por WhatsApp ✓
             </button>
+            <div style="margin-top: 20px; text-align: center; border-top: 1px solid var(--borde); padding-top: 20px;">
+                <p style="font-size: 0.7rem; color: var(--texto-suave); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                    ¿Ya agendaste? No olvides leer esto:
+                </p>
+                <button class="nav-btn" onclick="mostrarSeccion('bio'); setTimeout(toggleCuidados, 500);" style="border-color: var(--borde-hover); width: auto;">
+                    📖 Ver Guía de Cuidados
+                </button>
+            </div>
             <br><br>
             <button class="btn-secundario" onclick="siguientePaso(2)">← Editá algo</button>
         </div>
