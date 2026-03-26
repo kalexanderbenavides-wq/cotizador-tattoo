@@ -218,12 +218,13 @@
             content: '';
         }
 
+        /* SEPARADOR VISUAL ENTRE SECCIONES */
         .divisor-pro {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--acento), transparent);
-    margin: 40px 0;
-    opacity: 0.5;
-}
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--acento), transparent);
+            margin: 40px 0;
+            opacity: 0.5;
+        }
 
         /* =============================================
            SECCIÓN: INICIO (HERO)
@@ -467,17 +468,20 @@
             margin-bottom: 24px;
         }
 
+        /* TODOS LOS ESTILOS UNIFICADOS EN ROJO */
         .chip {
-    background: var(--negro-input);
-    border: 1px solid var(--acento); /* Todos con borde rojo */
-    border-radius: 20px;
-    padding: 8px 16px;
-    font-size: 0.75rem;
-    color: white;
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
+            background: var(--negro-input);
+            border: 1px solid var(--acento); /* Borde rojo ALX.TAT */
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            color: white;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
 
         
 
@@ -945,11 +949,12 @@
             .cuidado-grupo h4 { color: #e63946 !important; font-size: 1.1rem !important; margin-top: 20px; }
             .cuidado-grupo li { color: black !important; font-size: 1rem !important; }
         }
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Lo vuelve blanco */
-    scale: 1.4; /* Lo agranda */
-    cursor: pointer;
-}
+/* ICONO DE CALENDARIO BLANCO Y GRANDE */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1); 
+            scale: 1.4;
+            cursor: pointer;
+        }
         
     </style>
 </head>
@@ -1010,8 +1015,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </p>
             <p class="label">Estilos</p>
             <div class="estilos-chips">
-                <span class="chip destacado">Línea Fina</span>
-                <span class="chip destacado">Blackwork</span>
+                <span class="chip">Línea Fina</span>
+                <span class="chip">Blackwork</span>
                 <span class="chip">Realismo</span>
                 <span class="chip">Puntillismo</span>
                 <span class="chip">Tradicional</span>
@@ -1512,13 +1517,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         // =============================================
         // CARRETE / LIGHTBOX
         // =============================================
+        // =============================================
+        // CARRETE / LIGHTBOX (CORREGIDO)
+        // =============================================
         function abrirCarrete(nombreEstilo) {
             const fotos = fotosPorEstilo[nombreEstilo];
             if (!fotos) return;
 
+            // Ordenamos las fotos según el Excel
             fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
 
             const slider = document.getElementById('carrete-slider');
+            
+            // LLENAMOS EL CARRETE CON LAS FOTOS REALES (Aquí estaba el error)
             slider.innerHTML = fotos.map(f => `
                 <div class="carrete-slide">
                     <img src="${f.imagen}" alt="${nombreEstilo}">
@@ -1526,10 +1537,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             `).join('');
 
             document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
-            slider.scrollLeft = 0;
-slider.innerHTML = fotos.map(f => ... ).join('');
-slider.scrollTo({ left: 0 }); // Reforzamos el inicio
             
+            // FORZAMOS QUE SIEMPRE ARRANQUE EN LA FOTO 1
+            slider.scrollTo({ left: 0 });
 
             document.getElementById('btn-cotizar-carrete').onclick = () => {
                 const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
@@ -1560,20 +1570,30 @@ slider.scrollTo({ left: 0 }); // Reforzamos el inicio
         // =============================================
         const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
 
+        // =============================================
+        // NAVEGACIÓN (MEJORADA PARA TURNOS Y PORTFOLIO)
+        // =============================================
         function mostrarSeccion(id) {
-            // 1. Ocultamos todas las secciones y botones
+            // 1. Ocultamos todas las secciones
             document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+            
+            // 2. Quitamos el color rojo de TODOS los botones del menú
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
             
-            // 2. Activamos solo la sección pedida
+            // 3. Activamos la sección pedida
             const seccionDestino = document.getElementById('sec-' + id);
-            if (seccionDestino) seccionDestino.classList.add('activa');
+            if (seccionDestino) {
+                seccionDestino.classList.add('activa');
+            }
             
-            // 3. Marcamos el botón del menú
-            const btnIndex = secciones.indexOf(id);
-            if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
-            
-            // 4. RESET DE SCROLL: Volvemos arriba para que la pestaña se vea desde el inicio
+            // 4. Buscamos qué botón debe ponerse rojo (por el texto que tiene)
+            document.querySelectorAll('.nav-btn').forEach(boton => {
+                if (boton.innerText.toLowerCase().includes(id)) {
+                    boton.classList.add('activo');
+                }
+            });
+
+            // 5. RESET DE SCROLL: Volvemos arriba de la página
             window.scrollTo(0, 0);
         }
 
