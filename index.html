@@ -961,15 +961,16 @@
 <body>
 
     <nav class="navbar">
-    <a class="navbar-logo" href="#" style="display: flex; align-items: center; gap: 10px;">
-        <img src="logo2026.png" alt="Logo" style="height: 30px; width: auto;"> ALX<span>.</span>TAT
-    </a>
-    <div class="navbar-links">
-    <button class="nav-btn" onclick="mostrarSeccion('inicio')">Inicio</button>
-    <button class="nav-btn" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('galeria-grid').scrollIntoView({behavior:'smooth'}), 400)">Portfolio</button>
-    <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
-    <button class="nav-btn" onclick="mostrarSeccion('turno')">Turno</button>
-</div>
+        <a class="navbar-logo" href="#" style="display: flex; align-items: center; gap: 10px;">
+            <img src="logo2026.png" alt="Logo" style="height: 30px; width: auto;"> ALX<span>.</span>TAT
+        </a>
+        <div class="navbar-links">
+            <button class="nav-btn activo" onclick="mostrarSeccion('inicio')">Inicio</button>
+            <button class="nav-btn" onclick="mostrarSeccion('bio')">Bio</button>
+            <button class="nav-btn" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('galeria-grid').scrollIntoView({behavior:'smooth'}), 400)">Portfolio</button>
+            <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
+            <button class="nav-btn" onclick="mostrarSeccion('turno')">Turno</button>
+        </div>
     </nav>
 
     <div id="toast" class="toast"></div>
@@ -1285,6 +1286,12 @@
             Agendar con este presupuesto →
         </button>
 
+        <button id="btn-ir-turno" class="btn-principal" style="display:none" onclick="irATurnoConDatos()">
+            Agendar con este presupuesto →
+        </button>
+
+        <p class="galeria-titulo">// Portfolio</p>
+        <div id="galeria-grid" class="galeria-grid"></div>
        
     </section>
 
@@ -1389,10 +1396,6 @@
             <button class="btn-secundario" onclick="siguientePaso(2)">← Editá algo</button>
         </div>
 
-         
-        <!-- CAMBIO 2: "Portfolio" más grande y blanco -->
-        <p class="galeria-titulo">// Portfolio</p>
-        <div id="galeria-grid" class="galeria-grid"></div>
     </section>
 
     <!-- SECCIÓN 5: CUIDADOS (solo para PDF/print) -->
@@ -1529,7 +1532,7 @@
 
             const slider = document.getElementById('carrete-slider');
             
-            // LLENAMOS EL CARRETE CON LAS FOTOS REALES (Aquí estaba el error)
+            // CORRECCIÓN: Quitamos los "..." y ponemos el código real para cargar fotos
             slider.innerHTML = fotos.map(f => `
                 <div class="carrete-slide">
                     <img src="${f.imagen}" alt="${nombreEstilo}">
@@ -1538,7 +1541,7 @@
 
             document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
             
-            // FORZAMOS QUE SIEMPRE ARRANQUE EN LA FOTO 1
+            // Siempre arrancamos de la foto 1
             slider.scrollTo({ left: 0 });
 
             document.getElementById('btn-cotizar-carrete').onclick = () => {
