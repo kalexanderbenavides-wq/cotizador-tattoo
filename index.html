@@ -1007,27 +1007,168 @@
             <!-- Mapa corporal -->
             <p class="label">Zona a tatuar</p>
             <div class="mapa-wrap">
-                <svg viewBox="0 0 200 200" class="cuerpo-svg">
-                    <!-- Cabeza -->
-                    <circle cx="100" cy="25" r="15" class="zona-touch" data-valor="1.4" data-nombre="Cabeza / Cuello" onclick="seleccionarZona(this)"/>
-                    <!-- Torso -->
-                    <path d="M75 45 h50 v60 h-50 z" class="zona-touch" data-valor="1.2" data-nombre="Torso / Espalda" onclick="seleccionarZona(this)"/>
-                    <!-- Brazo izq -->
-                    <path d="M55 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" data-nombre="Brazo" onclick="seleccionarZona(this)"/>
-                    <!-- Brazo der -->
-                    <path d="M130 45 l15 10 v50 l-15 10 z" class="zona-touch" data-valor="1" data-nombre="Brazo" onclick="seleccionarZona(this)"/>
-                    <!-- Pierna izq -->
-                    <path d="M75 110 h20 v70 h-20 z" class="zona-touch" data-valor="1" data-nombre="Pierna" onclick="seleccionarZona(this)"/>
-                    <!-- Pierna der -->
-                    <path d="M105 110 h20 v70 h-20 z" class="zona-touch" data-valor="1" data-nombre="Pierna" onclick="seleccionarZona(this)"/>
+                <svg viewBox="0 0 200 340" class="cuerpo-svg" style="width:160px">
+
+                    <!-- CABEZA -->
+                    <ellipse cx="100" cy="22" rx="16" ry="18"
+                        class="zona-touch"
+                        data-valor="1.5" data-nombre="Cabeza / Cara"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- CUELLO -->
+                    <rect x="92" y="40" width="16" height="14" rx="4"
+                        class="zona-touch"
+                        data-valor="1.5" data-nombre="Cuello / Nuca"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- PECHO / CLAVÍCULA -->
+                    <path d="M72 58 Q100 54 128 58 L124 78 Q100 82 76 78 Z"
+                        class="zona-touch"
+                        data-valor="1.3" data-nombre="Pecho / Clavícula"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- ABDOMEN -->
+                    <path d="M76 78 Q100 82 124 78 L122 110 Q100 114 78 110 Z"
+                        class="zona-touch"
+                        data-valor="1.3" data-nombre="Abdomen"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- COSTILLAS IZQ -->
+                    <path d="M62 72 L76 78 L78 108 L62 102 Z"
+                        class="zona-touch"
+                        data-valor="1.6" data-nombre="Costillas"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- COSTILLAS DER -->
+                    <path d="M138 72 L124 78 L122 108 L138 102 Z"
+                        class="zona-touch"
+                        data-valor="1.6" data-nombre="Costillas"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- BRAZO SUPERIOR IZQ -->
+                    <path d="M54 58 L68 58 L72 58 L68 98 L54 94 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Brazo superior"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- BRAZO SUPERIOR DER -->
+                    <path d="M146 58 L132 58 L128 58 L132 98 L146 94 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Brazo superior"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- ANTEBRAZO IZQ -->
+                    <path d="M50 96 L66 100 L64 128 L48 124 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Antebrazo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- ANTEBRAZO DER -->
+                    <path d="M150 96 L134 100 L136 128 L152 124 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Antebrazo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- MANO IZQ -->
+                    <ellipse cx="46" cy="136" rx="10" ry="10"
+                        class="zona-touch"
+                        data-valor="1.4" data-nombre="Mano / Dedos"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- MANO DER -->
+                    <ellipse cx="154" cy="136" rx="10" ry="10"
+                        class="zona-touch"
+                        data-valor="1.4" data-nombre="Mano / Dedos"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- CADERA / GLUTEO IZQ -->
+                    <path d="M62 110 L78 110 L80 140 L62 142 Z"
+                        class="zona-touch"
+                        data-valor="1.1" data-nombre="Cadera / Glúteo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- CADERA / GLUTEO DER -->
+                    <path d="M138 110 L122 110 L120 140 L138 142 Z"
+                        class="zona-touch"
+                        data-valor="1.1" data-nombre="Cadera / Glúteo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- MUSLO IZQ -->
+                    <path d="M64 142 L82 140 L84 186 L66 188 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Muslo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- MUSLO DER -->
+                    <path d="M136 142 L118 140 L116 186 L134 188 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Muslo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- RODILLA IZQ -->
+                    <ellipse cx="75" cy="196" rx="10" ry="9"
+                        class="zona-touch"
+                        data-valor="1.3" data-nombre="Rodilla"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- RODILLA DER -->
+                    <ellipse cx="125" cy="196" rx="10" ry="9"
+                        class="zona-touch"
+                        data-valor="1.3" data-nombre="Rodilla"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- PANTORRILLA IZQ -->
+                    <path d="M66 206 L84 204 L82 244 L64 244 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Pantorrilla"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- PANTORRILLA DER -->
+                    <path d="M134 206 L116 204 L118 244 L136 244 Z"
+                        class="zona-touch"
+                        data-valor="1.0" data-nombre="Pantorrilla"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- PIE IZQ -->
+                    <path d="M62 246 L82 246 L84 260 L58 260 Z"
+                        class="zona-touch"
+                        data-valor="1.4" data-nombre="Pie / Tobillo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- PIE DER -->
+                    <path d="M138 246 L118 246 L116 260 L142 260 Z"
+                        class="zona-touch"
+                        data-valor="1.4" data-nombre="Pie / Tobillo"
+                        onclick="seleccionarZona(this)"/>
+
+                    <!-- ESPALDA ALTA (etiqueta visual, zona detrás) -->
+                    <path d="M76 58 Q100 54 124 58 L122 80 Q100 84 78 80 Z"
+                        class="zona-touch"
+                        data-valor="1.2" data-nombre="Espalda alta"
+                        onclick="seleccionarZona(this)"
+                        style="display:none"/>
+
                 </svg>
+
+                <!-- Botón para alternar vista frontal/trasera -->
+                <div style="display:flex; gap:8px; justify-content:center; margin-top:10px;">
+                    <button onclick="setVista('frente')" id="btn-frente"
+                        style="font-size:0.6rem; padding:5px 12px; border-radius:20px; border:1px solid var(--acento); background:var(--acento); color:white; cursor:pointer; font-weight:700; letter-spacing:1px; text-transform:uppercase;">
+                        Frente
+                    </button>
+                    <button onclick="setVista('espalda')" id="btn-espalda"
+                        style="font-size:0.6rem; padding:5px 12px; border-radius:20px; border:1px solid var(--borde-hover); background:transparent; color:var(--texto-suave); cursor:pointer; font-weight:700; letter-spacing:1px; text-transform:uppercase;">
+                        Espalda
+                    </button>
+                </div>
+
                 <p id="zona-display" class="zona-display">Seleccioná una zona</p>
             </div>
 
-            <!-- Input oculto para valor de zona (igual que antes) -->
+            <!-- Input oculto para valor de zona -->
             <select id="zona-cuerpo" style="display:none">
                 <option value="1">Brazo / Pierna</option>
-                <option value="1.2">Torso / Espalda</option>
+                <option value="1.2">Espalda / Torso</option>
                 <option value="1.4">Cabeza / Cuello / Costillas</option>
             </select>
 
@@ -1318,23 +1459,13 @@
         const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
 
         function mostrarSeccion(id) {
-            // Ocultamos todas las secciones
             document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
-            
-            // Desactivamos todos los botones de nav
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
-            
-            // Mostramos la sección elegida
             document.getElementById('sec-' + id).classList.add('activa');
-            
-            // Marcamos el botón correspondiente
             const btnIndex = secciones.indexOf(id);
-            if (btnIndex >= 0) {
-                document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
-            }
-
-            // Volvemos al tope de la página
-            window.scrollTo(0, 0);
+            if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
         }
 
         // =============================================
@@ -1397,15 +1528,69 @@
             }
         }
 
+        // Zonas de espalda (reemplazan las del frente al cambiar vista)
+        const zonasEspalda = [
+            { id:'espalda-alta',  d:'M76 58 Q100 54 124 58 L122 80 Q100 74 78 80 Z',   valor:'1.2', nombre:'Espalda alta' },
+            { id:'espalda-baja',  d:'M78 80 Q100 74 122 80 L120 110 Q100 114 80 110 Z', valor:'1.1', nombre:'Espalda baja / Lumbar' },
+            { id:'nuca',          d:'M88 40 Q100 36 112 40 L112 54 Q100 50 88 54 Z',    valor:'1.5', nombre:'Nuca' },
+        ];
+
+        let vistaActual = 'frente';
+        let elementosEspalda = [];
+
+        function setVista(vista) {
+            vistaActual = vista;
+            const svg = document.querySelector('.cuerpo-svg');
+
+            // Limpiamos zonas de espalda previas
+            elementosEspalda.forEach(el => el.remove());
+            elementosEspalda = [];
+
+            // Reseteamos selección
+            document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
+            document.getElementById('zona-display').innerText = 'Seleccioná una zona';
+
+            const btnF = document.getElementById('btn-frente');
+            const btnE = document.getElementById('btn-espalda');
+
+            if (vista === 'espalda') {
+                // Ocultamos zonas del frente que no aplican atrás
+                document.querySelectorAll('.zona-touch').forEach(z => z.style.opacity = '0.15');
+
+                // Agregamos zonas de espalda al SVG
+                zonasEspalda.forEach(z => {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', z.d);
+                    path.setAttribute('class', 'zona-touch');
+                    path.setAttribute('data-valor', z.valor);
+                    path.setAttribute('data-nombre', z.nombre);
+                    path.setAttribute('onclick', 'seleccionarZona(this)');
+                    svg.appendChild(path);
+                    elementosEspalda.push(path);
+                });
+
+                btnE.style.background = 'var(--acento)';
+                btnE.style.color = 'white';
+                btnE.style.borderColor = 'var(--acento)';
+                btnF.style.background = 'transparent';
+                btnF.style.color = 'var(--texto-suave)';
+                btnF.style.borderColor = 'var(--borde-hover)';
+            } else {
+                document.querySelectorAll('.zona-touch').forEach(z => z.style.opacity = '1');
+                btnF.style.background = 'var(--acento)';
+                btnF.style.color = 'white';
+                btnF.style.borderColor = 'var(--acento)';
+                btnE.style.background = 'transparent';
+                btnE.style.color = 'var(--texto-suave)';
+                btnE.style.borderColor = 'var(--borde-hover)';
+            }
+        }
+
         function seleccionarZona(el) {
-            // Limpiamos todas las zonas activas
             document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
             el.classList.add('activa');
-
-            // Actualizamos el select oculto y el display
             document.getElementById('zona-cuerpo').value = el.dataset.valor;
             document.getElementById('zona-display').innerText = '✦ ' + el.dataset.nombre;
-
             calcular();
         }
 
