@@ -908,6 +908,15 @@
 
         /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
         @media print {
+@page { margin: 0; size: auto; } /* Quita márgenes de impresión */
+            html, body { 
+        height: auto !important; 
+        overflow: visible !important; 
+    }
+    .seccion { 
+        min-height: auto !important; /* Quita el espacio extra */
+        padding: 0 !important; 
+    }
             * { 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
@@ -1124,6 +1133,9 @@
             </select>
 
             <p class="label">Zona a tatuar</p>
+            <p style="font-size: 0.65rem; color: #888; margin-bottom: 10px; font-style: italic; text-align: center; line-height: 1.2;">
+    ⚠️ Recordá que la selección corresponde al lado del cuerpo,<br>no a la perspectiva visual.
+</p>
             <div class="mapa-wrap">
                 <svg viewBox="0 0 200 340" class="cuerpo-svg" style="width:160px">
 
@@ -1373,12 +1385,7 @@
                 </select>
                 <p class="label">Fecha preferida</p>
                 <input type="date" id="t-fecha" class="input-campo">
-                <p class="label">Imagen de referencia (opcional)</p>
-                <div class="file-zona" id="file-zona">
-                    <input type="file" accept="image/*" id="t-imagen" onchange="mostrarImagen(this)">
-                    <div class="file-icon">📎</div>
-                    <p class="file-texto"><strong>Tocá para subir</strong> una referencia</p>
-                </div>
+                
                 <p class="label">Descripción de tu idea</p>
                 <textarea id="t-descripcion" class="input-campo" rows="3" placeholder="Contame brevemente qué tenés en mente..."></textarea>
             </div>
@@ -1593,28 +1600,21 @@
         // NAVEGACIÓN (MEJORADA PARA TURNOS Y PORTFOLIO)
         // =============================================
         function mostrarSeccion(id) {
-            // 1. Ocultamos todas las secciones
-            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
-            
-            // 2. Quitamos el color rojo de TODOS los botones del menú
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
-            
-            // 3. Activamos la sección pedida
-            const seccionDestino = document.getElementById('sec-' + id);
-            if (seccionDestino) {
-                seccionDestino.classList.add('activa');
-            }
-            
-            // 4. Buscamos qué botón debe ponerse rojo (por el texto que tiene)
-            document.querySelectorAll('.nav-btn').forEach(boton => {
-                if (boton.innerText.toLowerCase().includes(id)) {
-                    boton.classList.add('activo');
-                }
-            });
-
-            // 5. RESET DE SCROLL: Volvemos arriba de la página
-            window.scrollTo(0, 0);
-        }
+    // 1. Ocultamos todas las secciones y botones
+    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+    
+    // 2. Activamos la sección destino
+    const seccionDestino = document.getElementById('sec-' + id);
+    if (seccionDestino) seccionDestino.classList.add('activa');
+    
+    // 3. Pintamos el botón del menú de rojo
+    const btnIndex = secciones.indexOf(id);
+    if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
+    
+    // 4. RESET DE SCROLL: Forzamos ir arriba para ver el título de la sección
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
         // =============================================
         // COTIZADOR
@@ -1755,27 +1755,37 @@
         // IR A TURNO DESDE COTIZADOR
         // =============================================
         function irATurnoConDatos() {
-            const sel    = document.getElementById('complejidad');
-            const estilo = sel.options[sel.selectedIndex].text;
-            const tamano = document.getElementById('tamano').value;
-            const precio = document.getElementById('resultado-precio').querySelector('.precio-valor');
-            const zonaCompleta = document.getElementById('t-zona-completa').value;
+    // 1. Capturamos los datos del Cotizador
+    const selEstilo = document.getElementById('complejidad');
+    const estiloTexto = selEstilo.options[selEstilo.selectedIndex].text;
+    const tamanoCm = document.getElementById('tamano').value;
+    const zonaTexto = document.getElementById('t-zona-completa').value;
+    const presupuestoVisto = document.getElementById('resultado-precio').querySelector('.precio-valor')?.innerText;
 
-            if (estilo) document.getElementById('t-estilo').value = estilo.split('/')[0].trim();
+    // 2. Los pegamos en el formulario de Turnos
+    // Pegamos el Estilo (buscamos coincidencia)
+    const tEstilo = document.getElementById('t-estilo');
+    if (estiloTexto.includes("Línea Fina")) tEstilo.value = "Línea Fina / Minimalista";
+    else if (estiloTexto.includes("Blackwork")) tEstilo.value = "Blackwork / Tradicional";
+    else if (estiloTexto.includes("Realismo")) tEstilo.value = "Realismo";
 
-            if (tamano) {
-                document.getElementById('t-cm').value = tamano;
-                if (tamano <= 5)       document.getElementById('t-tamano').value = 'Pequeño (hasta 5cm)';
-                else if (tamano <= 15) document.getElementById('t-tamano').value = 'Mediano (5-15cm)';
-                else if (tamano <= 30) document.getElementById('t-tamano').value = 'Grande (15-30cm)';
-                else                   document.getElementById('t-tamano').value = 'Pieza grande / Manga';
-            }
+    // Pegamos los CM y calculamos la categoría
+    if (tamanoCm) {
+        document.getElementById('t-cm').value = tamanoCm;
+        const tReferencia = document.getElementById('t-tamano');
+        if (tamanoCm <= 5) tReferencia.value = "Pequeño (hasta 5cm)";
+        else if (tamanoCm <= 15) tReferencia.value = "Mediano (5-15cm)";
+        else tReferencia.value = "Grande (15-30cm)";
+    }
 
-            if (precio) document.getElementById('t-presupuesto').value = precio.innerText;
+    // Pegamos la Zona y el Presupuesto
+    if (zonaTexto) document.getElementById('t-zona').value = zonaTexto;
+    if (presupuestoVisto) document.getElementById('t-presupuesto').value = presupuestoVisto;
 
-            mostrarSeccion('turno');
-            mostrarToast('✦ Datos del cotizador pre-cargados');
-        }
+    // 3. Saltamos a la sección de Turno
+    mostrarSeccion('turno');
+    mostrarToast('✦ Datos cargados correctamente');
+}
 
         // =============================================
         // FORMULARIO DE TURNO
@@ -1865,6 +1875,7 @@
 
             const msg =
 `¡Hola Alex! Quiero agendar un turno:
+📸 *IMPORTANTE:* Adjuntá tu foto de referencia debajo de este mensaje.
 
 *DATOS PERSONALES*
 • Nombre: ${nombre}
