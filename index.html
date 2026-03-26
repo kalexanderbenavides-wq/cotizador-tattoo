@@ -218,11 +218,12 @@
             content: '';
         }
 
-        .divisor {
-            border: none;
-            border-top: 1px solid var(--borde);
-            margin: 24px 0;
-        }
+        .divisor-pro {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--acento), transparent);
+    margin: 40px 0;
+    opacity: 0.5;
+}
 
         /* =============================================
            SECCIÓN: INICIO (HERO)
@@ -467,18 +468,18 @@
         }
 
         .chip {
-            background: var(--negro-input);
-            border: 1px solid var(--borde-hover);
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.65rem;
-            color: var(--texto-medio);
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
+    background: var(--negro-input);
+    border: 1px solid var(--acento); /* Todos con borde rojo */
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
 
-        .chip.destacado { border-color: var(--acento); color: var(--acento); background: var(--acento-glow); }
+        
 
         .redes-lista { display: flex; flex-direction: column; gap: 10px; }
 
@@ -737,24 +738,16 @@
 
         /* CUIDADOS */
         .cuidados-btn-toggle {
-            width: 100%;
-            background: none;
-            border: 1px solid var(--borde);
-            border-radius: 14px;
-            color: var(--texto);
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            font-family: var(--fuente-cuerpo);
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: border-color 0.2s;
-            margin-bottom: 8px;
-        }
+    width: 100%;
+    background: var(--acento-glow);
+    border: 2px solid var(--acento);
+    border-radius: 14px;
+    color: white;
+    padding: 22px; /* Más grande */
+    font-size: 1rem; /* Texto más grande */
+    font-weight: 800;
+    letter-spacing: 2px;
+}
 
         .cuidados-btn-toggle:hover { border-color: var(--borde-hover); }
         .cuidados-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
@@ -952,6 +945,12 @@
             .cuidado-grupo h4 { color: #e63946 !important; font-size: 1.1rem !important; margin-top: 20px; }
             .cuidado-grupo li { color: black !important; font-size: 1rem !important; }
         }
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Lo vuelve blanco */
+    scale: 1.4; /* Lo agranda */
+    cursor: pointer;
+}
+        
     </style>
 </head>
 <body>
@@ -961,11 +960,11 @@
         <img src="logo2026.png" alt="Logo" style="height: 30px; width: auto;"> ALX<span>.</span>TAT
     </a>
     <div class="navbar-links">
-            <button class="nav-btn activo" onclick="mostrarSeccion('inicio')">Inicio</button>
-            <button class="nav-btn" onclick="mostrarSeccion('bio')">Bio</button>
-            <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
-            <button class="nav-btn" onclick="mostrarSeccion('turno')">Turno</button>
-        </div>
+    <button class="nav-btn" onclick="mostrarSeccion('inicio')">Inicio</button>
+    <button class="nav-btn" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('galeria-grid').scrollIntoView({behavior:'smooth'}), 400)">Portfolio</button>
+    <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
+    <button class="nav-btn" onclick="mostrarSeccion('turno')">Turno</button>
+</div>
     </nav>
 
     <div id="toast" class="toast"></div>
@@ -1060,6 +1059,27 @@
                 <br>
                 <button class="btn-secundario" onclick="window.print()">📥 Descargar guía PDF</button>
             </div>
+            
+<div class="divisor-pro"></div>
+
+<div class="card">
+    <p class="seccion-titulo">🛡️ Bioseguridad y Calidad</p>
+    <p class="bio-texto">
+        • Todo el material es <strong>100% descartable</strong> y de un solo uso.<br>
+        • Utilizo tintas <strong>orgánicas y veganas</strong> premium.<br>
+        • Higiene bajo normas estrictas de salud.
+    </p>
+</div>
+
+<div class="card">
+    <p class="seccion-titulo">💳 Métodos de Pago</p>
+    <div class="estilos-chips">
+        <span class="chip">Mercado Pago</span>
+        <span class="chip">Efectivo</span>
+        <span class="chip">Transferencia</span>
+    </div>
+</div>
+            
         </div>
     </section>
 
@@ -1507,6 +1527,9 @@
 
             document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
             slider.scrollLeft = 0;
+slider.innerHTML = fotos.map(f => ... ).join('');
+slider.scrollTo({ left: 0 }); // Reforzamos el inicio
+            
 
             document.getElementById('btn-cotizar-carrete').onclick = () => {
                 const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
@@ -1746,7 +1769,7 @@
             }
 
             pasoActual = numeroPaso;
-            window.scrollTo(0, 0);
+            document.getElementById('sec-turno').scrollIntoView({ behavior: 'smooth' });
         }
 
         function generarResumen() {
