@@ -86,10 +86,10 @@
 
         @media (max-width: 430px) {
     .navbar { 
-        padding: 10px 8px; /* Menos aire a los costados */
+        padding: 10px 8px;
     }
     .navbar-logo { 
-        font-size: 1rem; /* Logo más discreto */
+        font-size: 1rem;
         letter-spacing: 1px; 
         gap: 5px !important;
     }
@@ -97,20 +97,28 @@
         height: 22px !important; 
     }
     .navbar-links { 
-        gap: 2px; /* Botones más pegaditos */
+        gap: 2px;
     }
     .nav-btn { 
         padding: 6px 4px; 
-        font-size: 0.55rem; /* Letra más chica para que entren los 5 botones */
+        font-size: 0.55rem;
         letter-spacing: 0px; 
         min-width: 55px; 
         text-align: center;
+    }
+    /* "Portfolio" → "Fotos" solo en mobile */
+    .nav-btn[data-mobile="fotos"] {
+        font-size: 0; /* Ocultamos el texto original */
+    }
+    .nav-btn[data-mobile="fotos"]::after {
+        content: "Fotos";
+        font-size: 0.55rem;
     }
 }
 
         /* --- SISTEMA DE PESTAÑAS: Solo una visible a la vez --- */
         .seccion {
-            display: none; /* Esto oculta todo por defecto */
+            display: none;
             min-height: 100vh;
             padding: 100px 20px 60px;
             max-width: 480px;
@@ -119,7 +127,7 @@
         }
 
         .seccion.activa { 
-            display: block; /* Solo mostramos la que tiene la clase activa */
+            display: block;
         }
 
         /* COMPONENTES */
@@ -212,19 +220,15 @@
 
         .btn-secundario:hover { border-color: var(--acento); color: var(--acento); }
 
-        /* =============================================
-           CAMBIO 2: Títulos de sección más grandes y blancos
-        ============================================= */
         .seccion-titulo {
             font-family: var(--fuente-titulo);
-            font-size: 1rem;          /* era 0.75rem */
-            color: white;             /* era var(--acento) */
+            font-size: 1rem;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 20px;
         }
 
-        /* El prefijo // lo dejamos en rojo para mantener la identidad */
         .seccion-titulo::before {
             content: '';
         }
@@ -247,10 +251,9 @@
             padding-top: 120px;
         }
 
-        /* CAMBIO 2: hero-tag más grande y blanco */
         .hero-tag {
-            font-size: 0.85rem;       /* era 0.65rem */
-            color: white;             /* era var(--acento) */
+            font-size: 0.85rem;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 4px;
             font-weight: 700;
@@ -314,9 +317,6 @@
             gap: 10px;
         }
 
-        /* =============================================
-           CAMBIO 1: Botón Instagram
-        ============================================= */
         .btn-instagram {
             width: 100%;
             background: transparent;
@@ -351,13 +351,9 @@
             flex-shrink: 0;
         }
 
-        /* =============================================
-           CAMBIO 2: Galería — títulos y contadores más grandes
-        ============================================= */
-        /* Título "Portfolio" más grande y blanco */
         .galeria-titulo {
-            font-size: 1rem;          /* era 0.65rem */
-            color: white;             /* era var(--texto-suave) */
+            font-size: 1rem;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 3px;
             font-weight: 700;
@@ -410,18 +406,16 @@
             background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%);
         }
 
-        /* CAMBIO 2: nombre del estilo en la card más grande */
         .galeria-card-nombre {
-            font-size: 0.9rem;        /* era 0.7rem */
+            font-size: 0.9rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: white;
         }
 
-        /* CAMBIO 2: contador de trabajos más grande */
         .galeria-card-count {
-            font-size: 0.7rem;        /* era 0.55rem */
+            font-size: 0.7rem;
             color: var(--acento);
             font-weight: 700;
             margin-top: 3px;
@@ -479,10 +473,9 @@
             margin-bottom: 24px;
         }
 
-        /* TODOS LOS ESTILOS UNIFICADOS EN ROJO */
         .chip {
             background: var(--negro-input);
-            border: 1px solid var(--acento); /* Borde rojo ALX.TAT */
+            border: 1px solid var(--acento);
             border-radius: 20px;
             padding: 8px 16px;
             font-size: 0.75rem;
@@ -493,8 +486,6 @@
             margin-bottom: 5px;
             display: inline-block;
         }
-
-        
 
         .redes-lista { display: flex; flex-direction: column; gap: 10px; }
 
@@ -554,10 +545,9 @@
         .zona-touch:hover { fill: #2a2a2a; stroke: #555; }
         .zona-touch.activa { fill: var(--acento); stroke: rgba(255,255,255,0.3); filter: drop-shadow(0 0 6px var(--acento)); }
 
-        /* CAMBIO 3: display de zona más informativo */
         .zona-display {
-            font-size: 0.75rem;       /* un poco más grande para legibilidad */
-            color: white;             /* era var(--acento) — ahora blanco para mayor visibilidad */
+            font-size: 0.75rem;
+            color: white;
             text-transform: uppercase;
             font-weight: 700;
             letter-spacing: 2px;
@@ -568,9 +558,6 @@
         .zona-display .zona-nombre { color: var(--acento); }
         .zona-display .zona-lado { color: #aaa; font-size: 0.65rem; letter-spacing: 1px; }
 
-        /* =============================================
-           CAMBIO 4: Referencia de escala más clara
-        ============================================= */
         .escala-card {
             background: var(--negro-input);
             border: 1px solid var(--borde);
@@ -580,11 +567,10 @@
             display: none;
         }
 
-        /* Nuevo encabezado con título principal y subtítulo explicativo */
         .escala-header-titulo {
             font-size: 0.9rem;
             font-weight: 700;
-            color: white;             /* blanco para mayor visibilidad */
+            color: white;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 4px;
@@ -592,7 +578,7 @@
 
         .escala-header-sub {
             font-size: 0.8rem;
-            color: #bbb;              /* gris claro, más legible que el anterior */
+            color: #bbb;
             margin-bottom: 16px;
             line-height: 1.4;
         }
@@ -601,7 +587,6 @@
             color: var(--acento);
         }
 
-        /* El antiguo escala-header ya no se usa, lo reemplazamos */
         .escala-header {
             display: flex;
             justify-content: space-between;
@@ -643,10 +628,9 @@
             top: 13px; left: 10px;
         }
 
-        /* CAMBIO 4: etiquetas de referencia más claras y en blanco */
         .ref-label {
             font-size: 0.75rem;
-            color: white;             /* era var(--texto-suave) */
+            color: white;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-align: center;
@@ -753,16 +737,16 @@
 
         /* CUIDADOS */
         .cuidados-btn-toggle {
-    width: 100%;
-    background: var(--acento-glow);
-    border: 2px solid var(--acento);
-    border-radius: 14px;
-    color: white;
-    padding: 22px; /* Más grande */
-    font-size: 1rem; /* Texto más grande */
-    font-weight: 800;
-    letter-spacing: 2px;
-}
+            width: 100%;
+            background: var(--acento-glow);
+            border: 2px solid var(--acento);
+            border-radius: 14px;
+            color: white;
+            padding: 22px;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
 
         .cuidados-btn-toggle:hover { border-color: var(--borde-hover); }
         .cuidados-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
@@ -908,15 +892,15 @@
 
         /* --- CONFIGURACIÓN DE IMPRESIÓN (PDF) BLINDADA --- */
         @media print {
-@page { margin: 0; size: auto; } /* Quita márgenes de impresión */
+            @page { margin: 0; size: auto; }
             html, body { 
-        height: auto !important; 
-        overflow: visible !important; 
-    }
-    .seccion { 
-        min-height: auto !important; /* Quita el espacio extra */
-        padding: 0 !important; 
-    }
+                height: auto !important; 
+                overflow: visible !important; 
+            }
+            .seccion { 
+                min-height: auto !important;
+                padding: 0 !important; 
+            }
             * { 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
@@ -927,13 +911,9 @@
                 color: black !important; 
                 padding: 0 !important; 
             }
-
-            /* Escondemos TODO excepto la sección de cuidados */
             .navbar, #sec-inicio, #sec-bio, #sec-cotizador, #sec-turno, #carrete, #toast, .btn-principal, .btn-secundario, .cuidados-btn-toggle { 
                 display: none !important; 
             }
-
-            /* Forzamos que la sección de cuidados se vea aunque no sea la pestaña activa */
             #sec-cuidados {
                 display: block !important;
                 visibility: visible !important;
@@ -944,32 +924,29 @@
                 padding: 40px !important;
                 background: white !important;
             }
-
             .cuidados-body {
                 max-height: none !important;
                 display: block !important;
                 opacity: 1 !important;
                 overflow: visible !important;
             }
-
             .print-solo {
                 display: flex !important;
                 flex-direction: column;
                 align-items: center;
                 margin-bottom: 30px;
             }
-
             .print-solo h1 {
                 font-family: 'Bungee Hairline', sans-serif !important;
                 color: #e63946 !important;
                 font-size: 3rem !important;
                 margin: 10px 0;
             }
-
             .cuidado-grupo h4 { color: #e63946 !important; font-size: 1.1rem !important; margin-top: 20px; }
             .cuidado-grupo li { color: black !important; font-size: 1rem !important; }
         }
-/* ICONO DE CALENDARIO BLANCO Y GRANDE */
+
+        /* ICONO DE CALENDARIO BLANCO Y GRANDE */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1); 
             scale: 1.4;
@@ -987,9 +964,13 @@
         <div class="navbar-links">
             <button class="nav-btn activo" onclick="mostrarSeccion('inicio')">Inicio</button>
             <button class="nav-btn" onclick="mostrarSeccion('bio')">Bio</button>
-            <button class="nav-btn" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('galeria-grid').scrollIntoView({behavior:'smooth'}), 400)">Portfolio</button>
-            <button class="nav-btn" onclick="mostrarSeccion('cotizador')">Cotizá</button>
-            <button class="nav-btn" onclick="mostrarSeccion('turno')">Turno</button>
+            <button class="nav-btn" data-mobile="fotos" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('galeria-grid').scrollIntoView({behavior:'smooth'}), 400)">Portfolio</button>
+
+            <!-- CAMBIO 1: Navbar "Cotizá" → scroll al primer campo del formulario -->
+            <button class="nav-btn" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('complejidad').scrollIntoView({behavior:'smooth', block:'center'}), 350)">Cotizá</button>
+
+            <!-- CAMBIO 2: Navbar "Turno" → scroll al paso 1 del formulario -->
+            <button class="nav-btn" onclick="mostrarSeccion('turno'); setTimeout(() => document.getElementById('paso-1').scrollIntoView({behavior:'smooth', block:'start'}), 350)">Turno</button>
         </div>
     </nav>
 
@@ -1002,9 +983,12 @@
         <p class="hero-subtitulo">Estudio de Tatuajes Profesional</p>
 
         <div class="hero-acciones">
-            <button class="btn-principal" onclick="mostrarSeccion('turno')">Agendar Turno</button>
-            <button class="btn-secundario" onclick="mostrarSeccion('cotizador')">Cotizar mi Tattoo</button>
-            <!-- CAMBIO 1: Botón Instagram -->
+            <!-- CAMBIO 3: Hero "Agendar Turno" → scroll al paso 1 del formulario -->
+            <button class="btn-principal" onclick="mostrarSeccion('turno'); setTimeout(() => document.getElementById('paso-1').scrollIntoView({behavior:'smooth', block:'start'}), 350)">Agendar Turno</button>
+
+            <!-- CAMBIO 4: Hero "Cotizar mi Tattoo" → scroll al primer campo del formulario -->
+            <button class="btn-secundario" onclick="mostrarSeccion('cotizador'); setTimeout(() => document.getElementById('complejidad').scrollIntoView({behavior:'smooth', block:'center'}), 350)">Cotizar mi Tattoo</button>
+
             <a class="btn-instagram" href="https://instagram.com/alx.tat" target="_blank" rel="noopener">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -1017,7 +1001,6 @@
 
     <!-- SECCIÓN 2: BIO -->
     <section id="sec-bio" class="seccion">
-        <!-- CAMBIO 2: título de sección más grande y blanco (via CSS .seccion-titulo) -->
         <p class="seccion-titulo">// Sobre mí</p>
 
         <div class="card">
@@ -1086,32 +1069,31 @@
                 <button class="btn-secundario" onclick="window.print()">📥 Descargar guía PDF</button>
             </div>
             
-<div class="divisor-pro"></div>
+            <div class="divisor-pro"></div>
 
-<div class="card">
-    <p class="seccion-titulo">🛡️ Bioseguridad y Calidad</p>
-    <p class="bio-texto">
-        • Todo el material es <strong>100% descartable</strong> y de un solo uso.<br>
-        • Utilizo tintas <strong>orgánicas y veganas</strong> premium.<br>
-        • Higiene bajo normas estrictas de salud.
-    </p>
-</div>
+            <div class="card">
+                <p class="seccion-titulo">🛡️ Bioseguridad y Calidad</p>
+                <p class="bio-texto">
+                    • Todo el material es <strong>100% descartable</strong> y de un solo uso.<br>
+                    • Utilizo tintas <strong>orgánicas y veganas</strong> premium.<br>
+                    • Higiene bajo normas estrictas de salud.
+                </p>
+            </div>
 
-<div class="card">
-    <p class="seccion-titulo">💳 Métodos de Pago</p>
-    <div class="estilos-chips">
-        <span class="chip">Mercado Pago</span>
-        <span class="chip">Efectivo</span>
-        <span class="chip">Transferencia</span>
-    </div>
-</div>
+            <div class="card">
+                <p class="seccion-titulo">💳 Métodos de Pago</p>
+                <div class="estilos-chips">
+                    <span class="chip">Mercado Pago</span>
+                    <span class="chip">Efectivo</span>
+                    <span class="chip">Transferencia</span>
+                </div>
+            </div>
             
         </div>
     </section>
 
     <!-- SECCIÓN 3: COTIZADOR -->
     <section id="sec-cotizador" class="seccion">
-        <!-- CAMBIO 2: título de sección más grande y blanco -->
         <p class="seccion-titulo">// Cotizador</p>
 
         <div class="card">
@@ -1134,8 +1116,8 @@
 
             <p class="label">Zona a tatuar</p>
             <p style="font-size: 0.65rem; color: #888; margin-bottom: 10px; font-style: italic; text-align: center; line-height: 1.2;">
-    ⚠️ Recordá que la selección corresponde al lado del cuerpo,<br>no a la perspectiva visual.
-</p>
+                ⚠️ Recordá que la selección corresponde al lado del cuerpo,<br>no a la perspectiva visual.
+            </p>
             <div class="mapa-wrap">
                 <svg viewBox="0 0 200 340" class="cuerpo-svg" style="width:160px">
 
@@ -1159,7 +1141,6 @@
                         data-valor="1.3" data-nombre="Abdomen" data-lado=""
                         onclick="seleccionarZona(this)"/>
 
-                    <!-- CAMBIO 3: data-lado agrega info de lado -->
                     <path d="M62 72 L76 78 L78 108 L62 102 Z"
                         class="zona-touch"
                         data-valor="1.6" data-nombre="Costillas" data-lado="Izquierda"
@@ -1269,7 +1250,6 @@
                     </button>
                 </div>
 
-                <!-- CAMBIO 3: display con nombre + lado separados -->
                 <div id="zona-display" class="zona-display">
                     <span id="zona-nombre-txt">Seleccioná una zona</span>
                 </div>
@@ -1284,7 +1264,6 @@
             <p class="label">Tamaño aproximado (cm)</p>
             <input type="number" id="tamano" class="input-campo" placeholder="Ej: 15" min="1" oninput="calcular()">
 
-            <!-- CAMBIO 4: Referencia de escala rediseñada -->
             <div id="escala-card" class="escala-card">
                 <div class="escala-header-titulo">Referencia de escala</div>
                 <div class="escala-header-sub">
@@ -1309,10 +1288,6 @@
             Agendar con este presupuesto →
         </button>
 
-        <button id="btn-ir-turno" class="btn-principal" style="display:none" onclick="irATurnoConDatos()">
-            Agendar con este presupuesto →
-        </button>
-
         <p class="galeria-titulo">// Portfolio</p>
         <div id="galeria-grid" class="galeria-grid"></div>
        
@@ -1320,7 +1295,6 @@
 
     <!-- SECCIÓN 4: FORMULARIO DE TURNO -->
     <section id="sec-turno" class="seccion">
-        <!-- CAMBIO 2: título de sección más grande y blanco -->
         <p class="seccion-titulo">// Agendar Turno</p>
 
         <div class="turno-pasos">
@@ -1332,7 +1306,6 @@
         </div>
 
         <input type="hidden" id="t-presupuesto">
-        <!-- CAMBIO 3: guardamos también la zona con lado para el turno -->
         <input type="hidden" id="t-zona-completa">
 
         <div id="paso-1" class="formulario-paso activo">
@@ -1419,9 +1392,10 @@
     <!-- SECCIÓN 5: CUIDADOS (solo para PDF/print) -->
     <section id="sec-cuidados" class="seccion">
         <div class="print-solo">
-    <img src="logo2026.png" alt="Logo" style="max-width: 100px; margin-bottom: 10px;"> <h1>ALX.TAT</h1>
-    <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados Profesionales</p>
-</div>
+            <img src="logo2026.png" alt="Logo" style="max-width: 100px; margin-bottom: 10px;">
+            <h1>ALX.TAT</h1>
+            <p style="color:#999; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase">Guía de Cuidados Profesionales</p>
+        </div>
         <div class="cuidado-grupo">
             <h4>I. Preparación (antes del turno)</h4>
             <ul>
@@ -1538,46 +1512,37 @@
         // =============================================
         // CARRETE / LIGHTBOX
         // =============================================
-        // =============================================
-        // CARRETE / LIGHTBOX (CORREGIDO)
-        // =============================================
         function abrirCarrete(nombreEstilo) {
-    const fotos = fotosPorEstilo[nombreEstilo];
-    if (!fotos) return;
+            const fotos = fotosPorEstilo[nombreEstilo];
+            if (!fotos) return;
 
-    // 1. Ordenamos las fotos según tu Excel
-    fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
+            fotos.sort((a, b) => (parseInt(a.orden) || 99) - (parseInt(b.orden) || 99));
 
-    const slider = document.getElementById('carrete-slider');
-    
-    // 2. Cargamos las imágenes
-    slider.innerHTML = fotos.map(f => `
-        <div class="carrete-slide">
-            <img src="${f.imagen}" alt="${nombreEstilo}">
-        </div>
-    `).join('');
+            const slider = document.getElementById('carrete-slider');
+            
+            slider.innerHTML = fotos.map(f => `
+                <div class="carrete-slide">
+                    <img src="${f.imagen}" alt="${nombreEstilo}">
+                </div>
+            `).join('');
 
-    document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
+            document.getElementById('carrete-titulo').innerText = nombreEstilo.toUpperCase();
 
-    // 3. Mostramos el carrete
-    document.getElementById('carrete').classList.add('abierto');
-    document.body.style.overflow = 'hidden';
+            document.getElementById('carrete').classList.add('abierto');
+            document.body.style.overflow = 'hidden';
 
-    // 4. EL TRUCO: Forzamos al carrete a volver a la foto 1 al abrirse
-    // Usamos un tiempo mínimo (10 milisegundos) para asegurar que el navegador ya dibujó las fotos
-    setTimeout(() => {
-        slider.scrollLeft = 0;
-    }, 10);
+            setTimeout(() => {
+                slider.scrollLeft = 0;
+            }, 10);
 
-    // Configuración del botón de cotizar dentro del carrete
-    document.getElementById('btn-cotizar-carrete').onclick = () => {
-        const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
-        document.getElementById('complejidad').value = dif;
-        cerrarCarrete();
-        mostrarSeccion('cotizador');
-        mostrarToast('✦ Estilo seleccionado');
-    };
-}
+            document.getElementById('btn-cotizar-carrete').onclick = () => {
+                const dif = mapaDificultad[nombreEstilo.toLowerCase().trim()] || '1.5';
+                document.getElementById('complejidad').value = dif;
+                cerrarCarrete();
+                mostrarSeccion('cotizador');
+                mostrarToast('✦ Estilo seleccionado');
+            };
+        }
 
         function cerrarCarrete() {
             document.getElementById('carrete').classList.remove('abierto');
@@ -1596,25 +1561,18 @@
         // =============================================
         const secciones = ['inicio', 'bio', 'cotizador', 'turno'];
 
-        // =============================================
-        // NAVEGACIÓN (MEJORADA PARA TURNOS Y PORTFOLIO)
-        // =============================================
         function mostrarSeccion(id) {
-    // 1. Ocultamos todas las secciones y botones
-    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
-    
-    // 2. Activamos la sección destino
-    const seccionDestino = document.getElementById('sec-' + id);
-    if (seccionDestino) seccionDestino.classList.add('activa');
-    
-    // 3. Pintamos el botón del menú de rojo
-    const btnIndex = secciones.indexOf(id);
-    if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
-    
-    // 4. RESET DE SCROLL: Forzamos ir arriba para ver el título de la sección
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+            
+            const seccionDestino = document.getElementById('sec-' + id);
+            if (seccionDestino) seccionDestino.classList.add('activa');
+            
+            const btnIndex = secciones.indexOf(id);
+            if (btnIndex >= 0) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('activo');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         // =============================================
         // COTIZADOR
@@ -1637,9 +1595,9 @@
             document.getElementById('barra-fill').style.width = pct + '%';
             document.getElementById('progreso-pct').innerText = pct + '%';
 
-            const resDiv    = document.getElementById('resultado-precio');
+            const resDiv     = document.getElementById('resultado-precio');
             const escalaCard = document.getElementById('escala-card');
-            const btnTurno  = document.getElementById('btn-ir-turno');
+            const btnTurno   = document.getElementById('btn-ir-turno');
 
             if (tamano > 0) {
                 const precioBase = complejidad >= 2 ? PRECIOS.base_alto : PRECIOS.base_bajo;
@@ -1689,15 +1647,12 @@
             elementosEspalda = [];
 
             document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
-            // Reseteamos el display de zona
             document.getElementById('zona-nombre-txt').textContent = 'Seleccioná una zona';
 
             const btnF = document.getElementById('btn-frente');
             const btnE = document.getElementById('btn-espalda');
 
             if (vista === 'espalda') {
-                
-
                 zonasEspalda.forEach(z => {
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.setAttribute('d', z.d);
@@ -1710,24 +1665,22 @@
                     elementosEspalda.push(path);
                 });
 
-                btnE.style.background    = 'var(--acento)';
-                btnE.style.color         = 'white';
-                btnE.style.borderColor   = 'var(--acento)';
-                btnF.style.background    = 'transparent';
-                btnF.style.color         = 'var(--texto-suave)';
-                btnF.style.borderColor   = 'var(--borde-hover)';
+                btnE.style.background  = 'var(--acento)';
+                btnE.style.color       = 'white';
+                btnE.style.borderColor = 'var(--acento)';
+                btnF.style.background  = 'transparent';
+                btnF.style.color       = 'var(--texto-suave)';
+                btnF.style.borderColor = 'var(--borde-hover)';
             } else {
-                
-                btnF.style.background    = 'var(--acento)';
-                btnF.style.color         = 'white';
-                btnF.style.borderColor   = 'var(--acento)';
-                btnE.style.background    = 'transparent';
-                btnE.style.color         = 'var(--texto-suave)';
-                btnE.style.borderColor   = 'var(--borde-hover)';
+                btnF.style.background  = 'var(--acento)';
+                btnF.style.color       = 'white';
+                btnF.style.borderColor = 'var(--acento)';
+                btnE.style.background  = 'transparent';
+                btnE.style.color       = 'var(--texto-suave)';
+                btnE.style.borderColor = 'var(--borde-hover)';
             }
         }
 
-        // CAMBIO 3: seleccionarZona muestra nombre + lado
         function seleccionarZona(el) {
             document.querySelectorAll('.zona-touch').forEach(z => z.classList.remove('activa'));
             el.classList.add('activa');
@@ -1736,11 +1689,9 @@
             const nombre = el.dataset.nombre;
             const lado   = el.dataset.lado;
 
-            // Guardamos la combinación completa para el WhatsApp
             const zonaCompleta = lado ? nombre + ' · ' + lado : nombre;
             document.getElementById('t-zona-completa').value = zonaCompleta;
 
-            // Mostramos en el display: nombre en rojo, lado en gris
             const displayEl = document.getElementById('zona-nombre-txt');
             if (lado) {
                 displayEl.innerHTML = `<span class="zona-nombre">✦ ${nombre}</span> <span class="zona-lado">· ${lado}</span>`;
@@ -1755,37 +1706,31 @@
         // IR A TURNO DESDE COTIZADOR
         // =============================================
         function irATurnoConDatos() {
-    // 1. Capturamos los datos del Cotizador
-    const selEstilo = document.getElementById('complejidad');
-    const estiloTexto = selEstilo.options[selEstilo.selectedIndex].text;
-    const tamanoCm = document.getElementById('tamano').value;
-    const zonaTexto = document.getElementById('t-zona-completa').value;
-    const presupuestoVisto = document.getElementById('resultado-precio').querySelector('.precio-valor')?.innerText;
+            const selEstilo = document.getElementById('complejidad');
+            const estiloTexto = selEstilo.options[selEstilo.selectedIndex].text;
+            const tamanoCm = document.getElementById('tamano').value;
+            const zonaTexto = document.getElementById('t-zona-completa').value;
+            const presupuestoVisto = document.getElementById('resultado-precio').querySelector('.precio-valor')?.innerText;
 
-    // 2. Los pegamos en el formulario de Turnos
-    // Pegamos el Estilo (buscamos coincidencia)
-    const tEstilo = document.getElementById('t-estilo');
-    if (estiloTexto.includes("Línea Fina")) tEstilo.value = "Línea Fina / Minimalista";
-    else if (estiloTexto.includes("Blackwork")) tEstilo.value = "Blackwork / Tradicional";
-    else if (estiloTexto.includes("Realismo")) tEstilo.value = "Realismo";
+            const tEstilo = document.getElementById('t-estilo');
+            if (estiloTexto.includes("Línea Fina")) tEstilo.value = "Línea Fina / Minimalista";
+            else if (estiloTexto.includes("Blackwork")) tEstilo.value = "Blackwork / Tradicional";
+            else if (estiloTexto.includes("Realismo")) tEstilo.value = "Realismo";
 
-    // Pegamos los CM y calculamos la categoría
-    if (tamanoCm) {
-        document.getElementById('t-cm').value = tamanoCm;
-        const tReferencia = document.getElementById('t-tamano');
-        if (tamanoCm <= 5) tReferencia.value = "Pequeño (hasta 5cm)";
-        else if (tamanoCm <= 15) tReferencia.value = "Mediano (5-15cm)";
-        else tReferencia.value = "Grande (15-30cm)";
-    }
+            if (tamanoCm) {
+                document.getElementById('t-cm').value = tamanoCm;
+                const tReferencia = document.getElementById('t-tamano');
+                if (tamanoCm <= 5) tReferencia.value = "Pequeño (hasta 5cm)";
+                else if (tamanoCm <= 15) tReferencia.value = "Mediano (5-15cm)";
+                else tReferencia.value = "Grande (15-30cm)";
+            }
 
-    // Pegamos la Zona y el Presupuesto
-    if (zonaTexto) document.getElementById('t-zona').value = zonaTexto;
-    if (presupuestoVisto) document.getElementById('t-presupuesto').value = presupuestoVisto;
+            if (zonaTexto) document.getElementById('t-zona').value = zonaTexto;
+            if (presupuestoVisto) document.getElementById('t-presupuesto').value = presupuestoVisto;
 
-    // 3. Saltamos a la sección de Turno
-    mostrarSeccion('turno');
-    mostrarToast('✦ Datos cargados correctamente');
-}
+            mostrarSeccion('turno');
+            mostrarToast('✦ Datos cargados correctamente');
+        }
 
         // =============================================
         // FORMULARIO DE TURNO
@@ -1824,7 +1769,6 @@
         function generarResumen() {
             const presupuesto  = document.getElementById('t-presupuesto').value;
             const cm           = document.getElementById('t-cm').value;
-            // CAMBIO 3: incluimos la zona con lado en el resumen
             const zonaCompleta = document.getElementById('t-zona-completa').value;
 
             const datos = {
@@ -1859,10 +1803,9 @@
         // WHATSAPP
         // =============================================
         function enviarPorWhatsApp() {
-            const nombre      = document.getElementById('t-nombre').value;
-            const experiencia = document.getElementById('t-experiencia').value;
-            const estilo      = document.getElementById('t-estilo').value;
-            // CAMBIO 3: zona con lado en el mensaje de WhatsApp
+            const nombre       = document.getElementById('t-nombre').value;
+            const experiencia  = document.getElementById('t-experiencia').value;
+            const estilo       = document.getElementById('t-estilo').value;
             const zonaCompleta = document.getElementById('t-zona-completa').value || document.getElementById('t-zona').value;
             const cm           = document.getElementById('t-cm').value;
             const tamano       = document.getElementById('t-tamano').value;
@@ -1870,8 +1813,8 @@
             const descripcion  = document.getElementById('t-descripcion').value || '(Sin descripción)';
             const presupuesto  = document.getElementById('t-presupuesto').value;
 
-            const lineaPresupuesto = presupuesto  ? `• Presupuesto visto: ${presupuesto}\n` : '';
-            const lineaCm          = cm            ? `• Tamaño exacto: ${cm} cm\n`           : '';
+            const lineaPresupuesto = presupuesto ? `• Presupuesto visto: ${presupuesto}\n` : '';
+            const lineaCm          = cm          ? `• Tamaño exacto: ${cm} cm\n`           : '';
 
             const msg =
 `¡Hola Alex! Quiero agendar un turno:
